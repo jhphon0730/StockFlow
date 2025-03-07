@@ -19,7 +19,8 @@ type Postgres struct {
 }
 
 type Config struct {
-	Postgres Postgres
+	BCRYPT_COST string
+	Postgres    Postgres
 }
 
 var (
@@ -34,6 +35,7 @@ func LoadConfig() (*Config, error) {
 	}
 
 	config_instance = &Config{
+		BCRYPT_COST: getEnv("BCRYPT_COST", ""),
 		Postgres: Postgres{
 			DB_HOST:     getEnv("DB_HOST", "localhost"),
 			DB_USER:     getEnv("DB_USER", "postgres"),
