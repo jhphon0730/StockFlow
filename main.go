@@ -5,7 +5,6 @@ import (
 
 	"github.com/jhphon0730/StockFlow/internal/config"
 	"github.com/jhphon0730/StockFlow/internal/database"
-	"github.com/jhphon0730/StockFlow/internal/model"
 	"github.com/jhphon0730/StockFlow/internal/server"
 )
 
@@ -22,7 +21,7 @@ func main() {
 		return
 	}
 
-	if err := model.Migration(); err != nil {
+	if err := database.InitDatabase(); err != nil {
 		log.Fatalln(err)
 		return
 	}

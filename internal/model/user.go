@@ -12,12 +12,3 @@ type User struct {
 	Password string `gorm:"not null"`
 	Role     string `gorm:"size:50;not null"` // "admin", "staff"
 }
-
-func GetAllUsers() (*[]User, error) {
-	var users *[]User
-	if err := DB.Find(&users).Error; err != nil {
-		return nil, err
-	}
-
-	return users, nil
-}
