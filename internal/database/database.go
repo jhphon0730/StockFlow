@@ -6,6 +6,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
+	"log"
 	"sync"
 )
 
@@ -17,6 +18,7 @@ var (
 func InitDatabase() error {
 	var err error
 	cfg := config.GetConfig()
+	log.Println(cfg.Postgres)
 	dsn := "host=" + cfg.Postgres.DB_HOST + " user=" + cfg.Postgres.DB_USER + " password=" + cfg.Postgres.DB_PASSWORD + " dbname=" + cfg.Postgres.DB_NAME + " port=" + cfg.Postgres.DB_PORT + " sslmode=" + cfg.Postgres.SSL_MODE + " TimeZone=" + cfg.Postgres.TIMEZONE
 	db_instance, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

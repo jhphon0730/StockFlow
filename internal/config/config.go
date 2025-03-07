@@ -33,7 +33,7 @@ func LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
-	return &Config{
+	config_instance = &Config{
 		Postgres: Postgres{
 			DB_HOST:     getEnv("DB_HOST", "localhost"),
 			DB_USER:     getEnv("DB_USER", "postgres"),
@@ -43,7 +43,9 @@ func LoadConfig() (*Config, error) {
 			SSL_MODE:    getEnv("SSL_MODE", "disable"),
 			TIMEZONE:    getEnv("TIMEZONE", "Asia/Shanghai"),
 		},
-	}, nil
+	}
+
+	return config_instance, nil
 }
 
 func GetConfig() *Config {
