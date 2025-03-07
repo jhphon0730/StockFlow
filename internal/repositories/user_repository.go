@@ -1,12 +1,12 @@
 package repositories
 
 import (
-	"github.com/jhphon0730/StockFlow/internal/model"
+	"github.com/jhphon0730/StockFlow/internal/models"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
-	FindAll() (*[]model.User, error)
+	FindAll() (*[]models.User, error)
 }
 
 type userRepository struct {
@@ -19,8 +19,8 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (r *userRepository) FindAll() (*[]model.User, error) {
-	var users *[]model.User
+func (r *userRepository) FindAll() (*[]models.User, error) {
+	var users *[]models.User
 
 	if err := r.DB.Find(&users).Error; err != nil {
 		return nil, err
