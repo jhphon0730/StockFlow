@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/jhphon0730/StockFlow/internal/config"
+	"github.com/jhphon0730/StockFlow/internal/model"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -45,5 +46,13 @@ func CloseDB() {
 
 func Migration() error {
 	DB := GetDB()
-	return DB.AutoMigrate()
+	return DB.AutoMigrate(
+		&model.User{},
+		&model.Warehouse{},
+		&model.Product{},
+		&model.Inventory{},
+		&model.Transaction{},
+		&model.Order{},
+		&model.OrderItem{},
+	)
 }

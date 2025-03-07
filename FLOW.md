@@ -17,11 +17,11 @@ Go, GORM 및 WebSocket 통합을 활용하여 실시간 업데이트 기능을 �
 
 ## 2. 데이터베이스 모델링 및 ERD 구현
 - **데이터 모델 정의:**  
-  - GORM을 사용하여 사용자(Users), 창고(Warehouses), 제품(Products), 재고(Inventory), 주문(Orders), 주문 항목(OrderItems) 및 트랜잭션(Transactions)에 대한 모델을 생성합니다.
+  - [x] GORM을 사용하여 사용자(Users), 창고(Warehouses), 제품(Products), 재고(Inventory), 주문(Orders), 주문 항목(OrderItems) 및 트랜잭션(Transactions)에 대한 모델을 생성합니다.
 - **데이터베이스 스키마 마이그레이션:**  
-  - ERD를 기반으로 데이터베이스 마이그레이션을 생성 및 실행합니다.
+  - [x] ERD를 기반으로 데이터베이스 마이그레이션을 생성 및 실행합니다.
 - **관계 설정:**  
-  - 재고(Inventory)와 창고(Warehouses), 제품(Products)를 연결하는 등 적절한 외래 키 관계 및 인덱스를 설정합니다.
+  - [x] 재고(Inventory)와 창고(Warehouses), 제품(Products)를 연결하는 등 적절한 외래 키 관계 및 인덱스를 설정합니다.
 
 ---
 

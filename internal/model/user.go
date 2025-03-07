@@ -1,4 +1,4 @@
-package models
+package model
 
 import (
 	"gorm.io/gorm"
@@ -13,3 +13,11 @@ type User struct {
 	Role     string `gorm:"size:50;not null"` // "admin", "staff"
 }
 
+func GetAllUsers() (*[]User, error) {
+	var users *[]User
+	if err := DB.Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

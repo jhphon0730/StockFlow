@@ -1,4 +1,4 @@
-package models
+package model
 
 import (
 	"gorm.io/gorm"
@@ -11,4 +11,3 @@ type Warehouse struct {
 	Location    string      `gorm:"size:255;not null"`
 	Inventories []Inventory `gorm:"foreignKey:WarehouseID"`
 }
-

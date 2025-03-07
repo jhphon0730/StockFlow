@@ -1,4 +1,4 @@
-package models
+package model
 
 import "gorm.io/gorm"
 
@@ -11,4 +11,3 @@ type Product struct {
 	Inventories []Inventory `gorm:"foreignKey:ProductID"`
 	OrderItems  []OrderItem `gorm:"foreignKey:ProductID"`
 }
-

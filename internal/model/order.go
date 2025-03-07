@@ -1,4 +1,4 @@
-package models
+package model
 
 import "gorm.io/gorm"
 
@@ -14,11 +14,10 @@ type Order struct {
 /* 주문 내 제품 리스트 저장 (제품 ID, 수량, 가격) */
 type OrderItem struct {
 	gorm.Model
-	OrderID    uint     `gorm:"not null"`
-	ProductID  uint     `gorm:"not null"`
-	Quantity   int      `gorm:"not null"`
-	Price      float64  `gorm:"not null"`
-	Order      Order    `gorm:"foreignKey:OrderID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Product    Product  `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	OrderID   uint    `gorm:"not null"`
+	ProductID uint    `gorm:"not null"`
+	Quantity  int     `gorm:"not null"`
+	Price     float64 `gorm:"not null"`
+	Order     Order   `gorm:"foreignKey:OrderID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Product   Product `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
-
