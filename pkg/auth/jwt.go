@@ -36,7 +36,7 @@ func ValidateAndParseJWT(tokenString string) (*TokenClaims, error) {
 	// 토큰을 파싱하고 클레임을 추출
 	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("올바르지 않은 요청입니다.")
+			return nil, errors.New("올바르지 않은 요청입니다")
 		}
 		return jwtSecret, nil
 	})
@@ -48,10 +48,10 @@ func ValidateAndParseJWT(tokenString string) (*TokenClaims, error) {
 	if claims, ok := token.Claims.(*TokenClaims); ok && token.Valid {
 		// 만료 여부 확인
 		if claims.ExpiresAt.Time.Before(time.Now()) {
-			return nil, errors.New("로그인 세션이 만료되었습니다.")
+			return nil, errors.New("로그인 세션이 만료되었습니다")
 		}
 		return claims, nil
 	}
 
-	return nil, errors.New("올바르지 않은 요청입니다.")
+	return nil, errors.New("올바르지 않은 요청입니다")
 }

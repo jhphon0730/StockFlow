@@ -1,10 +1,11 @@
 package services
 
 import (
-	"net/http"
-
 	"github.com/jhphon0730/StockFlow/internal/models"
 	"github.com/jhphon0730/StockFlow/internal/repositories"
+
+	"errors"
+	"net/http"
 )
 
 type UserService interface {
@@ -32,6 +33,11 @@ func (u *userService) FindAll() (int, []models.User, error) {
 }
 
 func (u *userService) Create(user *models.User) (int, *models.User, error) {
+	alreadyUser, err := u.userRepository.FindByEmail(user.Email)
+	if err != nil || alreadyUser != nil {
+		return http.StatusConflict, nil, errors.New("이미 존재하는 이메일입니다")
+	}
+
 	createdUser, err := u.userRepository.Create(user)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
