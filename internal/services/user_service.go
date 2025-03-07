@@ -8,7 +8,8 @@ import (
 )
 
 type UserService interface {
-	FindAll() (int, *[]models.User, error)
+	FindAll() (int, []models.User, error)
+	Create(user *models.User) (int, *models.User, error)
 }
 
 type userService struct {
@@ -21,11 +22,20 @@ func NewUserService(userRepository repositories.UserRepository) UserService {
 	}
 }
 
-func (u *userService) FindAll() (int, *[]models.User, error) {
+func (u *userService) FindAll() (int, []models.User, error) {
 	users, err := u.userRepository.FindAll()
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 
 	return http.StatusOK, users, nil
+}
+
+func (u *userService) Create(user *models.User) (int, *models.User, error) {
+	createdUser, err := u.userRepository.Create(user)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusCreated, createdUser, nil
 }

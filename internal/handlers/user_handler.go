@@ -7,7 +7,8 @@ import (
 )
 
 type UserHandler interface {
-	FindAll(c *gin.Context)
+	FindAllUsers(c *gin.Context)
+	SignUpUser(c *gin.Context)
 }
 
 type userHandler struct {
@@ -20,9 +21,17 @@ func NewUserHandler(userService services.UserService) UserHandler {
 	}
 }
 
-func (u *userHandler) FindAll(c *gin.Context) {
+func (u *userHandler) FindAllUsers(c *gin.Context) {
 	status, users, err := u.userService.FindAll()
 	utils.JSONResponse(c, status, users, err)
 
 	return
+}
+
+func (u *userHandler) SignUpUser(c *gin.Context) {
+	// 0. Body Parse
+	// 1. 중복 유저 있는 지 체크
+	// 2. 비밀번호 암호화
+	// 3. 유저 생성
+	// 5. Response
 }
