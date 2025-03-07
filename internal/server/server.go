@@ -1,17 +1,30 @@
 package server
 
 import (
-	"net/http"
-	"time"
+	"github.com/jhphon0730/StockFlow/internal/database"
+	"github.com/jhphon0730/StockFlow/internal/handlers"
+	"github.com/jhphon0730/StockFlow/internal/repositories"
+	"github.com/jhphon0730/StockFlow/internal/services"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+
+	"net/http"
+	"time"
+)
+
+var (
+	DB *gorm.DB = database.GetDB()
+
+	userRepository repositories.UserRepository = repositories.NewUserRepository(DB)
+	userService    services.UserService        = services.NewUserService(userRepository)
+	userHandler    handlers.UserHandler        = handlers.NewUserHandler(userService)
 )
 
 type Server struct {
 	router *gin.Engine
-
-	PORT string
+	PORT   string
 }
 
 func NewServer() *Server {
@@ -43,5 +56,11 @@ func (s *Server) Init(PORT string) {
 }
 
 func (s *Server) Run() {
+	api := s.router.Group("/api")
+	{
+		user_api := api.Group("/users/")
+		s.RegisterUserRoutes(user_api)
+	}
+
 	s.router.Run(":" + s.PORT)
 }
