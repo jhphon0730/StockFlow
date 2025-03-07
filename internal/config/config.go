@@ -20,6 +20,7 @@ type Postgres struct {
 
 type Config struct {
 	BCRYPT_COST string
+	JWT_SECRET  string
 	Postgres    Postgres
 }
 
@@ -35,7 +36,8 @@ func LoadConfig() (*Config, error) {
 	}
 
 	config_instance = &Config{
-		BCRYPT_COST: getEnv("BCRYPT_COST", ""),
+		BCRYPT_COST: getEnv("BCRYPT_COST", "1"),
+		JWT_SECRET:  getEnv("JWT_SECRET ", "jwt"),
 		Postgres: Postgres{
 			DB_HOST:     getEnv("DB_HOST", "localhost"),
 			DB_USER:     getEnv("DB_USER", "postgres"),
