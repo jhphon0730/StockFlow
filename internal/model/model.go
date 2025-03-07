@@ -9,3 +9,15 @@ import (
 var (
 	DB *gorm.DB = database.GetDB()
 )
+
+func Migration() error {
+	return DB.AutoMigrate(
+		&User{},
+		&Warehouse{},
+		&Product{},
+		&Inventory{},
+		&Transaction{},
+		&Order{},
+		&OrderItem{},
+	)
+}
