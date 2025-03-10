@@ -33,8 +33,8 @@ func (u *userService) FindAll() (int, []models.User, error) {
 }
 
 func (u *userService) Create(user *models.User) (int, *models.User, error) {
-	alreadyUser, err := u.userRepository.FindByEmail(user.Email)
-	if err != nil || alreadyUser != nil {
+	alreadyUser, _ := u.userRepository.FindByEmail(user.Email)
+	if alreadyUser != nil {
 		return http.StatusConflict, nil, errors.New("이미 존재하는 이메일입니다")
 	}
 
