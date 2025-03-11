@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/jhphon0730/StockFlow/internal/models"
 	"github.com/jhphon0730/StockFlow/pkg/utils"
@@ -12,7 +13,8 @@ import (
 
 func SetupTestDB() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{
-		// Logger: logger.Default.LogMode(logger.Info),
+		// 배포 모드로 설정하여 로그를 출력하지 않도록 설정
+		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err != nil {
 		log.Fatalf("Failed to open test database: %v", err)
