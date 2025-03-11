@@ -30,7 +30,13 @@ var (
 )
 
 func LoadConfig() (*Config, error) {
-	err := godotenv.Load()
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("Server Working directory:", wd)
+
+	err = godotenv.Load(".env")
 	if err != nil {
 		return nil, err
 	}
