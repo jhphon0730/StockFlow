@@ -9,10 +9,6 @@ import (
 	"github.com/jhphon0730/StockFlow/internal/models"
 )
 
-var (
-	test_db *gorm.DB
-)
-
 func SetupTestDB() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
@@ -31,16 +27,16 @@ func SetupTestDB() *gorm.DB {
 	return db
 }
 
-func CreateTestUser() error {
-	user := models.User{
+func CreateTestUser(db *gorm.DB) (*models.User, error) {
+	user := &models.User{
 		Name:     "TestUser",
 		Email:    "testuser@example.com",
 		Password: "password123!",
 	}
 
-	if err := test_db.Create(&user).Error; err != nil {
-		return err
+	if err := db.Create(&user).Error; err != nil {
+		return nil, err
 	}
 
-	return nil
+	return user, nil
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/jhphon0730/StockFlow/internal/repositories"
 	"github.com/jhphon0730/StockFlow/internal/services"
 	"github.com/jhphon0730/StockFlow/pkg/dto"
+	"github.com/jhphon0730/StockFlow/pkg/utils"
 )
 
 func TestRegisterSuccess(t *testing.T) {
@@ -49,12 +50,12 @@ func TestRegisterSuccess(t *testing.T) {
 		t.Errorf("Expected status %v, got %v", http.StatusCreated, rr.Code)
 	}
 
-	var resp map[string]interface{}
+	var resp utils.Response
 	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
 		t.Errorf("Failed to parse JSON response: %v", err)
 	}
 
-	if _, exists := resp["data"]; !exists {
-		t.Error("Response does not contain 'data' field")
+	if resp.Data == nil {
+		t.Errorf("Expected data to be non-nil")
 	}
 }
