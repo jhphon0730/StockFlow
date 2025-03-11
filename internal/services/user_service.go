@@ -11,6 +11,7 @@ import (
 type UserService interface {
 	FindAll() (int, []models.User, error)
 	Create(user *models.User) (int, *models.User, error)
+	FindByEmail(email string) (int, *models.User, error)
 }
 
 type userService struct {
@@ -44,4 +45,13 @@ func (u *userService) Create(user *models.User) (int, *models.User, error) {
 	}
 
 	return http.StatusCreated, createdUser, nil
+}
+
+func (u *userService) FindByEmail(email string) (int, *models.User, error) {
+	user, err := u.userRepository.FindByEmail(email)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusOK, user, nil
 }

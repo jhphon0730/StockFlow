@@ -58,7 +58,7 @@ func (s *Server) Init(PORT string) {
 func (s *Server) Run() {
 	api := s.router.Group("/api")
 	{
-		user_api := api.Group("/users/")
+		user_api := api.Group("/users")
 		s.RegisterUserRoutes(user_api)
 	}
 

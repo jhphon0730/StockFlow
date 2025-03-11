@@ -37,3 +37,20 @@ func (s *SignUpUserDTO) ToUser() *models.User {
 		Role:     "staff",
 	}
 }
+
+type SignInUserDTO struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=8"`
+}
+
+func (s *SignInUserDTO) CheckSignInDTO() (bool, error) {
+	if !utils.IsValidEmail(s.Email) {
+		return false, errors.New("이메일은 5자 이상 50자 이하여야 합니다")
+	}
+
+	if !utils.IsValidPassword(s.Password) {
+		return false, errors.New("비밀번호는 8자 이상 32자 이하여야 합니다")
+	}
+
+	return true, nil
+}
