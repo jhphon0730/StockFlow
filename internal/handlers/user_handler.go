@@ -55,7 +55,7 @@ func (u *userHandler) SignUpUser(c *gin.Context) {
 	signUpDTO.Password = hashedPW
 
 	// 3. 유저 생성
-	status, user, err := u.userService.Create(signUpDTO.ToUser())
+	status, user, err := u.userService.Create(signUpDTO.ToModel())
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return

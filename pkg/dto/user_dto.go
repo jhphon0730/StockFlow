@@ -29,7 +29,7 @@ func (s *SignUpUserDTO) CheckSignUpDTO() (bool, error) {
 	return true, nil
 }
 
-func (s *SignUpUserDTO) ToUser() *models.User {
+func (s *SignUpUserDTO) ToModel() *models.User {
 	return &models.User{
 		Name:     s.Name,
 		Email:    s.Email,
