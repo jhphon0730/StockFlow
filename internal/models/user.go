@@ -10,5 +10,5 @@ type User struct {
 	Name     string `json:"name" binding:"required" validate:"required"`
 	Email    string `json:"email" gorm:"unique" binding:"required" validate:"required,email"`
 	Password string `json:"password" binding:"required" validate:"required"`
-	Role     string `json:"role" binding:"required" validate:"required"`
+	Role     string `json:"role" binding:"required" validate:"required"` // staff or admin
 }

@@ -14,14 +14,16 @@ var (
 )
 
 type TokenClaims struct {
-	UserID uint `json:"userID"`
+	UserID   uint   `json:"userID"`
+	UserRole string `json:"userRole"`
 	jwt.RegisteredClaims
 }
 
 // 토큰 생성 함수
-func GenerateJWT(userID uint) (string, error) {
+func GenerateJWT(userID uint, userRole string) (string, error) {
 	claims := TokenClaims{
-		UserID: userID,
+		UserID:   userID,
+		UserRole: userRole,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)), // 1시간 만료
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

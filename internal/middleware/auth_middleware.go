@@ -44,3 +44,44 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func AdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 1. Check Header
+		header := c.GetHeader("Authorization")
+		if header == "" {
+			utils.JSONResponse(c, http.StatusUnauthorized, nil, errors.New("비정상 요청입니다"))
+			c.Abort()
+			return
+		}
+
+		// 2. Check Token
+		token := strings.TrimPrefix(header, "Bearer ")
+		if token == "" {
+			utils.JSONResponse(c, http.StatusUnauthorized, nil, errors.New("비정상 요청입니다"))
+			c.Abort()
+			return
+		}
+
+		// 3. Validate Token
+		claims, err := auth.ValidateAndParseJWT(token)
+		if err != nil {
+			utils.JSONResponse(c, http.StatusUnauthorized, nil, err)
+			c.Abort()
+			return
+		}
+
+		// 4. Check UserRole
+		if claims.UserRole != "admin" {
+			utils.JSONResponse(c, http.StatusUnauthorized, nil, errors.New("관리자만 접근 가능합니다"))
+			c.Abort()
+			return
+		}
+
+		// 5. Save UserID to Context & Token
+		userID := claims.UserID
+		c.Set("userID", userID)
+		c.Set("token", token)
+		c.Next()
+	}
+}

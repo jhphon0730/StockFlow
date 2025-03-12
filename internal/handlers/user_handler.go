@@ -90,7 +90,7 @@ func (u *userHandler) SignInUser(c *gin.Context) {
 	}
 
 	// 3. generate JWT
-	jwt, err := auth.GenerateJWT(user.ID)
+	jwt, err := auth.GenerateJWT(user.ID, user.Role)
 	if err != nil {
 		utils.JSONResponse(c, http.StatusInternalServerError, nil, err)
 		return
