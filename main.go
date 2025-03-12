@@ -28,7 +28,7 @@ func main() {
 		return
 	}
 
-	if err := database.InitDatabase(); err != nil {
+	if err := database.Migration(); err != nil {
 		log.Fatalln(err)
 		return
 	}
