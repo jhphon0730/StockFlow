@@ -49,7 +49,5 @@ func Migration() error {
 		&models.Product{},
 		&models.Inventory{},
 		&models.Transaction{},
-		&models.Order{},
-		&models.OrderItem{},
 	)
 }

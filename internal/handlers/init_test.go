@@ -25,8 +25,6 @@ func SetupTestDB() *gorm.DB {
 		&models.Product{},
 		&models.Inventory{},
 		&models.Transaction{},
-		&models.Order{},
-		&models.OrderItem{},
 	)
 
 	return db
