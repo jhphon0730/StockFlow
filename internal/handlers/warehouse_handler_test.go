@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"strconv"
 	"bytes"
 	"encoding/json"
 	"net/http"
@@ -65,5 +66,49 @@ func TestCreateWarehouse(t *testing.T) {
 
 	if resp.Data.Warehouse.Name != payload.Name || resp.Data.Warehouse.Location != payload.Location {
 		t.Errorf("Expected warehouse name and location to match payload")
+	}
+}
+
+func GetWarehouse(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	db := SetupTestDB()
+	warehouseRepo := repositories.NewWarehouseRepository(db)
+	warehouseService := services.NewWarehouseService(warehouseRepo)
+	warehouseHandler := handlers.NewWarehouseHandler(warehouseService)
+
+	router := gin.Default()
+	router.GET("/warehouses/:id", warehouseHandler.GetWarehouse)
+
+	warehouse, err := CreateTestWarehouse(db)
+	if err != nil {
+		t.Errorf("Failed to create test warehouse: %v", err)
+	}
+
+	req, err := http.NewRequest("GET", "/warehouses/" + strconv.Itoa(int(warehouse.ID)), nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Errorf("Expected status %v, got %v", http.StatusCreated, rr.Code)
+	}
+
+	var resp struct {
+		Response
+		Data struct {
+			Warehouse *models.Warehouse `json:"warehouse"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+		t.Errorf("Failed to parse JSON response: %v", err)
+	}
+
+	if resp.Data.Warehouse == nil {
+		t.Errorf("Expected warehouse to be non-nil")
 	}
 }

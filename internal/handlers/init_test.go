@@ -49,3 +49,15 @@ func CreateTestUser(db *gorm.DB) (*models.User, error) {
 
 	return &user, nil
 }
+
+func CreateTestWarehouse(db *gorm.DB) (*models.Warehouse, error) {
+	warehouse := models.Warehouse{
+		Name:     "test_warehouse",
+		Location: "test_location",
+	}
+	if err := db.Create(&warehouse).Error; err != nil {
+		return nil, err
+	}
+
+	return &warehouse, nil
+}
