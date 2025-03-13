@@ -9,11 +9,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"strconv"
 	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 )
 
@@ -69,7 +69,7 @@ func TestCreateWarehouse(t *testing.T) {
 	}
 }
 
-func GetWarehouse(t *testing.T) {
+func TestGetWarehouse(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	db := SetupTestDB()
@@ -85,7 +85,7 @@ func GetWarehouse(t *testing.T) {
 		t.Errorf("Failed to create test warehouse: %v", err)
 	}
 
-	req, err := http.NewRequest("GET", "/warehouses/" + strconv.Itoa(int(warehouse.ID)), nil)
+	req, err := http.NewRequest("GET", "/warehouses/"+strconv.Itoa(int(warehouse.ID)), nil)
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
@@ -110,5 +110,44 @@ func GetWarehouse(t *testing.T) {
 
 	if resp.Data.Warehouse == nil {
 		t.Errorf("Expected warehouse to be non-nil")
+	}
+}
+
+func TestDeleteWarehouse(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	db := SetupTestDB()
+	warehouseRepo := repositories.NewWarehouseRepository(db)
+	warehouseService := services.NewWarehouseService(warehouseRepo)
+	warehouseHandler := handlers.NewWarehouseHandler(warehouseService)
+
+	router := gin.Default()
+	router.DELETE("/warehouses/:id", warehouseHandler.DeleteWarehouse)
+
+	warehouse, err := CreateTestWarehouse(db)
+	if err != nil {
+		t.Errorf("Failed to create test warehouse: %v", err)
+	}
+
+	req, err := http.NewRequest("DELETE", "/warehouses/"+strconv.Itoa(int(warehouse.ID)), nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Errorf("Expected status %v, got %v", http.StatusCreated, rr.Code)
+	}
+
+	var warehouseCount int64
+	if err := db.Model(&models.Warehouse{}).Where("id = ?", warehouse.ID).Count(&warehouseCount).Error; err != nil {
+		t.Errorf("Failed to count warehouses: %v", err)
+	}
+
+	if warehouseCount != 0 {
+		t.Errorf("Expected warehouse to be deleted")
 	}
 }

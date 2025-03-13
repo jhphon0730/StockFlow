@@ -15,6 +15,7 @@ import (
 type WareHouseHandler interface {
 	GetWarehouse(c *gin.Context)
 	CreateWarehouse(c *gin.Context)
+	DeleteWarehouse(c *gin.Context)
 }
 
 type warehouseHandler struct {
@@ -78,4 +79,27 @@ func (w *warehouseHandler) CreateWarehouse(c *gin.Context) {
 	}
 
 	utils.JSONResponse(c, status, res_data, nil)
+}
+
+func (w *warehouseHandler) DeleteWarehouse(c *gin.Context) {
+	// 요청 시에는 /warehouses/:id 로 요청이 들어옴
+	id := c.Param("id")
+	if id == "" {
+		utils.JSONResponse(c, http.StatusBadRequest, nil, errors.New("id is required"))
+		return
+	}
+
+	id_int, err := strconv.Atoi(id)
+	if err != nil {
+		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
+		return
+	}
+
+	status, err := w.warehouseService.Delete(uint(id_int))
+	if err != nil {
+		utils.JSONResponse(c, status, nil, err)
+		return
+	}
+
+	utils.JSONResponse(c, status, nil, nil)
 }
