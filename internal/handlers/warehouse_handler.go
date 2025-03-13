@@ -12,7 +12,8 @@ import (
 	"strconv"
 )
 
-type WareHouseHandler interface {
+type WarehouseHandler interface {
+	GetAllWarehouses(c *gin.Context)
 	GetWarehouse(c *gin.Context)
 	CreateWarehouse(c *gin.Context)
 	DeleteWarehouse(c *gin.Context)
@@ -22,10 +23,23 @@ type warehouseHandler struct {
 	warehouseService services.WarehouseService
 }
 
-func NewWarehouseHandler(warehouseService services.WarehouseService) WareHouseHandler {
+func NewWarehouseHandler(warehouseService services.WarehouseService) WarehouseHandler {
 	return &warehouseHandler{
 		warehouseService: warehouseService,
 	}
+}
+
+func (w *warehouseHandler) GetAllWarehouses(c *gin.Context) {
+	status, warehouses, err := w.warehouseService.FindAll()
+	if err != nil {
+		utils.JSONResponse(c, status, nil, err)
+		return
+	}
+
+	res_data := gin.H{
+		"warehouses": warehouses,
+	}
+	utils.JSONResponse(c, status, res_data, nil)
 }
 
 func (w *warehouseHandler) GetWarehouse(c *gin.Context) {

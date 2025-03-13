@@ -2,9 +2,6 @@ package server
 
 import (
 	"github.com/jhphon0730/StockFlow/internal/database"
-	"github.com/jhphon0730/StockFlow/internal/handlers"
-	"github.com/jhphon0730/StockFlow/internal/repositories"
-	"github.com/jhphon0730/StockFlow/internal/services"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -16,10 +13,6 @@ import (
 
 var (
 	DB *gorm.DB = database.GetDB()
-
-	userRepository repositories.UserRepository = repositories.NewUserRepository(DB)
-	userService    services.UserService        = services.NewUserService(userRepository)
-	userHandler    handlers.UserHandler        = handlers.NewUserHandler(userService)
 )
 
 type Server struct {

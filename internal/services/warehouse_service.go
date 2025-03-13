@@ -8,6 +8,7 @@ import (
 )
 
 type WarehouseService interface {
+	FindAll() (int, []models.Warehouse, error)
 	FindByID(id uint) (int, *models.Warehouse, error)
 	Create(warehouse *models.Warehouse) (int, *models.Warehouse, error)
 	Delete(id uint) (int, error)
@@ -21,6 +22,15 @@ func NewWarehouseService(warehouseRepository repositories.WarehouseRepository) W
 	return &warehouseService{
 		warehouseRepository: warehouseRepository,
 	}
+}
+
+func (w *warehouseService) FindAll() (int, []models.Warehouse, error) {
+	warehouses, err := w.warehouseRepository.FindAll()
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusOK, warehouses, nil
 }
 
 func (w *warehouseService) FindByID(id uint) (int, *models.Warehouse, error) {

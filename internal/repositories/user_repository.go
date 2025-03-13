@@ -6,10 +6,10 @@ import (
 )
 
 type UserRepository interface {
+	FindAll() ([]models.User, error)
 	FindByID(id uint) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
 	FindByRole(role string) ([]models.User, error)
-	FindAll() ([]models.User, error)
 
 	Create(user *models.User) (*models.User, error)
 }
@@ -22,6 +22,16 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{
 		db: db,
 	}
+}
+
+func (r *userRepository) FindAll() ([]models.User, error) {
+	var users []models.User
+
+	if err := r.db.Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (r *userRepository) FindByID(id uint) (*models.User, error) {
@@ -48,16 +58,6 @@ func (r *userRepository) FindByRole(role string) ([]models.User, error) {
 	var users []models.User
 
 	if err := r.db.Where("role = ?", role).Find(&users).Error; err != nil {
-		return nil, err
-	}
-
-	return users, nil
-}
-
-func (r *userRepository) FindAll() ([]models.User, error) {
-	var users []models.User
-
-	if err := r.db.Find(&users).Error; err != nil {
 		return nil, err
 	}
 

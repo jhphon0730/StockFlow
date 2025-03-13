@@ -7,7 +7,10 @@ import (
 
 type WarehouseRepository interface {
 	FindByID(id uint) (*models.Warehouse, error)
+	FindAll() ([]models.Warehouse, error)
+
 	Create(warehouse *models.Warehouse) (*models.Warehouse, error)
+
 	Delete(id uint) error
 }
 
@@ -29,6 +32,16 @@ func (r *warehouseRepository) FindByID(id uint) (*models.Warehouse, error) {
 	}
 
 	return &warehouse, nil
+}
+
+func (r *warehouseRepository) FindAll() ([]models.Warehouse, error) {
+	var warehouses []models.Warehouse
+
+	if err := r.db.Find(&warehouses).Error; err != nil {
+		return nil, err
+	}
+
+	return warehouses, nil
 }
 
 func (r *warehouseRepository) Create(warehouse *models.Warehouse) (*models.Warehouse, error) {
