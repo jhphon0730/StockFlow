@@ -25,6 +25,7 @@ func (s *Server) RegisterUserRoutes(router *gin.RouterGroup) {
 }
 
 func (s *Server) RegisterWarehouseRoutes(router *gin.RouterGroup) {
+	router.GET("", warehouseHandler.GetAllWarehouses)
 	router.POST("", warehouseHandler.CreateWarehouse)
 	router.GET("/:id", warehouseHandler.GetWarehouse)
 	router.DELETE("/:id", warehouseHandler.DeleteWarehouse)
