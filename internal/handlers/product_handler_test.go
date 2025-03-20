@@ -6,6 +6,7 @@ import (
 	"github.com/jhphon0730/StockFlow/internal/repositories"
 	"github.com/jhphon0730/StockFlow/internal/services"
 	"github.com/jhphon0730/StockFlow/pkg/dto"
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 
@@ -16,14 +17,25 @@ import (
 	"testing"
 )
 
-func TestCreateProduct(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+func setup() (*gorm.DB, *gin.Engine, repositories.ProductRepository, services.ProductService, handlers.ProductHandler) {
+	// Test DB 초기화
 	db := SetupTestDB()
 	productRepo := repositories.NewProductRepository(db)
 	productService := services.NewProductService(productRepo)
 	productHandler := handlers.NewProductHandler(productService)
 
 	router := gin.Default()
+	return db, router, productRepo, productService, productHandler
+}
+
+func cleanup(db *gorm.DB) {
+	// 테스트 후 DB 초기화
+	db.Exec("DELETE FROM products")
+}
+
+func TestCreateProduct(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	_, router, _, _, productHandler := setup()
 	router.POST("/products", productHandler.CreateProduct)
 
 	payload := dto.CreateProductDTO{
@@ -70,15 +82,11 @@ func TestCreateProduct(t *testing.T) {
 
 func TestGetAllProduct(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-
-	db := SetupTestDB()
-	productRepo := repositories.NewProductRepository(db)
-	productService := services.NewProductService(productRepo)
-	productHandler := handlers.NewProductHandler(productService)
-
-	router := gin.Default()
+	db, router, _, _, productHandler := setup()
 	router.GET("/products", productHandler.GetAllProducts)
 
+	// Test 데이터 삽입
+	cleanup(db)
 	CreateTestProduct(db, "test1", "test1")
 	CreateTestProduct(db, "test2", "test2")
 
@@ -105,21 +113,17 @@ func TestGetAllProduct(t *testing.T) {
 	}
 
 	if len(resp.Data.Products) != 2 {
-		t.Errorf("got %v", len(resp.Data.Products))
+		t.Errorf("Expected 2 products, got %v", len(resp.Data.Products))
 	}
 }
 
 func TestGetProduct(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-
-	db := SetupTestDB()
-	productRepo := repositories.NewProductRepository(db)
-	productService := services.NewProductService(productRepo)
-	productHandler := handlers.NewProductHandler(productService)
-
-	router := gin.Default()
+	db, router, _, _, productHandler := setup()
 	router.GET("/products/:id", productHandler.GetProduct)
 
+	// Test 데이터 삽입
+	cleanup(db)
 	CreateTestProduct(db, "test1", "test1")
 
 	req, err := http.NewRequest("GET", "/products/1", nil)
@@ -141,7 +145,6 @@ func TestGetProduct(t *testing.T) {
 			Product *models.Product `json:"product"`
 		} `json:"data"`
 	}
-
 	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
 		t.Fatalf("Failed to parse JSON response: %v", err)
 	}
@@ -153,15 +156,11 @@ func TestGetProduct(t *testing.T) {
 
 func TestDeleteProduct(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-
-	db := SetupTestDB()
-	productRepo := repositories.NewProductRepository(db)
-	productService := services.NewProductService(productRepo)
-	productHandler := handlers.NewProductHandler(productService)
-
-	router := gin.Default()
+	db, router, _, _, productHandler := setup()
 	router.DELETE("/products/:id", productHandler.DeleteProduct)
 
+	// Test 데이터 삽입
+	cleanup(db)
 	CreateTestProduct(db, "test1", "test1")
 
 	req, err := http.NewRequest("DELETE", "/products/1", nil)
