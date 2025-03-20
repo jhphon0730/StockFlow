@@ -16,6 +16,7 @@ type ProductHandler interface {
 	GetAllProducts(c *gin.Context)
 	GetProduct(c *gin.Context)
 	CreateProduct(c *gin.Context)
+	DeleteProduct(c *gin.Context)
 }
 
 type productHandler struct {
@@ -93,4 +94,26 @@ func (p *productHandler) CreateProduct(c *gin.Context) {
 	}
 
 	utils.JSONResponse(c, status, res_data, nil)
+}
+
+func (p *productHandler) DeleteProduct(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		utils.JSONResponse(c, http.StatusBadRequest, nil, errors.New("id is required"))
+		return
+	}
+
+	id_int, err := strconv.Atoi(id)
+	if err != nil {
+		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
+		return
+	}
+
+	status, err := p.productService.Delete(uint(id_int))
+	if err != nil {
+		utils.JSONResponse(c, status, nil, err)
+		return
+	}
+
+	utils.JSONResponse(c, status, nil, nil)
 }
