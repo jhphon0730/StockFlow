@@ -9,10 +9,10 @@ type Inventory struct {
 	gorm.Model
 	WarehouseID uint `json:"warehouse_id" binding:"required" validate:"required"`
 	ProductID   uint `json:"product_id" binding:"required" validate:"required"`
-	Quantity    int  `json:"quantity" binding:"required" validate:"required,gte=0"` // 재고 수량 (0 이상)
+	Quantity    int  `json:"quantity" binding:"required" validate:"required,gte=0"`
 
 	// 연관관계
-	Warehouse    Warehouse     `gorm:"foreignKey:WarehouseID"`
-	Product      Product       `gorm:"foreignKey:ProductID"`
-	Transactions []Transaction `gorm:"foreignKey:InventoryID"` // 해당 재고의 입출고 기록
+	Warehouse    Warehouse     `gorm:"foreignKey:WarehouseID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"` // Warehouse 삭제 시 Inventory 삭제
+	Product      Product       `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`   // Product 삭제 시 Inventory 삭제
+	Transactions []Transaction `gorm:"foreignKey:InventoryID;constraint:OnDelete:CASCADE"`                  // Inventory 삭제 시 Transaction 삭제
 }

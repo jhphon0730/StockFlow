@@ -10,5 +10,5 @@ type Product struct {
 	Name        string      `json:"name" binding:"required" validate:"required"`
 	Description string      `json:"description"` // 선택적 설명
 	SKU         string      `json:"sku" gorm:"unique" binding:"required" validate:"required"`
-	Inventories []Inventory `gorm:"foreignKey:ProductID"` // 하나의 제품에 여러 재고 항목이 있음
+	Inventories []Inventory `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
