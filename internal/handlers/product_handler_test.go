@@ -150,3 +150,30 @@ func TestGetProduct(t *testing.T) {
 		t.Fatalf("Expected product to be non-nil")
 	}
 }
+
+func TestDeleteProduct(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	db := SetupTestDB()
+	productRepo := repositories.NewProductRepository(db)
+	productService := services.NewProductService(productRepo)
+	productHandler := handlers.NewProductHandler(productService)
+
+	router := gin.Default()
+	router.DELETE("/products/:id", productHandler.DeleteProduct)
+
+	CreateTestProduct(db, "test1", "test1")
+
+	req, err := http.NewRequest("DELETE", "/products/1", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected status %v, got %v", http.StatusOK, rr.Code)
+	}
+}
