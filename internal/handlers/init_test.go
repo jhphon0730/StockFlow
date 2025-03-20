@@ -61,3 +61,15 @@ func CreateTestWarehouse(db *gorm.DB) (*models.Warehouse, error) {
 
 	return &warehouse, nil
 }
+
+func CreateTestProduct(db *gorm.DB, Name, SKU string) (*models.Product, error) {
+	product := models.Product{
+		Name: Name,
+		SKU:  SKU,
+	}
+	if err := db.Create(&product).Error; err != nil {
+		return nil, err
+	}
+
+	return &product, nil
+}

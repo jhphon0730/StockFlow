@@ -18,7 +18,6 @@ import (
 
 func TestCreateProduct(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-
 	db := SetupTestDB()
 	productRepo := repositories.NewProductRepository(db)
 	productService := services.NewProductService(productRepo)
@@ -66,5 +65,46 @@ func TestCreateProduct(t *testing.T) {
 
 	if resp.Data.Product.Name != payload.Name {
 		t.Errorf("Expected product name %v, got %v", payload.Name, resp.Data.Product.Name)
+	}
+}
+
+func TestGetAllProduct(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	db := SetupTestDB()
+	productRepo := repositories.NewProductRepository(db)
+	productService := services.NewProductService(productRepo)
+	productHandler := handlers.NewProductHandler(productService)
+
+	router := gin.Default()
+	router.GET("/products", productHandler.GetAllProducts)
+
+	CreateTestProduct(db, "test1", "test1")
+	CreateTestProduct(db, "test2", "test2")
+
+	req, err := http.NewRequest("GET", "/products", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected status %v, got %v", http.StatusOK, rr.Code)
+	}
+
+	var resp struct {
+		Response
+		Data struct {
+			Products []models.Product `json:"products"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("Failed to parse JSON response: %v", err)
+	}
+
+	if len(resp.Data.Products) != 2 {
+		t.Errorf("got %v", len(resp.Data.Products))
 	}
 }
