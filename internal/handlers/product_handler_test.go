@@ -108,3 +108,45 @@ func TestGetAllProduct(t *testing.T) {
 		t.Errorf("got %v", len(resp.Data.Products))
 	}
 }
+
+func TestGetProduct(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	db := SetupTestDB()
+	productRepo := repositories.NewProductRepository(db)
+	productService := services.NewProductService(productRepo)
+	productHandler := handlers.NewProductHandler(productService)
+
+	router := gin.Default()
+	router.GET("/products/:id", productHandler.GetProduct)
+
+	CreateTestProduct(db, "test1", "test1")
+
+	req, err := http.NewRequest("GET", "/products/1", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected status %v, got %v", http.StatusOK, rr.Code)
+	}
+
+	var resp struct {
+		Response
+		Data struct {
+			Product *models.Product `json:"product"`
+		} `json:"data"`
+	}
+
+	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("Failed to parse JSON response: %v", err)
+	}
+
+	if resp.Data.Product == nil {
+		t.Fatalf("Expected product to be non-nil")
+	}
+}
