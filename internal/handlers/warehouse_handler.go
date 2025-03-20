@@ -43,7 +43,6 @@ func (w *warehouseHandler) GetAllWarehouses(c *gin.Context) {
 }
 
 func (w *warehouseHandler) GetWarehouse(c *gin.Context) {
-	// 요청 시에는 /warehouses/:id 로 요청이 들어옴
 	id := c.Param("id")
 	if id == "" {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, errors.New("id is required"))
