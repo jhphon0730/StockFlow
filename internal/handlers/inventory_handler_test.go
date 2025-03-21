@@ -159,3 +159,36 @@ func TestGetInventory(t *testing.T) {
 		t.Errorf("Expected product to be included in inventory but got nil")
 	}
 }
+
+func TestDeleteInventory(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db, router, _, _, inventoryHandler := setupInventory()
+	router.DELETE("/inventories/:id", inventoryHandler.DeleteInventory)
+
+	cleanupInventory(db)
+	p, _ := CreateTestProduct(db, "TestProduct", "TestSKU")
+	w, _ := CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
+	CreateTestInventory(db, p.ID, w.ID, 10)
+
+	req, err := http.NewRequest("DELETE", "/inventories/1", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected status code %d but got %d", http.StatusOK, rr.Code)
+	}
+
+	var inventoryCount int64
+	if err := db.Model(&models.Inventory{}).Count(&inventoryCount).Error; err != nil {
+		t.Fatalf("Failed to count inventory: %v", err)
+	}
+
+	if inventoryCount != 0 {
+		t.Errorf("Expected inventory count to be 0 but got %d", inventoryCount)
+	}
+}
