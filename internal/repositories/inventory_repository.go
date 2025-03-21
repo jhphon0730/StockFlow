@@ -67,5 +67,10 @@ func (r *inventoryRepository) Delete(id uint) error {
 		return err
 	}
 
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	return nil
 }
