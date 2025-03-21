@@ -36,7 +36,7 @@ func (r *inventoryRepository) FindAll() ([]models.Inventory, error) {
 func (r *inventoryRepository) FindByID(id uint) (*models.Inventory, error) {
 	var inventory models.Inventory
 
-	if err := r.db.First(&inventory, id).Error; err != nil {
+	if err := r.db.First(&inventory, id).Preload("Product").Error; err != nil {
 		return nil, err
 	}
 
