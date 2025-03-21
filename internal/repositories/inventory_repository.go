@@ -52,7 +52,18 @@ func (r *inventoryRepository) Create(inventory *models.Inventory) (*models.Inven
 }
 
 func (r *inventoryRepository) Delete(id uint) error {
-	if err := r.db.Delete(&models.Inventory{}, id).Error; err != nil {
+	tx := r.db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	if err := tx.Delete(&models.Inventory{}, id).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Where("inventory_id = ?", id).Delete(&models.Transaction{}).Error; err != nil {
+		tx.Rollback()
 		return err
 	}
 

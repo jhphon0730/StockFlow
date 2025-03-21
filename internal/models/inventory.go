@@ -17,12 +17,3 @@ type Inventory struct {
 	Transactions []Transaction `gorm:"foreignKey:InventoryID;constraint:OnDelete:CASCADE"`                  // Inventory 삭제 시 Transaction 삭제
 }
 
-// CASCADE ( Soft-Delete )
-func (inventory *Inventory) AfterDelete(tx *gorm.DB) (err error) {
-	if err = tx.Session(&gorm.Session{SkipHooks: true}).
-		Where("inventory_id = ?", inventory.ID).
-		Delete(&Transaction{}).Error; err != nil {
-		return err
-	}
-	return nil
-}

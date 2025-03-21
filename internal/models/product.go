@@ -13,12 +13,3 @@ type Product struct {
 	Inventories []Inventory `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
-// CASCADE ( Soft-Delete )
-func (product *Product) AfterDelete(tx *gorm.DB) (err error) {
-    if err = tx.Session(&gorm.Session{SkipHooks: true}).
-        Where("product_id = ?", product.ID).
-        Delete(&Inventory{}).Error; err != nil {
-        return err
-    }
-    return nil
-}

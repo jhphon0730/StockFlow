@@ -53,8 +53,36 @@ func (r *productRepository) Create(product *models.Product) (*models.Product, er
 }
 
 func (r *productRepository) Delete(id uint) error {
-	if err := r.db.Delete(&models.Product{}, id).Error; err != nil {
-		return err
+	tx := r.db.Begin()
+	if tx.Error != nil {
+			return tx.Error
+	}
+
+	if err := tx.Where("id = ?", id).Delete(&models.Product{}).Error; err != nil {
+			tx.Rollback()
+			return err
+	}
+
+	var inventories []models.Inventory
+	if err := tx.Where("product_id = ?", id).Find(&inventories).Error; err != nil {
+			tx.Rollback()
+			return err
+	}
+
+	if err := tx.Where("product_id = ?", id).Delete(&models.Inventory{}).Error; err != nil {
+			tx.Rollback()
+			return err
+	}
+
+	for _, inv := range inventories {
+			if err := tx.Where("inventory_id = ?", inv.ID).Delete(&models.Transaction{}).Error; err != nil {
+					tx.Rollback()
+					return err
+			}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+			return err
 	}
 
 	return nil
