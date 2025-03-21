@@ -15,5 +15,5 @@ type Transaction struct {
 	Timestamp   time.Time `json:"timestamp" binding:"required" validate:"required"`
 
 	// 연관관계
-	Inventory Inventory `gorm:"foreignKey:InventoryID;constraint:OnDelete:CASCADE"` // Inventory 삭제 시 Transaction 삭제
+	Inventory *Inventory `gorm:"foreignKey:InventoryID;constraint:OnDelete:CASCADE"` // Inventory 삭제 시 Transaction 삭제
 }
