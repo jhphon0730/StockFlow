@@ -113,3 +113,49 @@ func TestGetAllInventory(t *testing.T) {
 		t.Errorf("Expected product to be included in inventory but got nil")
 	}
 }
+
+func TestGetInventory(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db, router, _, _, inventoryHandler := setupInventory()
+	router.GET("/inventories/:id", inventoryHandler.FindInventory)
+
+	cleanupInventory(db)
+	p, _ := CreateTestProduct(db, "TestProduct", "TestSKU")
+	w, _ := CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
+	CreateTestInventory(db, p.ID, w.ID, 10)
+
+	req, err := http.NewRequest("GET", "/inventories/1", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected status code %d but got %d", http.StatusOK, rr.Code)
+	}
+
+	var resp struct {
+		Response
+		Data struct {
+			Inventory *models.Inventory `json:"inventory"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("Failed to unmarshal response: %v", err)
+	}
+
+	if resp.Data.Inventory == nil {
+		t.Fatalf("Expected inventory to be returned but got nil")
+	}
+
+	if resp.Data.Inventory.ID != 1 {
+		t.Errorf("Expected inventory ID to be 1 but got %d", resp.Data.Inventory.ID)
+	}
+
+	if resp.Data.Inventory.Product == nil {
+		t.Errorf("Expected product to be included in inventory but got nil")
+	}
+}
