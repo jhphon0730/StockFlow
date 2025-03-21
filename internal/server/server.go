@@ -53,6 +53,12 @@ func (s *Server) Run() {
 	{
 		user_api := api.Group("/users")
 		s.RegisterUserRoutes(user_api)
+		warehouse_api := api.Group("/warehouses")
+		s.RegisterWarehouseRoutes(warehouse_api)
+		product_api := api.Group("/products")
+		s.RegisterProductRoutes(product_api)
+		inventory_api := api.Group("/inventories")
+		s.RegisterInventoryRoutes(inventory_api)
 	}
 
 	s.router.Run(":" + s.PORT)

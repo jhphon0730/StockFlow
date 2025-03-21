@@ -75,7 +75,7 @@ func TestCreateInventory(t *testing.T) {
 func TestGetAllInventory(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	db, router, _, _, inventoryHandler := setupInventory()
-	router.GET("/inventories", inventoryHandler.FindAllInventory)
+	router.GET("/inventories", inventoryHandler.GetAllInventory)
 
 	cleanupInventory(db)
 	p, _ := CreateTestProduct(db, "TestProduct", "TestSKU")
@@ -117,7 +117,7 @@ func TestGetAllInventory(t *testing.T) {
 func TestGetInventory(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	db, router, _, _, inventoryHandler := setupInventory()
-	router.GET("/inventories/:id", inventoryHandler.FindInventory)
+	router.GET("/inventories/:id", inventoryHandler.GetInventory)
 
 	cleanupInventory(db)
 	p, _ := CreateTestProduct(db, "TestProduct", "TestSKU")

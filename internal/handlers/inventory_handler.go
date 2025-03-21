@@ -13,8 +13,8 @@ import (
 )
 
 type InventoryHandler interface {
-	FindAllInventory(c *gin.Context)
-	FindInventory(c *gin.Context)
+	GetAllInventory(c *gin.Context)
+	GetInventory(c *gin.Context)
 	CreateInventory(c *gin.Context)
 	DeleteInventory(c *gin.Context)
 }
@@ -29,7 +29,7 @@ func NewInventoryHandler(inventoryService services.InventoryService) InventoryHa
 	}
 }
 
-func (i *inventoryHandler) FindAllInventory(c *gin.Context) {
+func (i *inventoryHandler) GetAllInventory(c *gin.Context) {
 	status, inventories, err := i.inventoryService.FindAll()
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
@@ -43,7 +43,7 @@ func (i *inventoryHandler) FindAllInventory(c *gin.Context) {
 	utils.JSONResponse(c, status, res_data, nil)
 }
 
-func (i *inventoryHandler) FindInventory(c *gin.Context) {
+func (i *inventoryHandler) GetInventory(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, errors.New("id is required"))
