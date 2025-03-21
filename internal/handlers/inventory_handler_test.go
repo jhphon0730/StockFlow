@@ -1,16 +1,18 @@
 package handlers_test
 
 import (
+	"github.com/jhphon0730/StockFlow/internal/handlers"
+	"github.com/jhphon0730/StockFlow/internal/models"
+	"github.com/jhphon0730/StockFlow/internal/repositories"
+	"github.com/jhphon0730/StockFlow/internal/services"
+
+	"github.com/gin-gonic/gin"
+
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
-	"github.com/jhphon0730/StockFlow/internal/handlers"
-	"github.com/jhphon0730/StockFlow/internal/models"
-	"github.com/jhphon0730/StockFlow/internal/repositories"
-	"github.com/jhphon0730/StockFlow/internal/services"
 	"gorm.io/gorm"
 )
 
@@ -32,13 +34,13 @@ func cleanupInventory(db *gorm.DB) {
 func TestCreateInventory(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	db, router, _, _, inventoryHandler := setupInventory()
-	router.POST("/inventorys/:warehouse_id/:product_id", inventoryHandler.CreateInventory)
+	router.POST("/inventories/:warehouse_id/:product_id", inventoryHandler.CreateInventory)
 
 	cleanupInventory(db)
 	CreateTestProduct(db, "TestProduct", "TestSKU")
 	CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
 
-	req, err := http.NewRequest("POST", "/inventorys/1/1", nil)
+	req, err := http.NewRequest("POST", "/inventories/1/1", nil)
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
@@ -67,5 +69,47 @@ func TestCreateInventory(t *testing.T) {
 
 	if resp.Data.Inventory.ID != 1 {
 		t.Errorf("Expected inventory ID to be 1 but got %d", resp.Data.Inventory.ID)
+	}
+}
+
+func TestGetAllInventory(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db, router, _, _, inventoryHandler := setupInventory()
+	router.GET("/inventories", inventoryHandler.FindAllInventory)
+
+	cleanupInventory(db)
+	p, _ := CreateTestProduct(db, "TestProduct", "TestSKU")
+	w, _ := CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
+	CreateTestInventory(db, p.ID, w.ID, 10)
+
+	req, err := http.NewRequest("GET", "/inventories", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected status code %d but got %d", http.StatusOK, rr.Code)
+	}
+
+	var resp struct {
+		Response
+		Data struct {
+			Inventories []models.Inventory `json:"inventories"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("Failed to unmarshal response: %v", err)
+	}
+
+	if len(resp.Data.Inventories) != 1 {
+		t.Errorf("Expected 1 inventories but got %d", len(resp.Data.Inventories))
+	}
+
+	if resp.Data.Inventories[0].Product == nil {
+		t.Errorf("Expected product to be included in inventory but got nil")
 	}
 }

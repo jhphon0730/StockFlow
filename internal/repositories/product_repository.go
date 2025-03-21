@@ -27,7 +27,7 @@ func NewProductRepository(db *gorm.DB) ProductRepository {
 func (r *productRepository) FindAll() ([]models.Product, error) {
 	var products []models.Product
 
-	if err := r.db.Find(&products).Preload("Inventories").Error; err != nil {
+	if err := r.db.Preload("Inventories").Find(&products).Error; err != nil {
 		return nil, err
 	}
 

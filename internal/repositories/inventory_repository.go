@@ -26,7 +26,7 @@ func NewInventoryRepository(db *gorm.DB) InventoryRepository {
 func (r *inventoryRepository) FindAll() ([]models.Inventory, error) {
 	var inventories []models.Inventory
 
-	if err := r.db.Find(&inventories).Preload("Product").Error; err != nil {
+	if err := r.db.Preload("Product").Find(&inventories).Error; err != nil {
 		return nil, err
 	}
 
@@ -36,7 +36,7 @@ func (r *inventoryRepository) FindAll() ([]models.Inventory, error) {
 func (r *inventoryRepository) FindByID(id uint) (*models.Inventory, error) {
 	var inventory models.Inventory
 
-	if err := r.db.First(&inventory, id).Preload("Product").Error; err != nil {
+	if err := r.db.Preload("Product").First(&inventory, id).Error; err != nil {
 		return nil, err
 	}
 
