@@ -73,3 +73,16 @@ func CreateTestProduct(db *gorm.DB, Name, SKU string) (*models.Product, error) {
 
 	return &product, nil
 }
+
+func CreateTestInventory(db *gorm.DB, productID, warehouseID uint, quantity int) (*models.Inventory, error) {
+	inventory := models.Inventory{
+		ProductID:   productID,
+		WarehouseID: warehouseID,
+		Quantity:    quantity,
+	}
+	if err := db.Create(&inventory).Error; err != nil {
+		return nil, err
+	}
+
+	return &inventory, nil
+}

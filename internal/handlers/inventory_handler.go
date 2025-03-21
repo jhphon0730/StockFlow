@@ -1,14 +1,15 @@
 package handlers
 
 import (
-	"errors"
-	"net/http"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
 	"github.com/jhphon0730/StockFlow/internal/services"
 	"github.com/jhphon0730/StockFlow/pkg/dto"
 	"github.com/jhphon0730/StockFlow/pkg/utils"
+
+	"github.com/gin-gonic/gin"
+
+	"errors"
+	"net/http"
+	"strconv"
 )
 
 type InventoryHandler interface {
