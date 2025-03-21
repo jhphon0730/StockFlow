@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/jhphon0730/StockFlow/internal/models"
+
 	"gorm.io/gorm"
 )
 
