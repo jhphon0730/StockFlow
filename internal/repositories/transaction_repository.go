@@ -9,6 +9,8 @@ import (
 type TransactionRepository interface {
 	FindAll() ([]models.Transaction, error)
 	FindByID(id uint) (*models.Transaction, error)
+	Create(transaction *models.Transaction) (*models.Transaction, error)
+	Delete(id uint) error
 }
 
 type transactionRepository struct {
@@ -44,5 +46,26 @@ func (r *transactionRepository) FindByID(id uint) (*models.Transaction, error) {
 }
 
 // 재고내역 생성
+func (r *transactionRepository) Create(transaction *models.Transaction) (*models.Transaction, error) {
+	if err := r.db.Create(transaction).Error; err != nil {
+		return nil, err
+	}
+
+	return transaction, nil
+}
 
 // 재고내역 삭제
+func (r *transactionRepository) Delete(id uint) error {
+	tx := r.db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	if err := tx.Delete(&models.Transaction{}, id).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
+}
+
