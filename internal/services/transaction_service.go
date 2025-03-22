@@ -9,6 +9,9 @@ import (
 
 type TransactionService interface {
 	FindAll() (int, []models.Transaction, error)
+	FindByID(id uint) (int, *models.Transaction, error)
+	Create(transaction *models.Transaction) (int, *models.Transaction, error)
+	Delete(id uint) (int, error)
 }
 
 type transactionService struct {
@@ -28,4 +31,31 @@ func (t *transactionService) FindAll() (int, []models.Transaction, error) {
 	}
 
 	return http.StatusOK, transactions, nil
+}
+
+func (t *transactionService) FindByID(id uint) (int, *models.Transaction, error) {
+	transaction, err := t.transactionRepository.FindByID(id)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusOK, transaction, nil
+}
+
+func (t *transactionService) Create(transaction *models.Transaction) (int, *models.Transaction, error) {
+	createdTransaction, err := t.transactionRepository.Create(transaction)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusCreated, createdTransaction, nil
+}
+
+func (t *transactionService) Delete(id uint) (int, error) {
+	err := t.transactionRepository.Delete(id)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return http.StatusOK, nil
 }
