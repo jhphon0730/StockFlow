@@ -48,7 +48,7 @@ func (s *Server) RegisterProductRoutes(router *gin.RouterGroup) {
 
 func (s *Server) RegisterInventoryRoutes(router *gin.RouterGroup) {
 	router.GET("", inventoryHandler.GetAllInventory)
-	router.POST("/:warehouse_id/:product_id", inventoryHandler.CreateInventory)
+	router.POST("", inventoryHandler.CreateInventory)
 	router.GET("/:id", inventoryHandler.GetInventory)
 	router.DELETE("/:id", inventoryHandler.DeleteInventory)
 }

@@ -5,10 +5,12 @@ import (
 	"github.com/jhphon0730/StockFlow/internal/models"
 	"github.com/jhphon0730/StockFlow/internal/repositories"
 	"github.com/jhphon0730/StockFlow/internal/services"
+	"github.com/jhphon0730/StockFlow/pkg/dto"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -33,13 +35,21 @@ func cleanupInventory(db *gorm.DB) {
 func TestCreateInventory(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	db, router, _, _, inventoryHandler := setupInventory()
-	router.POST("/inventories/:warehouse_id/:product_id", inventoryHandler.CreateInventory)
+	router.POST("/inventories", inventoryHandler.CreateInventory)
+	payload := dto.CreateInventoryDTO{
+		WarehouseID: 1,
+		ProductID: 	 1,
+	}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("Failed to marshal JSON payload: %v", err)
+	}
 
 	cleanupInventory(db)
 	CreateTestProduct(db, "TestProduct", "TestSKU")
 	CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
 
-	req, err := http.NewRequest("POST", "/inventories/1/1", nil)
+	req, err := http.NewRequest("POST", "/inventories", bytes.NewBuffer(jsonPayload))
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}

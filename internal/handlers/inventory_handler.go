@@ -70,31 +70,12 @@ func (i *inventoryHandler) GetInventory(c *gin.Context) {
 }
 
 func (i *inventoryHandler) CreateInventory(c *gin.Context) {
-	warehouse_id := c.Param("warehouse_id")
-	product_id := c.Param("product_id")
-
-	if warehouse_id == "" || product_id == "" {
-		utils.JSONResponse(c, http.StatusBadRequest, nil, errors.New("id, warehouse_id, product_id are required"))
-		return
-	}
-
-	warehouse_id_int, err := strconv.Atoi(warehouse_id)
-	if err != nil {
+	var createInventoryDTO dto.CreateInventoryDTO
+	if err := c.ShouldBindJSON(&createInventoryDTO); err != nil {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
 		return
 	}
-
-	product_id_int, err := strconv.Atoi(product_id)
-	if err != nil {
-		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
-		return
-	}
-
-	createInventoryDTO := dto.CreateInventoryDTO{
-		WarehouseID: uint(warehouse_id_int),
-		ProductID:   uint(product_id_int),
-		Quantity:    0,
-	}
+	createInventoryDTO.Quantity = 0 // default value
 
 	if ok, err := createInventoryDTO.CheckCreateInventoryDTO(); !ok {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
