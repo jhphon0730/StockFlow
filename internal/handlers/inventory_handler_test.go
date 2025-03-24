@@ -7,13 +7,12 @@ import (
 	"github.com/jhphon0730/StockFlow/internal/services"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"gorm.io/gorm"
 )
 
 func setupInventory() (*gorm.DB, *gin.Engine, repositories.InventoryRepository, services.InventoryService, handlers.InventoryHandler) {
