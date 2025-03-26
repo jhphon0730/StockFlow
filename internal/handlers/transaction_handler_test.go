@@ -90,3 +90,43 @@ func TestCreateTransaction(t *testing.T) {
 		t.Errorf("Expected type %s, got %s", payload.Type, resp.Data.Transaction.Type)
 	}
 }
+
+func TestGetAllTransaction(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db, router, _, _, transactionHandler := setupTransaction()
+	router.GET("/transactions", transactionHandler.GetAllTransaction)
+
+	cleanupTransaction(db)
+	CreateTestProduct(db, "TestProduct", "TestSKU")
+	CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
+	CreateTestInventory(db, 1, 1, 10)
+	CreateTestTransaction(db, 1, "IN", 10)
+	CreateTestTransaction(db, 1, "ADJUST", 20)
+
+	req, err := http.NewRequest("GET", "/transactions", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected status code %d, got %d", http.StatusOK, rr.Code)
+	}
+
+	var resp struct {
+		Response
+		Data struct {
+			Transactions []models.Transaction `json:"transactions"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(rr.Body).Decode(&resp); err != nil {
+		t.Fatalf("Failed to decode response: %v", err)
+	}
+
+	if len(resp.Data.Transactions) != 2 {
+		t.Fatalf("Expected 2 transactions, got %d", len(resp.Data.Transactions))
+	}
+}

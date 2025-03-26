@@ -86,3 +86,16 @@ func CreateTestInventory(db *gorm.DB, productID, warehouseID uint, quantity int)
 
 	return &inventory, nil
 }
+
+func CreateTestTransaction(db *gorm.DB, inventoryID uint, transactionType string, quantity int) (*models.Transaction, error) {
+	transaction := models.Transaction{
+		InventoryID: inventoryID,
+		Type:        transactionType,
+		Quantity:    quantity,
+	}
+	if err := db.Create(&transaction).Error; err != nil {
+		return nil, err
+	}
+
+	return &transaction, nil
+}
