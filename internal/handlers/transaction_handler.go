@@ -16,6 +16,7 @@ type TransactionHandler interface {
 	GetAllTransaction(c *gin.Context)
 	GetTransaction(c *gin.Context)
 	CreateTransaction(c *gin.Context)
+	DeleteTransaction(c *gin.Context)
 }
 
 type transactionHandler struct {
@@ -91,4 +92,26 @@ func (t *transactionHandler) CreateTransaction(c *gin.Context) {
 	}
 
 	utils.JSONResponse(c, status, res_data, nil)
+}
+
+func (t *transactionHandler) DeleteTransaction(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		utils.JSONResponse(c, http.StatusBadRequest, nil, errors.New("id is required"))
+		return
+	}
+
+	id_int, err := strconv.Atoi(id)
+	if err != nil {
+		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
+		return
+	}
+
+	status, err := t.transactionService.Delete(uint(id_int))
+	if err != nil {
+		utils.JSONResponse(c, status, nil, err)
+		return
+	}
+
+	utils.JSONResponse(c, status, nil, nil)
 }
