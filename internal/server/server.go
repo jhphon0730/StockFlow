@@ -59,6 +59,8 @@ func (s *Server) Run() {
 		s.RegisterProductRoutes(product_api)
 		inventory_api := api.Group("/inventories")
 		s.RegisterInventoryRoutes(inventory_api)
+		transaction_api := api.Group("/transactions")
+		s.RegisterTransactionRoutes(transaction_api)
 	}
 
 	s.router.Run(":" + s.PORT)
