@@ -13,7 +13,7 @@ import (
 )
 
 type TransactionHandler interface {
-	GetAllTransaction(c *gin.Context)
+	GetAllTransactions(c *gin.Context)
 	GetTransaction(c *gin.Context)
 	CreateTransaction(c *gin.Context)
 	DeleteTransaction(c *gin.Context)
@@ -29,7 +29,7 @@ func NewTransactionHandler(transactionService services.TransactionService) Trans
 	}
 }
 
-func (t *transactionHandler) GetAllTransaction(c *gin.Context) {
+func (t *transactionHandler) GetAllTransactions(c *gin.Context) {
 	status, transactions, err := t.transactionService.FindAll()
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)

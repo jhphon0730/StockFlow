@@ -91,10 +91,10 @@ func TestCreateTransaction(t *testing.T) {
 	}
 }
 
-func TestGetAllTransaction(t *testing.T) {
+func TestGetAllTransactions(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	db, router, _, _, transactionHandler := setupTransaction()
-	router.GET("/transactions", transactionHandler.GetAllTransaction)
+	router.GET("/transactions", transactionHandler.GetAllTransactions)
 
 	cleanupTransaction(db)
 	CreateTestProduct(db, "TestProduct", "TestSKU")

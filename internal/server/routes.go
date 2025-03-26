@@ -24,6 +24,10 @@ var (
 	inventoryRepository repositories.InventoryRepository = repositories.NewInventoryRepository(DB)
 	inventoryService    services.InventoryService        = services.NewInventoryService(inventoryRepository)
 	inventoryHandler    handlers.InventoryHandler        = handlers.NewInventoryHandler(inventoryService)
+
+	transactionRepository repositories.TransactionRepository = repositories.NewTransactionRepository(DB)
+	transactionService    services.TransactionService        = services.NewTransactionService(transactionRepository)
+	transactionHandler    handlers.TransactionHandler        = handlers.NewTransactionHandler(transactionService)
 )
 
 func (s *Server) RegisterUserRoutes(router *gin.RouterGroup) {
@@ -51,4 +55,11 @@ func (s *Server) RegisterInventoryRoutes(router *gin.RouterGroup) {
 	router.POST("", inventoryHandler.CreateInventory)
 	router.GET("/:id", inventoryHandler.GetInventory)
 	router.DELETE("/:id", inventoryHandler.DeleteInventory)
+}
+
+func (s *Server) RegisterTransactionRoutes(router *gin.RouterGroup) {
+	router.GET("", transactionHandler.GetAllTransactions)
+	router.POST("", transactionHandler.CreateTransaction)
+	router.GET("/:id", transactionHandler.GetTransaction)
+	router.DELETE("/:id", transactionHandler.DeleteTransaction)
 }
