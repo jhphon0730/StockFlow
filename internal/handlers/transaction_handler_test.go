@@ -173,3 +173,37 @@ func TestGetTransaction(t *testing.T) {
 		t.Errorf("Expected transaction ID to be 1, got %d", resp.Data.Transaction.ID)
 	}
 }
+
+func TestDeleteTransaction(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db, router, _, _, transactionHandler := setupTransaction()
+	router.DELETE("/transactions/:id", transactionHandler.DeleteTransaction)
+
+	cleanupTransaction(db)
+	CreateTestProduct(db, "TestProduct", "TestSKU")
+	CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
+	CreateTestInventory(db, 1, 1, 10)
+	CreateTestTransaction(db, 1, "IN", 10)
+
+	req, err := http.NewRequest("DELETE", "/transactions/1", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected status code %d, got %d", http.StatusOK, rr.Code)
+	}
+
+	var transactionCount int64
+	if err := db.Model(&models.Transaction{}).Count(&transactionCount).Error; err != nil {
+		t.Fatalf("Failed to count transactions: %v", err)
+	}
+
+	if transactionCount != 0 {
+		t.Errorf("Expected transaction count to be 0, got %d", transactionCount)
+	}
+}
