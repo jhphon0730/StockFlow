@@ -130,3 +130,46 @@ func TestGetAllTransaction(t *testing.T) {
 		t.Fatalf("Expected 2 transactions, got %d", len(resp.Data.Transactions))
 	}
 }
+
+func TestGetTransaction(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db, router, _, _, transactionHandler := setupTransaction()
+	router.GET("/transactions/:id", transactionHandler.GetTransaction)
+
+	cleanupTransaction(db)
+	CreateTestProduct(db, "TestProduct", "TestSKU")
+	CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
+	CreateTestInventory(db, 1, 1, 10)
+	CreateTestTransaction(db, 1, "IN", 10)
+
+	req, err := http.NewRequest("GET", "/transactions/1", nil)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Expected status code %d, got %d", http.StatusOK, rr.Code)
+	}
+
+	var resp struct {
+		Response
+		Data struct {
+			Transaction *models.Transaction `json:"transaction"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("Failed to unmarshal response: %v", err)
+	}
+
+	if resp.Data.Transaction == nil {
+		t.Fatalf("Expected transaction to be returned, got nil")
+	}
+
+	if resp.Data.Transaction.ID != 1 {
+		t.Errorf("Expected transaction ID to be 1, got %d", resp.Data.Transaction.ID)
+	}
+}
