@@ -10,7 +10,7 @@ import (
 type Transaction struct {
 	gorm.Model
 	InventoryID uint      `json:"inventory_id" binding:"required" validate:"required"`
-	Type        string    `json:"type" binding:"required" validate:"required,oneof=in out adjust"` // 입고(in), 출고(out), 조정(adjust)
+	Type        string    `json:"type" binding:"required" validate:"required,oneof=in out adjust"` // 입고(IN), 출고(OUT), 조정(ADJUST)
 	Quantity    int       `json:"quantity" binding:"required" validate:"required"`
 	Timestamp   time.Time `json:"timestamp" binding:"required" validate:"required"`
 
