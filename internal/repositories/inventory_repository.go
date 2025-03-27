@@ -11,6 +11,7 @@ type InventoryRepository interface {
 	FindByID(id uint) (*models.Inventory, error)
 	Create(inventory *models.Inventory) (*models.Inventory, error)
 	Delete(id uint) error
+	UpdateQuantity(id uint, quantity int, transaction_type string) error
 }
 
 type inventoryRepository struct {
@@ -72,5 +73,9 @@ func (r *inventoryRepository) Delete(id uint) error {
 		return err
 	}
 
+	return nil
+}
+
+func (r *inventoryRepository) UpdateQuantity(id uint, quantity int, transaction_type string) error {
 	return nil
 }
