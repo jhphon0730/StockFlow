@@ -50,6 +50,10 @@ func (t *transactionService) Create(transaction *models.Transaction) (int, *mode
 		return http.StatusInternalServerError, nil, err
 	}
 
+	if err := t.inventoryRepository.UpdateQuantity(createdTransaction.InventoryID, createdTransaction.Quantity, createdTransaction.Type); err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
 	return http.StatusCreated, createdTransaction, nil
 }
 

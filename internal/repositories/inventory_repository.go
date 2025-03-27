@@ -77,5 +77,30 @@ func (r *inventoryRepository) Delete(id uint) error {
 }
 
 func (r *inventoryRepository) UpdateQuantity(id uint, quantity int, transaction_type string) error {
-	return nil
+	var inventory *models.Inventory
+	tx := r.db.Begin()
+	if err := tx.Error; err != nil {
+		return err
+	}
+
+	if err := tx.First(&inventory, id).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	switch transaction_type {
+	case "in":
+	inventory.Quantity += quantity
+	case "out":
+	inventory.Quantity -= quantity
+	case "adjust":
+	inventory.Quantity = quantity
+	}
+
+	if err := tx.Save(inventory).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
