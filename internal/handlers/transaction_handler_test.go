@@ -21,7 +21,8 @@ func setupTransaction() (*gorm.DB, *gin.Engine, repositories.TransactionReposito
 	// Test DB 초기화
 	db := SetupTestDB()
 	transactionRepo := repositories.NewTransactionRepository(db)
-	transactionService := services.NewTransactionService(transactionRepo)
+	inventoryRepo := repositories.NewInventoryRepository(db)
+	transactionService := services.NewTransactionService(transactionRepo, inventoryRepo)
 	transactionHandler := handlers.NewTransactionHandler(transactionService)
 
 	router := gin.Default()

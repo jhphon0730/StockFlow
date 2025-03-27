@@ -26,7 +26,7 @@ var (
 	inventoryHandler    handlers.InventoryHandler        = handlers.NewInventoryHandler(inventoryService)
 
 	transactionRepository repositories.TransactionRepository = repositories.NewTransactionRepository(DB)
-	transactionService    services.TransactionService        = services.NewTransactionService(transactionRepository)
+	transactionService    services.TransactionService        = services.NewTransactionService(transactionRepository, inventoryRepository)
 	transactionHandler    handlers.TransactionHandler        = handlers.NewTransactionHandler(transactionService)
 )
 

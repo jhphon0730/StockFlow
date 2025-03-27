@@ -16,11 +16,13 @@ type TransactionService interface {
 
 type transactionService struct {
 	transactionRepository repositories.TransactionRepository
+	inventoryRepository repositories.InventoryRepository
 }
 
-func NewTransactionService(transactionRepository repositories.TransactionRepository) TransactionService {
+func NewTransactionService(transactionRepository repositories.TransactionRepository, inventoryRepository repositories.InventoryRepository) TransactionService {
 	return &transactionService{
 		transactionRepository: transactionRepository,
+		inventoryRepository: inventoryRepository,
 	}
 }
 
