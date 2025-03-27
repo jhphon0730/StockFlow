@@ -89,11 +89,11 @@ func (r *inventoryRepository) UpdateQuantity(id uint, quantity int, transaction_
 	}
 
 	switch transaction_type {
-	case "in":
+	case "IN":
 	inventory.Quantity += quantity
-	case "out":
+	case "OUT":
 	inventory.Quantity -= quantity
-	case "adjust":
+	case "ADJUST":
 	inventory.Quantity = quantity
 	}
 

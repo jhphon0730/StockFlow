@@ -17,7 +17,7 @@ import (
 	"testing"
 )
 
-func setupTransaction() (*gorm.DB, *gin.Engine, repositories.TransactionRepository, services.TransactionService, handlers.TransactionHandler) {
+func setupTransaction() (*gorm.DB, *gin.Engine, repositories.InventoryRepository, repositories.TransactionRepository, services.TransactionService, handlers.TransactionHandler) {
 	// Test DB 초기화
 	db := SetupTestDB()
 	transactionRepo := repositories.NewTransactionRepository(db)
@@ -26,7 +26,7 @@ func setupTransaction() (*gorm.DB, *gin.Engine, repositories.TransactionReposito
 	transactionHandler := handlers.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
-	return db, router, transactionRepo, transactionService, transactionHandler
+	return db, router, inventoryRepo, transactionRepo, transactionService, transactionHandler
 }
 
 func cleanupTransaction(db *gorm.DB) {
@@ -35,7 +35,7 @@ func cleanupTransaction(db *gorm.DB) {
 
 func TestCreateTransaction(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db, router, _, _, transactionHandler := setupTransaction()
+	db, router, _, _, _, transactionHandler := setupTransaction()
 	router.POST("/transactions", transactionHandler.CreateTransaction)
 	payload := dto.CreateTransactionDTO{
 		InventoryID: 1,
@@ -94,7 +94,7 @@ func TestCreateTransaction(t *testing.T) {
 
 func TestGetAllTransactions(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db, router, _, _, transactionHandler := setupTransaction()
+	db, router, _, _, _, transactionHandler := setupTransaction()
 	router.GET("/transactions", transactionHandler.GetAllTransactions)
 
 	cleanupTransaction(db)
@@ -134,7 +134,7 @@ func TestGetAllTransactions(t *testing.T) {
 
 func TestGetTransaction(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db, router, _, _, transactionHandler := setupTransaction()
+	db, router, _, _, _, transactionHandler := setupTransaction()
 	router.GET("/transactions/:id", transactionHandler.GetTransaction)
 
 	cleanupTransaction(db)
@@ -177,7 +177,7 @@ func TestGetTransaction(t *testing.T) {
 
 func TestDeleteTransaction(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db, router, _, _, transactionHandler := setupTransaction()
+	db, router, _, _, _, transactionHandler := setupTransaction()
 	router.DELETE("/transactions/:id", transactionHandler.DeleteTransaction)
 
 	cleanupTransaction(db)
@@ -206,5 +206,47 @@ func TestDeleteTransaction(t *testing.T) {
 
 	if transactionCount != 0 {
 		t.Errorf("Expected transaction count to be 0, got %d", transactionCount)
+	}
+}
+
+func TestInTransaction(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db, router, inventoryRepo, _, _, transactionHandler := setupTransaction()
+	router.POST("/transactions", transactionHandler.CreateTransaction)
+	payload := dto.CreateTransactionDTO{
+		InventoryID: 1,
+		Quantity:    10,
+		Type:        "IN",
+	}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("Failed to marshal JSON payload: %v", err)
+	}
+
+	cleanupTransaction(db)
+	CreateTestProduct(db, "TestProduct", "TestSKU")
+	CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
+	CreateTestInventory(db, 1, 1, 0)
+
+	req, err := http.NewRequest("POST", "/transactions", bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rr.Code)
+	}
+
+	inventory, err := inventoryRepo.FindByID(1)
+	if err != nil {
+		t.Fatalf("Failed to find inventory: %v", err)
+	}
+
+	if inventory.Quantity != 10 {
+		t.Errorf("Expected inventory quantity to be 10, got %d", inventory.Quantity)
 	}
 }
