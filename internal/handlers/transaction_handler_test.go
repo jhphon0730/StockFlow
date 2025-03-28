@@ -250,3 +250,87 @@ func TestInTransaction(t *testing.T) {
 		t.Errorf("Expected inventory quantity to be 10, got %d", inventory.Quantity)
 	}
 }
+
+func TestOutTransaction(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db, router, inventoryRepo, _, _, transactionHandler := setupTransaction()
+	router.POST("/transactions", transactionHandler.CreateTransaction)
+	payload := dto.CreateTransactionDTO{
+		InventoryID: 1,
+		Quantity:    5,
+		Type:        "OUT",
+	}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("Failed to marshal JSON payload: %v", err)
+	}
+
+	cleanupTransaction(db)
+	CreateTestProduct(db, "TestProduct", "TestSKU")
+	CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
+	CreateTestInventory(db, 1, 1, 5)
+
+	req, err := http.NewRequest("POST", "/transactions", bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rr.Code)
+	}
+
+	inventory, err := inventoryRepo.FindByID(1)
+	if err != nil {
+		t.Fatalf("Failed to find inventory: %v", err)
+	}
+
+	if inventory.Quantity != 0 {
+		t.Errorf("Expected inventory quantity to be 10, got %d", inventory.Quantity)
+	}
+}
+
+func TestAdjustTransaction(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db, router, inventoryRepo, _, _, transactionHandler := setupTransaction()
+	router.POST("/transactions", transactionHandler.CreateTransaction)
+	payload := dto.CreateTransactionDTO{
+		InventoryID: 1,
+		Quantity:    30,
+		Type:        "ADJUST",
+	}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("Failed to marshal JSON payload: %v", err)
+	}
+
+	cleanupTransaction(db)
+	CreateTestProduct(db, "TestProduct", "TestSKU")
+	CreateTestWarehouse(db, "TestWarehouse", "TestLocation")
+	CreateTestInventory(db, 1, 1, 5)
+
+	req, err := http.NewRequest("POST", "/transactions", bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusCreated {
+		t.Errorf("Expected status code %d, got %d", http.StatusCreated, rr.Code)
+	}
+
+	inventory, err := inventoryRepo.FindByID(1)
+	if err != nil {
+		t.Fatalf("Failed to find inventory: %v", err)
+	}
+
+	if inventory.Quantity != 30 {
+		t.Errorf("Expected inventory quantity to be 10, got %d", inventory.Quantity)
+	}
+}
