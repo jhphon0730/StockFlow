@@ -23,7 +23,7 @@ type Redis struct {
 	REDIS_PORT string
 	REDIS_PASSWORD string
 	REDIS_WAREHOUSE_DB string
-	REDIS_PROUDCT_DB string
+	REDIS_PRODUCT_DB string
 	REDIS_INVENTORY_DB string
 	REDIS_TRANSACTION_DB string
 }
@@ -69,7 +69,7 @@ func LoadConfig() (*Config, error) {
 			REDIS_PORT: getEnv("REDIS_PORT", "6379"),
 			REDIS_PASSWORD: getEnv("REDIS_PASSWORD", ""),
 			REDIS_WAREHOUSE_DB: getEnv("REDIS_WAREHOUSE_DB", "0"),
-			REDIS_PROUDCT_DB: getEnv("REDIS_PROUDCT_DB", "1"),
+			REDIS_PRODUCT_DB: getEnv("REDIS_PRODUCT_DB", "1"),
 			REDIS_INVENTORY_DB: getEnv("REDIS_INVENTORY_DB", "2"),
 			REDIS_TRANSACTION_DB: getEnv("REDIS_TRANSACTION_DB", "3"),
 		},

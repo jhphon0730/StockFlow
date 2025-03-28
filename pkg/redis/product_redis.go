@@ -25,13 +25,13 @@ type productRedis struct {
 }
 
 var (
-	once     sync.Once
-	instance ProductRedis
+	product_once     sync.Once
+	product_instance ProductRedis
 )
 
 func NewProductRedis(ctx context.Context) error {
 	config := config.GetConfig()
-	db, err := strconv.Atoi(config.Redis.REDIS_PROUDCT_DB)
+	db, err := strconv.Atoi(config.Redis.REDIS_PRODUCT_DB)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func NewProductRedis(ctx context.Context) error {
 		return err
 	}
 
-	instance = &productRedis{
+	product_instance = &productRedis{
 		client: productClient,
 	}
 
@@ -57,7 +57,7 @@ func NewProductRedis(ctx context.Context) error {
 func GetProductRedis(ctx context.Context) (ProductRedis, error) {
 	var err error
 
-	once.Do(func() {
+	product_once.Do(func() {
 		err = NewProductRedis(ctx)
 	})
 
@@ -65,11 +65,11 @@ func GetProductRedis(ctx context.Context) (ProductRedis, error) {
 		return nil, err
 	}
 
-	if instance == nil {
-		return nil, errors.New("product redis instance is nil")
+	if product_instance == nil {
+		return nil, errors.New("product redis product_instance is nil")
 	}
 
-	return instance, nil
+	return product_instance, nil
 }
 
 
