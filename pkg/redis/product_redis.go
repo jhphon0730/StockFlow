@@ -17,6 +17,7 @@ type ProductRedis interface {
 	DeleteProductCache(ctx context.Context) error
 	SetProductCache(ctx context.Context, products []models.Product) error
 	GetProductCache(ctx context.Context) ([]models.Product, error)
+	Close() error
 }
 
 type productRedis struct {
@@ -98,4 +99,8 @@ func (r *productRedis) GetProductCache(ctx context.Context) ([]models.Product, e
 	}
 
 	return products, nil
+}
+
+func (r *productRedis) Close() error {
+	return r.client.Close()
 }
