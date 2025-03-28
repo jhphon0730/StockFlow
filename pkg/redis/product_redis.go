@@ -56,10 +56,18 @@ func GetProductRedis(ctx context.Context) (ProductRedis, error) {
 		err = NewProductRedis(ctx)
 	})
 
-	if instance == nil || err != nil {
-		return nil, errors.New("Product Redis가 초기화되지 않았습니다")
+	if err != nil {
+		return nil, err
+	}
+
+	if instance == nil {
+		return nil, errors.New("product redis instance is nil")
 	}
 
 	return instance, nil
 }
 
+
+func (r *productRedis) DeleteProduct(ctx context.Context) error {
+	return r.client.Del(ctx, REDIS_PRODUCT_CACHE_KEY).Err()
+}
