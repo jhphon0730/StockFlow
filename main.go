@@ -55,6 +55,7 @@ func main() {
 
 	// 종료 신호 대기
 	<-c
+
 	s.Shutdown(ctx)
 	cancel()
 

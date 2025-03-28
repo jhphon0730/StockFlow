@@ -81,10 +81,11 @@ func (s *Server) Run() error {
 
 func (s *Server) Shutdown(ctx context.Context) {
 	log.Println("Shutting down server...")
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
 
-	if err := s.server.Shutdown(ctx); err != nil {
+	shutdownCtx, shutdownCancel := context.WithTimeout(ctx, 5*time.Second)
+	defer shutdownCancel()
+
+	if err := s.server.Shutdown(shutdownCtx); err != nil {
 		log.Fatalf("Server forced to shutdown: %v", err)
 	}
 
