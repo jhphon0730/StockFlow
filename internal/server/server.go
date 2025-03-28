@@ -1,14 +1,16 @@
 package server
 
 import (
+	"context"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/jhphon0730/StockFlow/internal/database"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-
-	"net/http"
-	"time"
 )
 
 var (
@@ -18,6 +20,7 @@ var (
 type Server struct {
 	router *gin.Engine
 	PORT   string
+	server *http.Server
 }
 
 func NewServer() *Server {
@@ -29,11 +32,11 @@ func (s *Server) Init(PORT string) {
 	s.router.Use(gin.Logger())
 
 	s.router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://192.168.0.5:3000", "http://localhost:3000"}, // 실제 프론트엔드 주소
+		AllowOrigins:     []string{"http://192.168.0.5:3000", "http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true, // Credentials 허용
+		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
 			return true
 		},
@@ -46,9 +49,14 @@ func (s *Server) Init(PORT string) {
 	})
 
 	s.PORT = PORT
+
+	s.server = &http.Server{
+		Addr:    ":" + s.PORT,
+		Handler: s.router,
+	}
 }
 
-func (s *Server) Run() {
+func (s *Server) Run() error {
 	api := s.router.Group("/api")
 	{
 		user_api := api.Group("/users")
@@ -63,5 +71,22 @@ func (s *Server) Run() {
 		s.RegisterTransactionRoutes(transaction_api)
 	}
 
-	s.router.Run(":" + s.PORT)
+	log.Println("Starting server on port", s.PORT)
+	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) Shutdown(ctx context.Context) {
+	log.Println("Shutting down server...")
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	if err := s.server.Shutdown(ctx); err != nil {
+		log.Fatalf("Server forced to shutdown: %v", err)
+	}
+
+	log.Println("Server exited properly")
 }
