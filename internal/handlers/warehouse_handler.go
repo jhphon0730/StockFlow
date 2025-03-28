@@ -70,6 +70,7 @@ func (w *warehouseHandler) GetWarehouse(c *gin.Context) {
 }
 
 func (w *warehouseHandler) CreateWarehouse(c *gin.Context) {
+	ctx := c.Request.Context()
 	var createWarehouseDTO dto.CreateWarehouseDTO
 	if err := c.ShouldBind(&createWarehouseDTO); err != nil {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
@@ -83,7 +84,7 @@ func (w *warehouseHandler) CreateWarehouse(c *gin.Context) {
 	}
 
 	// 2. 창고 생성
-	status, warehouse, err := w.warehouseService.Create(createWarehouseDTO.ToModel())
+	status, warehouse, err := w.warehouseService.Create(createWarehouseDTO.ToModel(), ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return
@@ -97,6 +98,8 @@ func (w *warehouseHandler) CreateWarehouse(c *gin.Context) {
 }
 
 func (w *warehouseHandler) DeleteWarehouse(c *gin.Context) {
+	ctx := c.Request.Context()
+
 	// 요청 시에는 /warehouses/:id 로 요청이 들어옴
 	id := c.Param("id")
 	if id == "" {
@@ -110,7 +113,7 @@ func (w *warehouseHandler) DeleteWarehouse(c *gin.Context) {
 		return
 	}
 
-	status, err := w.warehouseService.Delete(uint(id_int))
+	status, err := w.warehouseService.Delete(uint(id_int), ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return

@@ -12,8 +12,8 @@ import (
 type WarehouseService interface {
 	FindAll(ctx context.Context) (int, []models.Warehouse, error)
 	FindByID(id uint) (int, *models.Warehouse, error)
-	Create(warehouse *models.Warehouse) (int, *models.Warehouse, error)
-	Delete(id uint) (int, error)
+	Create(warehouse *models.Warehouse, ctx context.Context) (int, *models.Warehouse, error)
+	Delete(id uint, ctx context.Context) (int, error)
 }
 
 type warehouseService struct {
@@ -26,9 +26,17 @@ func NewWarehouseService(warehouseRepository repositories.WarehouseRepository) W
 	}
 }
 
-func (w *warehouseService) FindAll(ctx context.Context) (int, []models.Warehouse, error) {
+func (w *warehouseService) getWarehouseRedis(ctx context.Context) redis.WarehouseRedis {
 	warehouseRedis, err := redis.GetWarehouseRedis(ctx)
-	if err == nil { 
+	if err != nil {
+		return nil
+	}
+
+	return warehouseRedis
+}
+
+func (w *warehouseService) FindAll(ctx context.Context) (int, []models.Warehouse, error) {
+	if warehouseRedis := w.getWarehouseRedis(ctx); warehouseRedis != nil {
 		warehouses, err := warehouseRedis.GetWarehouseCache(ctx)
 		if err == nil && len(warehouses) > 0 { 
 			return http.StatusOK, warehouses, nil
@@ -40,7 +48,7 @@ func (w *warehouseService) FindAll(ctx context.Context) (int, []models.Warehouse
 		return http.StatusInternalServerError, nil, err
 	}
 
-	if warehouseRedis != nil {
+	if warehouseRedis := w.getWarehouseRedis(ctx); warehouseRedis != nil {
 		_ = warehouseRedis.SetWarehouseCache(ctx, warehouses)
 	}
 
@@ -56,19 +64,27 @@ func (w *warehouseService) FindByID(id uint) (int, *models.Warehouse, error) {
 	return http.StatusOK, warehouse, nil
 }
 
-func (w *warehouseService) Create(warehouse *models.Warehouse) (int, *models.Warehouse, error) {
+func (w *warehouseService) Create(warehouse *models.Warehouse, ctx context.Context) (int, *models.Warehouse, error) {
 	createdWarehouse, err := w.warehouseRepository.Create(warehouse)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 
+	if warehouseRedis := w.getWarehouseRedis(ctx); warehouseRedis != nil {
+		_ = warehouseRedis.DeleteWarehouseCache(ctx)
+	}
+
 	return http.StatusCreated, createdWarehouse, nil
 }
 
-func (w *warehouseService) Delete(id uint) (int, error) {
+func (w *warehouseService) Delete(id uint, ctx context.Context) (int, error) {
 	err := w.warehouseRepository.Delete(id)
 	if err != nil {
 		return http.StatusInternalServerError, err
+	}
+
+	if warehouseRedis := w.getWarehouseRedis(ctx); warehouseRedis != nil {
+		_ = warehouseRedis.DeleteWarehouseCache(ctx)
 	}
 
 	return http.StatusOK, nil
