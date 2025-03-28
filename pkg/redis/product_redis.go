@@ -2,17 +2,21 @@ package redis
 
 import (
 	"github.com/jhphon0730/StockFlow/internal/config"
+	"github.com/jhphon0730/StockFlow/internal/models"
 
 	"github.com/go-redis/redis/v8"
 
+	"sync"
 	"errors"
 	"context"
 	"strconv"
-	"sync"
+	"encoding/json"
 )
 
 type ProductRedis interface {
-	// Redis와 상호작용할 메서드를 추가하세요
+	DeleteProductCache(ctx context.Context) error
+	SetProductCache(ctx context.Context, products []models.Product) error
+	GetProductCache(ctx context.Context) ([]models.Product, error)
 }
 
 type productRedis struct {
@@ -68,6 +72,30 @@ func GetProductRedis(ctx context.Context) (ProductRedis, error) {
 }
 
 
-func (r *productRedis) DeleteProduct(ctx context.Context) error {
+func (r *productRedis) DeleteProductCache(ctx context.Context) error {
 	return r.client.Del(ctx, REDIS_PRODUCT_CACHE_KEY).Err()
+}
+
+func (r *productRedis) SetProductCache(ctx context.Context, products []models.Product) error {
+	productBytes, err := json.Marshal(products)
+	if err != nil {
+		return err
+	}
+
+	return r.client.Set(ctx, REDIS_PRODUCT_CACHE_KEY, productBytes, 0).Err()
+}
+
+func (r *productRedis) GetProductCache(ctx context.Context) ([]models.Product, error) {
+	productBytes, err := r.client.Get(ctx, REDIS_PRODUCT_CACHE_KEY).Bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	var products []models.Product
+	err = json.Unmarshal(productBytes, &products)
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }
