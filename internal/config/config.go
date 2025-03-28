@@ -18,10 +18,21 @@ type Postgres struct {
 	TIMEZONE    string
 }
 
+type Redis struct {
+	REDIS_HOST string
+	REDIS_PORT string
+	REDIS_PASSWORD string
+	REDIS_WAREHOUSE_DB string
+	REDIS_PROUDCT_DB string
+	REDIS_INVENTORY_DB string
+	REDIS_TRANSACTION_DB string
+}
+
 type Config struct {
 	BCRYPT_COST string
 	JWT_SECRET  string
 	Postgres    Postgres
+	Redis       Redis
 }
 
 var (
@@ -52,6 +63,15 @@ func LoadConfig() (*Config, error) {
 			DB_PORT:     getEnv("DB_PORT", "5432"),
 			SSL_MODE:    getEnv("SSL_MODE", "disable"),
 			TIMEZONE:    getEnv("TIMEZONE", "Asia/Shanghai"),
+		},
+		Redis: Redis{
+			REDIS_HOST: getEnv("REDIS_HOST", "localhost"),
+			REDIS_PORT: getEnv("REDIS_PORT", "6379"),
+			REDIS_PASSWORD: getEnv("REDIS_PASSWORD", ""),
+			REDIS_WAREHOUSE_DB: getEnv("REDIS_WAREHOUSE_DB", "0"),
+			REDIS_PROUDCT_DB: getEnv("REDIS_PROUDCT_DB", "1"),
+			REDIS_INVENTORY_DB: getEnv("REDIS_INVENTORY_DB", "2"),
+			REDIS_TRANSACTION_DB: getEnv("REDIS_TRANSACTION_DB", "3"),
 		},
 	}
 
