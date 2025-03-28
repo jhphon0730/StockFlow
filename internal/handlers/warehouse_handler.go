@@ -30,7 +30,9 @@ func NewWarehouseHandler(warehouseService services.WarehouseService) WarehouseHa
 }
 
 func (w *warehouseHandler) GetAllWarehouses(c *gin.Context) {
-	status, warehouses, err := w.warehouseService.FindAll()
+	ctx := c.Request.Context()
+
+	status, warehouses, err := w.warehouseService.FindAll(ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return

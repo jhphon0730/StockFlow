@@ -3,12 +3,14 @@ package services
 import (
 	"github.com/jhphon0730/StockFlow/internal/models"
 	"github.com/jhphon0730/StockFlow/internal/repositories"
+	"github.com/jhphon0730/StockFlow/pkg/redis"
 
+	"context"
 	"net/http"
 )
 
 type WarehouseService interface {
-	FindAll() (int, []models.Warehouse, error)
+	FindAll(ctx context.Context) (int, []models.Warehouse, error)
 	FindByID(id uint) (int, *models.Warehouse, error)
 	Create(warehouse *models.Warehouse) (int, *models.Warehouse, error)
 	Delete(id uint) (int, error)
@@ -24,10 +26,22 @@ func NewWarehouseService(warehouseRepository repositories.WarehouseRepository) W
 	}
 }
 
-func (w *warehouseService) FindAll() (int, []models.Warehouse, error) {
+func (w *warehouseService) FindAll(ctx context.Context) (int, []models.Warehouse, error) {
+	warehouseRedis, err := redis.GetWarehouseRedis(ctx)
+	if err == nil { 
+		warehouses, err := warehouseRedis.GetWarehouseCache(ctx)
+		if err == nil && len(warehouses) > 0 { 
+			return http.StatusOK, warehouses, nil
+		}
+	}
+
 	warehouses, err := w.warehouseRepository.FindAll()
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
+	}
+
+	if warehouseRedis != nil {
+		_ = warehouseRedis.SetWarehouseCache(ctx, warehouses)
 	}
 
 	return http.StatusOK, warehouses, nil
