@@ -1,4 +1,4 @@
-### - [ ] Transaction ( with Inventory )
+### - [x] Transaction ( with Inventory )
 - in/out 시에 Inventory 수정하는 로직을 추가하여야 함
 
 ```
