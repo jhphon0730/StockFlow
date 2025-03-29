@@ -30,7 +30,9 @@ func NewProductHandler(productservice services.ProductService) ProductHandler {
 }
 
 func (p *productHandler) GetAllProducts(c *gin.Context) {
-	status, products, err := p.productService.FindAll()
+	ctx := c.Request.Context()
+
+	status, products, err := p.productService.FindAll(ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return
@@ -70,6 +72,7 @@ func (p *productHandler) GetProduct(c *gin.Context) {
 }
 
 func (p *productHandler) CreateProduct(c *gin.Context) {
+	ctx := c.Request.Context()
 	var createProductDTO dto.CreateProductDTO
 	if err := c.ShouldBind(&createProductDTO); err != nil {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
@@ -83,7 +86,7 @@ func (p *productHandler) CreateProduct(c *gin.Context) {
 	}
 
 	// 2. Convert DTO to Model & creaet
-	status, product, err := p.productService.Create(createProductDTO.ToModel())
+	status, product, err := p.productService.Create(createProductDTO.ToModel(), ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return
@@ -97,6 +100,7 @@ func (p *productHandler) CreateProduct(c *gin.Context) {
 }
 
 func (p *productHandler) DeleteProduct(c *gin.Context) {
+	ctx := c.Request.Context()
 	id := c.Param("id")
 	if id == "" {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, errors.New("id is required"))
@@ -109,7 +113,7 @@ func (p *productHandler) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	status, err := p.productService.Delete(uint(id_int))
+	status, err := p.productService.Delete(uint(id_int), ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return
