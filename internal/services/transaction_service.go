@@ -3,15 +3,17 @@ package services
 import (
 	"github.com/jhphon0730/StockFlow/internal/models"
 	"github.com/jhphon0730/StockFlow/internal/repositories"
+	"github.com/jhphon0730/StockFlow/pkg/redis"
 
 	"net/http"
+	"context"
 )
 
 type TransactionService interface {
-	FindAll() (int, []models.Transaction, error)
+	FindAll(ctx context.Context) (int, []models.Transaction, error)
 	FindByID(id uint) (int, *models.Transaction, error)
-	Create(transaction *models.Transaction) (int, *models.Transaction, error)
-	Delete(id uint) (int, error)
+	Create(transaction *models.Transaction, ctx context.Context) (int, *models.Transaction, error)
+	Delete(id uint, ctx context.Context) (int, error)
 }
 
 type transactionService struct {
@@ -26,10 +28,30 @@ func NewTransactionService(transactionRepository repositories.TransactionReposit
 	}
 }
 
-func (t *transactionService) FindAll() (int, []models.Transaction, error) {
+func (t *transactionService) getTransactionRedis(ctx context.Context) redis.TransactionRedis {
+	transactionRedis, err := redis.GetTransactionRedis(ctx)
+	if err != nil {
+		return nil
+	}
+
+	return transactionRedis
+}
+
+func (t *transactionService) FindAll(ctx context.Context) (int, []models.Transaction, error) {
+	if transactionRedis := t.getTransactionRedis(ctx); transactionRedis != nil {
+		transactions, err := transactionRedis.GetTransactionCache(ctx)
+		if err == nil && len(transactions) > 0 {
+			return http.StatusOK, transactions, nil
+		}
+	}
+
 	transactions, err := t.transactionRepository.FindAll()
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
+	}
+
+	if transactionRedis := t.getTransactionRedis(ctx); transactionRedis != nil {
+		_ = transactionRedis.SetTransactionCache(ctx, transactions)
 	}
 
 	return http.StatusOK, transactions, nil
@@ -44,7 +66,7 @@ func (t *transactionService) FindByID(id uint) (int, *models.Transaction, error)
 	return http.StatusOK, transaction, nil
 }
 
-func (t *transactionService) Create(transaction *models.Transaction) (int, *models.Transaction, error) {
+func (t *transactionService) Create(transaction *models.Transaction, ctx context.Context) (int, *models.Transaction, error) {
 	createdTransaction, err := t.transactionRepository.Create(transaction)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
@@ -54,13 +76,21 @@ func (t *transactionService) Create(transaction *models.Transaction) (int, *mode
 		return http.StatusInternalServerError, nil, err
 	}
 
+	if transactionRedis := t.getTransactionRedis(ctx); transactionRedis != nil {
+		_ = transactionRedis.DeleteTransactionCache(ctx)
+	}
+
 	return http.StatusCreated, createdTransaction, nil
 }
 
-func (t *transactionService) Delete(id uint) (int, error) {
+func (t *transactionService) Delete(id uint, ctx context.Context) (int, error) {
 	err := t.transactionRepository.Delete(id)
 	if err != nil {
 		return http.StatusInternalServerError, err
+	}
+
+	if transactionRedis := t.getTransactionRedis(ctx); transactionRedis != nil {
+		_ = transactionRedis.DeleteTransactionCache(ctx)
 	}
 
 	return http.StatusOK, nil

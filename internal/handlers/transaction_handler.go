@@ -30,7 +30,8 @@ func NewTransactionHandler(transactionService services.TransactionService) Trans
 }
 
 func (t *transactionHandler) GetAllTransactions(c *gin.Context) {
-	status, transactions, err := t.transactionService.FindAll()
+	ctx := c.Request.Context()
+	status, transactions, err := t.transactionService.FindAll(ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return
@@ -70,6 +71,7 @@ func (t *transactionHandler) GetTransaction(c *gin.Context) {
 }
 
 func (t *transactionHandler) CreateTransaction(c *gin.Context) {
+	ctx := c.Request.Context()
 	var createTransactionDTO dto.CreateTransactionDTO
 	if err := c.ShouldBindJSON(&createTransactionDTO); err != nil {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
@@ -81,7 +83,7 @@ func (t *transactionHandler) CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	status, transaction, err := t.transactionService.Create(createTransactionDTO.ToModel())
+	status, transaction, err := t.transactionService.Create(createTransactionDTO.ToModel(), ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return
@@ -95,6 +97,7 @@ func (t *transactionHandler) CreateTransaction(c *gin.Context) {
 }
 
 func (t *transactionHandler) DeleteTransaction(c *gin.Context) {
+	ctx := c.Request.Context()
 	id := c.Param("id")
 	if id == "" {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, errors.New("id is required"))
@@ -107,7 +110,7 @@ func (t *transactionHandler) DeleteTransaction(c *gin.Context) {
 		return
 	}
 
-	status, err := t.transactionService.Delete(uint(id_int))
+	status, err := t.transactionService.Delete(uint(id_int), ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return
