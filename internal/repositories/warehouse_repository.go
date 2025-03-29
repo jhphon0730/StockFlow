@@ -7,7 +7,7 @@ import (
 
 type WarehouseRepository interface {
 	FindByID(id uint) (*models.Warehouse, error)
-	FindAll() ([]models.Warehouse, error)
+	FindAll(search_filter map[string]interface{}) ([]models.Warehouse, error)
 
 	Create(warehouse *models.Warehouse) (*models.Warehouse, error)
 
@@ -34,10 +34,20 @@ func (r *warehouseRepository) FindByID(id uint) (*models.Warehouse, error) {
 	return &warehouse, nil
 }
 
-func (r *warehouseRepository) FindAll() ([]models.Warehouse, error) {
+func (r *warehouseRepository) FindAll(search_filter map[string]interface{}) ([]models.Warehouse, error) {
 	var warehouses []models.Warehouse
+	query := r.db
 
-	if err := r.db.Find(&warehouses).Error; err != nil {
+	for key, value := range search_filter {
+		switch key {
+		case "name":
+			query = query.Where("name LIKE ?", "%"+value.(string)+"%")
+		case "location":
+			query = query.Where("location LIKE ?", "%"+value.(string)+"%")
+		}
+	}
+
+	if err := query.Find(&warehouses).Error; err != nil {
 		return nil, err
 	}
 

@@ -31,8 +31,9 @@ func NewWarehouseHandler(warehouseService services.WarehouseService) WarehouseHa
 
 func (w *warehouseHandler) GetAllWarehouses(c *gin.Context) {
 	ctx := c.Request.Context()
+	search_filter := utils.GetWarehouseSearchQuery(c)
 
-	status, warehouses, err := w.warehouseService.FindAll(ctx)
+	status, warehouses, err := w.warehouseService.FindAll(ctx, search_filter)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return

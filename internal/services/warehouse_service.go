@@ -10,7 +10,7 @@ import (
 )
 
 type WarehouseService interface {
-	FindAll(ctx context.Context) (int, []models.Warehouse, error)
+	FindAll(ctx context.Context, search_filter map[string]interface{}) (int, []models.Warehouse, error)
 	FindByID(id uint) (int, *models.Warehouse, error)
 	Create(warehouse *models.Warehouse, ctx context.Context) (int, *models.Warehouse, error)
 	Delete(id uint, ctx context.Context) (int, error)
@@ -35,20 +35,22 @@ func (w *warehouseService) getWarehouseRedis(ctx context.Context) redis.Warehous
 	return warehouseRedis
 }
 
-func (w *warehouseService) FindAll(ctx context.Context) (int, []models.Warehouse, error) {
-	if warehouseRedis := w.getWarehouseRedis(ctx); warehouseRedis != nil {
+func (w *warehouseService) FindAll(ctx context.Context, search_filter map[string]interface{}) (int, []models.Warehouse, error) {
+	warehouseRedis := w.getWarehouseRedis(ctx)
+
+	if warehouseRedis != nil && len(search_filter) == 0 {
 		warehouses, err := warehouseRedis.GetWarehouseCache(ctx)
 		if err == nil && len(warehouses) > 0 { 
 			return http.StatusOK, warehouses, nil
 		}
 	}
 
-	warehouses, err := w.warehouseRepository.FindAll()
+	warehouses, err := w.warehouseRepository.FindAll(search_filter)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 
-	if warehouseRedis := w.getWarehouseRedis(ctx); warehouseRedis != nil {
+	if warehouseRedis != nil && len(search_filter) == 0 {
 		_ = warehouseRedis.SetWarehouseCache(ctx, warehouses)
 	}
 
