@@ -30,7 +30,8 @@ func NewInventoryHandler(inventoryService services.InventoryService) InventoryHa
 }
 
 func (i *inventoryHandler) GetAllInventory(c *gin.Context) {
-	status, inventories, err := i.inventoryService.FindAll()
+	ctx := c.Request.Context()
+	status, inventories, err := i.inventoryService.FindAll(ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return
@@ -70,6 +71,7 @@ func (i *inventoryHandler) GetInventory(c *gin.Context) {
 }
 
 func (i *inventoryHandler) CreateInventory(c *gin.Context) {
+	ctx := c.Request.Context()
 	var createInventoryDTO dto.CreateInventoryDTO
 	if err := c.ShouldBindJSON(&createInventoryDTO); err != nil {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, err)
@@ -82,7 +84,7 @@ func (i *inventoryHandler) CreateInventory(c *gin.Context) {
 		return
 	}
 
-	status, inventory, err := i.inventoryService.Create(createInventoryDTO.ToModel())
+	status, inventory, err := i.inventoryService.Create(createInventoryDTO.ToModel(), ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return
@@ -96,6 +98,7 @@ func (i *inventoryHandler) CreateInventory(c *gin.Context) {
 }
 
 func (i *inventoryHandler) DeleteInventory(c *gin.Context) {
+	ctx := c.Request.Context()
 	id := c.Param("id")
 	if id == "" {
 		utils.JSONResponse(c, http.StatusBadRequest, nil, errors.New("id is required"))
@@ -108,7 +111,7 @@ func (i *inventoryHandler) DeleteInventory(c *gin.Context) {
 		return
 	}
 
-	status, err := i.inventoryService.Delete(uint(id_int))
+	status, err := i.inventoryService.Delete(uint(id_int), ctx)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return

@@ -3,15 +3,17 @@ package services
 import (
 	"github.com/jhphon0730/StockFlow/internal/models"
 	"github.com/jhphon0730/StockFlow/internal/repositories"
+	"github.com/jhphon0730/StockFlow/pkg/redis"
 
 	"net/http"
+	"context"
 )
 
 type InventoryService interface {
-	FindAll() (int, []models.Inventory, error)
+	FindAll(ctx context.Context) (int, []models.Inventory, error)
 	FindByID(id uint) (int, *models.Inventory, error)
-	Create(inventory *models.Inventory) (int, *models.Inventory, error)
-	Delete(id uint) (int, error)
+	Create(inventory *models.Inventory, ctx context.Context) (int, *models.Inventory, error)
+	Delete(id uint, ctx context.Context) (int, error)
 }
 
 type inventoryService struct {
@@ -24,10 +26,30 @@ func NewInventoryService(inventoryRepository repositories.InventoryRepository) I
 	}
 }
 
-func (i *inventoryService) FindAll() (int, []models.Inventory, error) {
+func (i *inventoryService) getInventoryRedis(ctx context.Context) redis.InventoryRedis {
+	inventoryRedis, err := redis.GetInventoryRedis(ctx)
+	if err != nil {
+		return nil
+	}
+
+	return inventoryRedis
+}
+
+func (i *inventoryService) FindAll(ctx context.Context) (int, []models.Inventory, error) {
+	if inventoryRedis := i.getInventoryRedis(ctx); inventoryRedis != nil {
+		inventories, err := inventoryRedis.GetInventoryCache(ctx)
+		if err == nil && len(inventories) > 0 {
+			return http.StatusOK, inventories, nil
+		}
+	}
+
 	inventories, err := i.inventoryRepository.FindAll()
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
+	}
+
+	if inventoryRedis := i.getInventoryRedis(ctx); inventoryRedis != nil {
+		_ = inventoryRedis.SetInventoryCache(ctx, inventories)
 	}
 
 	return http.StatusOK, inventories, nil
@@ -42,19 +64,27 @@ func (i *inventoryService) FindByID(id uint) (int, *models.Inventory, error) {
 	return http.StatusOK, inventory, nil
 }
 
-func (i *inventoryService) Create(inventory *models.Inventory) (int, *models.Inventory, error) {
+func (i *inventoryService) Create(inventory *models.Inventory, ctx context.Context) (int, *models.Inventory, error) {
 	createdInventory, err := i.inventoryRepository.Create(inventory)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 
+	if inventoryRedis := i.getInventoryRedis(ctx); inventoryRedis != nil {
+		_ = inventoryRedis.DeleteInventoryCache(ctx)
+	}
+
 	return http.StatusCreated, createdInventory, nil
 }
 
-func (i *inventoryService) Delete(id uint) (int, error) {
+func (i *inventoryService) Delete(id uint, ctx context.Context) (int, error) {
 	err := i.inventoryRepository.Delete(id)
 	if err != nil {
 		return http.StatusInternalServerError, err
+	}
+
+	if inventoryRedis := i.getInventoryRedis(ctx); inventoryRedis != nil {
+		_ = inventoryRedis.DeleteInventoryCache(ctx)
 	}
 
 	return http.StatusOK, nil
