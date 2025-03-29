@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/jhphon0730/StockFlow/internal/models"
 	"github.com/jhphon0730/StockFlow/internal/repositories"
+	"github.com/jhphon0730/StockFlow/pkg/redis"
 
 	"context"
 	"net/http"
@@ -25,10 +26,30 @@ func NewProductService(productRepository repositories.ProductRepository) Product
 	}
 }
 
+func (p *productService) getProductRedis(ctx context.Context) redis.ProductRedis {
+	productRedis, err := redis.GetProductRedis(ctx)
+	if err != nil {
+		return nil
+	}
+
+	return productRedis
+}
+
 func (p *productService) FindAll(ctx context.Context) (int, []models.Product, error) {
+	if productRedis := p.getProductRedis(ctx); productRedis != nil {
+		products, err := productRedis.GetProductCache(ctx)
+		if err == nil && len(products) > 0 {
+			return http.StatusOK, products, nil
+		}
+	}
+
 	products, err := p.productRepository.FindAll()
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
+	}
+
+	if productRedis := p.getProductRedis(ctx); productRedis != nil {
+		_ = productRedis.SetProductCache(ctx, products)
 	}
 
 	return http.StatusOK, products, nil
@@ -49,6 +70,10 @@ func (p *productService) Create(product *models.Product, ctx context.Context) (i
 		return http.StatusInternalServerError, nil, err
 	}
 
+	if productRedis := p.getProductRedis(ctx); productRedis != nil {
+		_ = productRedis.DeleteProductCache(ctx)
+	}
+
 	return http.StatusCreated, createdProduct, nil
 }
 
@@ -56,6 +81,10 @@ func (p *productService) Delete(id uint, ctx context.Context) (int, error) {
 	err := p.productRepository.Delete(id)
 	if err != nil {
 		return http.StatusInternalServerError, err
+	}
+
+	if productRedis := p.getProductRedis(ctx); productRedis != nil {
+		_ = productRedis.DeleteProductCache(ctx)
 	}
 
 	return http.StatusOK, nil
