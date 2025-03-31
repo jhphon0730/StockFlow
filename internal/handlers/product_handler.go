@@ -31,8 +31,9 @@ func NewProductHandler(productservice services.ProductService) ProductHandler {
 
 func (p *productHandler) GetAllProducts(c *gin.Context) {
 	ctx := c.Request.Context()
+	search_filter := utils.GetProductSearchQuery(c)
 
-	status, products, err := p.productService.FindAll(ctx)
+	status, products, err := p.productService.FindAll(ctx, search_filter)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return

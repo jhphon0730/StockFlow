@@ -10,7 +10,7 @@ import (
 )
 
 type ProductService interface {
-	FindAll(ctx context.Context) (int, []models.Product, error)
+	FindAll(ctx context.Context, search_filter map[string]interface{}) (int, []models.Product, error)
 	FindByID(id uint) (int, *models.Product, error)
 	Create(product *models.Product, ctx context.Context) (int, *models.Product, error)
 	Delete(id uint, ctx context.Context) (int, error)
@@ -35,20 +35,22 @@ func (p *productService) getProductRedis(ctx context.Context) redis.ProductRedis
 	return productRedis
 }
 
-func (p *productService) FindAll(ctx context.Context) (int, []models.Product, error) {
-	if productRedis := p.getProductRedis(ctx); productRedis != nil {
+func (p *productService) FindAll(ctx context.Context, search_filter map[string]interface{}) (int, []models.Product, error) {
+	productRedis := p.getProductRedis(ctx)
+
+	if productRedis != nil && len(search_filter) == 0 {
 		products, err := productRedis.GetProductCache(ctx)
 		if err == nil && len(products) > 0 {
 			return http.StatusOK, products, nil
 		}
 	}
 
-	products, err := p.productRepository.FindAll()
+	products, err := p.productRepository.FindAll(search_filter)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 
-	if productRedis := p.getProductRedis(ctx); productRedis != nil {
+	if productRedis != nil && len(search_filter) == 0 {
 		_ = productRedis.SetProductCache(ctx, products)
 	}
 

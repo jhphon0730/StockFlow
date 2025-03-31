@@ -21,3 +21,17 @@ func GetWarehouseSearchQuery(c *gin.Context) map[string]interface{} {
 
 	return  querys
 }
+
+func GetProductSearchQuery(c *gin.Context) map[string]interface{} {
+	querys := make(map[string]interface{})
+
+	if name := c.Query("name"); name != "" {
+		querys["name"] = name
+	}
+
+	if sku := c.Query("sku"); sku != "" {
+		querys["sku"] = sku
+	}
+
+	return querys
+}

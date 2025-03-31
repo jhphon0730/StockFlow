@@ -7,7 +7,7 @@ import (
 )
 
 type ProductRepository interface {
-	FindAll() ([]models.Product, error)
+	FindAll(search_filter map[string]interface{}) ([]models.Product, error)
 	FindByID(id uint) (*models.Product, error)
 
 	Create(product *models.Product) (*models.Product, error)
@@ -24,10 +24,20 @@ func NewProductRepository(db *gorm.DB) ProductRepository {
 	}
 }
 
-func (r *productRepository) FindAll() ([]models.Product, error) {
+func (r *productRepository) FindAll(search_filter map[string]interface{}) ([]models.Product, error) {
 	var products []models.Product
+	query := r.db
 
-	if err := r.db.Preload("Inventories").Find(&products).Error; err != nil {
+	for key, value := range search_filter {
+		switch key {
+		case "name":
+			query = query.Where("name LIKE ?", "%"+value.(string)+"%")
+		case "sku":
+			query = query.Where("sku LIKE ?", "%"+value.(string)+"%")
+		}
+	}
+
+	if err := query.Preload("Inventories").Find(&products).Error; err != nil {
 		return nil, err
 	}
 
