@@ -7,7 +7,7 @@ import (
 )
 
 type InventoryRepository interface {
-	FindAll() ([]models.Inventory, error)
+	FindAll(search_filter map[string]interface{}) ([]models.Inventory, error)
 	FindByID(id uint) (*models.Inventory, error)
 	Create(inventory *models.Inventory) (*models.Inventory, error)
 	Delete(id uint) error
@@ -24,10 +24,20 @@ func NewInventoryRepository(db *gorm.DB) InventoryRepository {
 	}
 }
 
-func (r *inventoryRepository) FindAll() ([]models.Inventory, error) {
+func (r *inventoryRepository) FindAll(search_filter map[string]interface{}) ([]models.Inventory, error) {
 	var inventories []models.Inventory
+	query := r.db
 
-	if err := r.db.Preload("Product").Find(&inventories).Error; err != nil {
+	for key, value := range search_filter {
+		switch key {
+		case "product_id":
+			query = query.Where("product_id = ?", value)
+		case "warehouse_id":
+			query = query.Where("warehouse_id = ?", value)
+		}
+	}
+
+	if err := query.Preload("Product").Find(&inventories).Error; err != nil {
 		return nil, err
 	}
 

@@ -31,7 +31,9 @@ func NewInventoryHandler(inventoryService services.InventoryService) InventoryHa
 
 func (i *inventoryHandler) GetAllInventory(c *gin.Context) {
 	ctx := c.Request.Context()
-	status, inventories, err := i.inventoryService.FindAll(ctx)
+	search_filter := utils.GetInventorySearchQuery(c)
+
+	status, inventories, err := i.inventoryService.FindAll(ctx, search_filter)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return

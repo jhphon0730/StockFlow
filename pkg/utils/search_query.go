@@ -35,3 +35,17 @@ func GetProductSearchQuery(c *gin.Context) map[string]interface{} {
 
 	return querys
 }
+
+func GetInventorySearchQuery(c *gin.Context) map[string]interface{} {
+	querys := make(map[string]interface{})
+
+	if warehouseID := c.Query("warehouse_id"); warehouseID != "" {
+		querys["warehouse_id"] = warehouseID
+	}
+
+	if productID := c.Query("product_id"); productID != "" {
+		querys["product_id"] = productID
+	}
+
+	return querys
+}

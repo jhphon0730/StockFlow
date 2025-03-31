@@ -10,7 +10,7 @@ import (
 )
 
 type InventoryService interface {
-	FindAll(ctx context.Context) (int, []models.Inventory, error)
+	FindAll(ctx context.Context, search_filter map[string]interface{}) (int, []models.Inventory, error)
 	FindByID(id uint) (int, *models.Inventory, error)
 	Create(inventory *models.Inventory, ctx context.Context) (int, *models.Inventory, error)
 	Delete(id uint, ctx context.Context) (int, error)
@@ -35,20 +35,22 @@ func (i *inventoryService) getInventoryRedis(ctx context.Context) redis.Inventor
 	return inventoryRedis
 }
 
-func (i *inventoryService) FindAll(ctx context.Context) (int, []models.Inventory, error) {
-	if inventoryRedis := i.getInventoryRedis(ctx); inventoryRedis != nil {
+func (i *inventoryService) FindAll(ctx context.Context, search_filter map[string]interface{}) (int, []models.Inventory, error) {
+	inventoryRedis := i.getInventoryRedis(ctx)
+
+	if inventoryRedis != nil && len(search_filter) == 0 {
 		inventories, err := inventoryRedis.GetInventoryCache(ctx)
 		if err == nil && len(inventories) > 0 {
 			return http.StatusOK, inventories, nil
 		}
 	}
 
-	inventories, err := i.inventoryRepository.FindAll()
+	inventories, err := i.inventoryRepository.FindAll(search_filter)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 
-	if inventoryRedis := i.getInventoryRedis(ctx); inventoryRedis != nil {
+	if inventoryRedis != nil && len(search_filter) == 0 {
 		_ = inventoryRedis.SetInventoryCache(ctx, inventories)
 	}
 
