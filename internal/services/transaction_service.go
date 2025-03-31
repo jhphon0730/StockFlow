@@ -10,7 +10,7 @@ import (
 )
 
 type TransactionService interface {
-	FindAll(ctx context.Context) (int, []models.Transaction, error)
+	FindAll(ctx context.Context, search_filter map[string]interface{}) (int, []models.Transaction, error)
 	FindByID(id uint) (int, *models.Transaction, error)
 	Create(transaction *models.Transaction, ctx context.Context) (int, *models.Transaction, error)
 	Delete(id uint, ctx context.Context) (int, error)
@@ -37,20 +37,22 @@ func (t *transactionService) getTransactionRedis(ctx context.Context) redis.Tran
 	return transactionRedis
 }
 
-func (t *transactionService) FindAll(ctx context.Context) (int, []models.Transaction, error) {
-	if transactionRedis := t.getTransactionRedis(ctx); transactionRedis != nil {
+func (t *transactionService) FindAll(ctx context.Context, search_filter map[string]interface{}) (int, []models.Transaction, error) {
+	transactionRedis := t.getTransactionRedis(ctx)
+
+	if transactionRedis != nil && len(search_filter) == 0 {
 		transactions, err := transactionRedis.GetTransactionCache(ctx)
 		if err == nil && len(transactions) > 0 {
 			return http.StatusOK, transactions, nil
 		}
 	}
 
-	transactions, err := t.transactionRepository.FindAll()
+	transactions, err := t.transactionRepository.FindAll(search_filter)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 
-	if transactionRedis := t.getTransactionRedis(ctx); transactionRedis != nil {
+	if transactionRedis != nil && len(search_filter) == 0 {
 		_ = transactionRedis.SetTransactionCache(ctx, transactions)
 	}
 

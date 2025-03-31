@@ -49,3 +49,17 @@ func GetInventorySearchQuery(c *gin.Context) map[string]interface{} {
 
 	return querys
 }
+
+func GetTransactionSearchQuery(c *gin.Context) map[string]interface{} {
+	querys := make(map[string]interface{})
+
+	if inventoryID := c.Query("inventory_id"); inventoryID != "" {
+		querys["inventory_id"] = inventoryID
+	}
+
+	if transactionType := c.Query("type"); transactionType != "" {
+		querys["type"] = transactionType
+	}
+
+	return querys
+}

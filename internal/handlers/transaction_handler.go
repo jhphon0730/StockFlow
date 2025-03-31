@@ -31,7 +31,9 @@ func NewTransactionHandler(transactionService services.TransactionService) Trans
 
 func (t *transactionHandler) GetAllTransactions(c *gin.Context) {
 	ctx := c.Request.Context()
-	status, transactions, err := t.transactionService.FindAll(ctx)
+	search_filter := utils.GetTransactionSearchQuery(c)
+
+	status, transactions, err := t.transactionService.FindAll(ctx, search_filter)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return

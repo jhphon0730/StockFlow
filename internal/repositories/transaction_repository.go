@@ -7,7 +7,7 @@ import (
 )
 
 type TransactionRepository interface {
-	FindAll() ([]models.Transaction, error)
+	FindAll(search_filter map[string]interface{}) ([]models.Transaction, error)
 	FindByID(id uint) (*models.Transaction, error)
 	Create(transaction *models.Transaction) (*models.Transaction, error)
 	Delete(id uint) error
@@ -24,10 +24,20 @@ func NewTransactionRepository(db *gorm.DB) TransactionRepository {
 }
 
 // 모든 재고내역 조회 
-func (r *transactionRepository) FindAll() ([]models.Transaction, error) {
+func (r *transactionRepository) FindAll(search_filter map[string]interface{}) ([]models.Transaction, error) {
 	var transactions []models.Transaction
+	query := r.db
 
-	if err := r.db.Find(&transactions).Error; err != nil {
+	for key, value := range search_filter {
+		switch key {
+		case "inventory_id":
+			query = query.Where("inventory_id = ?", value)
+		case "type":
+			query = query.Where("type = ?", value)
+		}
+	}
+
+	if err := query.Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 
