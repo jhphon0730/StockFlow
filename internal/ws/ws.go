@@ -1,10 +1,11 @@
 package ws
 import (
+	"github.com/jhphon0730/StockFlow/pkg/utils"
+
 	"github.com/gorilla/websocket"
 
 	"log"
 	"sync"
-	"encoding/json"
 )
 
 type Client struct {
@@ -67,7 +68,7 @@ func (w *webSocketManager) handleMessage(client *Client) {
 		}
 
 		var msg Message
-		if err := json.Unmarshal(message, &msg); err != nil {
+		if err := utils.JsonDecode(message, &msg); err != nil {
 			log.Println("Error unmarshaling message: ", err)
 			// 클라이언트에게 에러 메시지 전송
 			client.Conn.WriteMessage(websocket.TextMessage, []byte(`{"error":"invalid message format"}`))
