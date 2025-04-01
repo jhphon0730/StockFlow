@@ -44,7 +44,7 @@ func (w *webSocketManager) HandleConnection(conn *websocket.Conn, roomID string,
 		RoomID: roomID,
 	}
 
-	w.addClientRoom(client, roomID)
+	w.addClientRoom(client)
 
 	go w.handleMessage(client)
 }
@@ -73,9 +73,6 @@ func (w *webSocketManager) handleMessage(client *Client) {
 			client.Conn.WriteMessage(websocket.TextMessage, []byte(`{"error":"invalid message format"}`))
 			continue // 잘못된 메시지 무시
 		}
-
-		msg.ClientID = client.ID
-		msg.RoomID = client.RoomID
 
 		switch msg.Action {
 		case "join":

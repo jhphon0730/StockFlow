@@ -33,17 +33,17 @@ func (w *webSocketManager) removeRoom(client *Client) {
 		w.Mutex.Unlock()
 	}
 }
-func (w *webSocketManager) addClientRoom(client *Client, roomID string) {
+func (w *webSocketManager) addClientRoom(client *Client) {
 	log.Printf("Client %s joined room %s\n", client.ID, client.RoomID)
 
 	w.Mutex.Lock()
-	room, ok := w.Rooms[roomID]
+	room, ok := w.Rooms[client.RoomID]
 	if !ok {
 		room = &Room{
 			Clients: make(map[*Client]bool),
 		}
 
-		w.Rooms[roomID] = room
+		w.Rooms[client.RoomID] = room
 	}
 	w.Mutex.Unlock()
 
