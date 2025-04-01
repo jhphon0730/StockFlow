@@ -10,33 +10,33 @@ type Room struct {
 	Mutex sync.Mutex
 }
 
-func (w *webSocketManager) removeRoom(client *Client, roomID string) {
-	log.Printf("Client %s left room %s\n", client.ID, roomID)
+func (w *webSocketManager) removeRoom(client *Client) {
+	log.Printf("Client %s left room %s\n", client.ID, client.RoomID)
 
 	w.Mutex.Lock()
-	defer w.Mutex.Unlock()
+	room, ok := w.Rooms[client.RoomID]
+	w.Mutex.Unlock()
 
-	if room, ok := w.Rooms[roomID]; ok {
-		room.Mutex.Lock()
-		defer room.Mutex.Unlock()
-
-		delete(room.Clients, client)
-
-		// Remove room if no clients
-		if len(room.Clients) == 0 {
-			delete(w.Rooms, roomID)
-		}
+	if !ok {
+		return
 	}
 
-	client.Conn.Close()
-}
+	room.Mutex.Lock()
+	defer room.Mutex.Unlock()
 
+	delete(room.Clients, client)
+
+	// 클라이언트가 모두 나가면 방 삭제
+	if len(room.Clients) == 0 {
+		w.Mutex.Lock()
+		delete(w.Rooms, client.RoomID)
+		w.Mutex.Unlock()
+	}
+}
 func (w *webSocketManager) addClientRoom(client *Client, roomID string) {
 	log.Printf("Client %s joined room %s\n", client.ID, client.RoomID)
 
 	w.Mutex.Lock()
-	defer w.Mutex.Unlock()
-	
 	room, ok := w.Rooms[roomID]
 	if !ok {
 		room = &Room{
@@ -45,9 +45,9 @@ func (w *webSocketManager) addClientRoom(client *Client, roomID string) {
 
 		w.Rooms[roomID] = room
 	}
+	w.Mutex.Unlock()
 
 	room.Mutex.Lock()
-	defer room.Mutex.Unlock()
-
 	room.Clients[client] = true
+	room.Mutex.Unlock()
 }

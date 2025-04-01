@@ -51,7 +51,8 @@ func (w *webSocketManager) HandleConnection(conn *websocket.Conn, roomID string,
 
 func (w *webSocketManager) handleMessage(client *Client) {
 	defer func() {
-		w.removeRoom(client, client.RoomID)
+		client.Conn.Close()
+		w.removeRoom(client)
 	}()
 
 	for {

@@ -33,7 +33,6 @@ func (w *webSocketManager) updateMessage(roomID string, clientID string, message
 
 		if err := client.Conn.WriteMessage(websocket.TextMessage, message); err != nil {
 			log.Printf("Error broadcasting to client %s: %v", client.ID, err)
-			continue
 		}
 	}
 }
