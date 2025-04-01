@@ -16,7 +16,6 @@ type Client struct {
 }
 
 type WebSocketManager interface {
-	Init()
 	HandleConnection(conn *websocket.Conn, roomID string, clientID string)
 }
 
@@ -38,12 +37,7 @@ func GetManager() WebSocketManager {
 
 var (
 	wsManager = NewWebSocketManager()
-	msgChan = make(chan Message)
 )
-
-func (w *webSocketManager) Init() {
-	go w.broadcasting()
-}
 
 func (w *webSocketManager) HandleConnection(conn *websocket.Conn, roomID string, clientID string) {
 	client := &Client{
@@ -85,8 +79,7 @@ func (w *webSocketManager) handleMessage(client *Client) {
 		msg.ClientID = client.ID
 		msg.RoomID = client.RoomID
 
-		log.Printf("Received message: %v", msg)
-
+		w.broadcasting(msg)
 	}
 }
 

@@ -32,13 +32,6 @@ func (w *webSocketManager) removeRoom(client *Client) {
 		delete(w.Rooms, client.RoomID)
 		w.Mutex.Unlock()
 	}
-
-	msgChan <- Message{
-		Action: "leave",
-		RoomID: client.RoomID,
-		ClientID: client.ID,
-		Data: len(room.Clients),
-	}
 }
 
 func (w *webSocketManager) addClientRoom(client *Client) {
@@ -52,18 +45,11 @@ func (w *webSocketManager) addClientRoom(client *Client) {
 		}
 		w.Rooms[client.RoomID] = room
 	}
-	room.Mutex.Lock() // 🔥 방에 대한 락을 먼저 잡는다.
 	w.Mutex.Unlock()
 
+	room.Mutex.Lock()
 	room.Clients[client] = true
 	room.Mutex.Unlock()
-
-	msgChan <- Message{
-		Action: "join",
-		RoomID: client.RoomID,
-		ClientID: client.ID,
-		Data: w.getRoomClientCount(client.RoomID),
-	}
 }
 
 func (w *webSocketManager) getRoomClientCount(roomID string) int {
