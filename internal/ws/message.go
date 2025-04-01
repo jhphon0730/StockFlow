@@ -16,9 +16,7 @@ type Message struct {
 
 // 특정 사용자가 데이터 추가/삭제/수정 시에 다른 사용자에게 데이터 수정이 있었음을 알리기 위한 메시지 전송
 func (w *webSocketManager) broadcasting() {
-	for {
-		msg := <-msgChan
-
+	for msg := range msgChan { 
 		roomID := msg.RoomID
 		clientID := msg.ClientID
 
@@ -33,12 +31,10 @@ func (w *webSocketManager) broadcasting() {
 		w.Mutex.Unlock()
 
 		if !ok {
-			return
+			continue
 		}
 
 		room.Mutex.Lock()
-		defer room.Mutex.Unlock()
-
 		for client := range room.Clients {
 			if client.ID == clientID || client.Conn == nil {
 				continue
@@ -48,5 +44,6 @@ func (w *webSocketManager) broadcasting() {
 				log.Printf("Error broadcasting to client %s: %v", client.ID, err)
 			}
 		}
+		room.Mutex.Unlock()
 	}
 }

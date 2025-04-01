@@ -10,6 +10,7 @@ import (
 	"github.com/jhphon0730/StockFlow/internal/config"
 	"github.com/jhphon0730/StockFlow/internal/database"
 	"github.com/jhphon0730/StockFlow/internal/server"
+	"github.com/jhphon0730/StockFlow/internal/ws"
 	"github.com/jhphon0730/StockFlow/pkg/utils"
 )
 
@@ -38,6 +39,8 @@ func main() {
 	if err := database.Migration(); err != nil {
 		log.Fatalln("Database Migration Error:", err)
 	}
+
+	ws.GetManager().Init()
 
 	s := server.NewServer()
 	s.Init("8080")

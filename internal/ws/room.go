@@ -50,12 +50,11 @@ func (w *webSocketManager) addClientRoom(client *Client) {
 		room = &Room{
 			Clients: make(map[*Client]bool),
 		}
-
 		w.Rooms[client.RoomID] = room
 	}
+	room.Mutex.Lock() // 🔥 방에 대한 락을 먼저 잡는다.
 	w.Mutex.Unlock()
 
-	room.Mutex.Lock()
 	room.Clients[client] = true
 	room.Mutex.Unlock()
 
