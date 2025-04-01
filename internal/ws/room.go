@@ -32,7 +32,15 @@ func (w *webSocketManager) removeRoom(client *Client) {
 		delete(w.Rooms, client.RoomID)
 		w.Mutex.Unlock()
 	}
+
+	msgChan <- Message{
+		Action: "leave",
+		RoomID: client.RoomID,
+		ClientID: client.ID,
+		Data: len(room.Clients),
+	}
 }
+
 func (w *webSocketManager) addClientRoom(client *Client) {
 	log.Printf("Client %s joined room %s\n", client.ID, client.RoomID)
 
@@ -50,4 +58,26 @@ func (w *webSocketManager) addClientRoom(client *Client) {
 	room.Mutex.Lock()
 	room.Clients[client] = true
 	room.Mutex.Unlock()
+
+	msgChan <- Message{
+		Action: "join",
+		RoomID: client.RoomID,
+		ClientID: client.ID,
+		Data: w.getRoomClientCount(client.RoomID),
+	}
+}
+
+func (w *webSocketManager) getRoomClientCount(roomID string) int {
+	w.Mutex.Lock()
+	room, ok := w.Rooms[roomID]
+	w.Mutex.Unlock()
+
+	if !ok {
+		return 0
+	}
+
+	room.Mutex.Lock()
+	defer room.Mutex.Unlock()
+
+	return len(room.Clients)
 }

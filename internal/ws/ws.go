@@ -15,6 +15,7 @@ type Client struct {
 }
 
 type WebSocketManager interface {
+	Init()
 	HandleConnection(conn *websocket.Conn, roomID string, clientID string)
 }
 
@@ -36,7 +37,12 @@ func GetManager() WebSocketManager {
 
 var (
 	wsManager = NewWebSocketManager()
+	msgChan = make(chan Message)
 )
+
+func (w *webSocketManager) Init() {
+	go w.broadcasting()
+}
 
 func (w *webSocketManager) HandleConnection(conn *websocket.Conn, roomID string, clientID string) {
 	client := &Client{
@@ -75,15 +81,11 @@ func (w *webSocketManager) handleMessage(client *Client) {
 			continue // 잘못된 메시지 무시
 		}
 
-		switch msg.Action {
-		case "join":
-		case "leave":
-			return
-		case "update":
-			w.updateMessage(msg.RoomID, msg.ClientID, message)
-		default:
-			log.Printf("Unknown action: %s", msg.Action)
-		}
+		msg.ClientID = client.ID
+		msg.RoomID = client.RoomID
+
+		log.Printf("Received message: %v", msg)
+
 	}
 }
 
