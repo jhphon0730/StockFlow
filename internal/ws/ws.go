@@ -118,7 +118,7 @@ func (w *webSocketManager) handleMessage(client *Client) {
 
 		switch msg.Action {
 		case "join":
-			log.Println("Joining room: ", msg.RoomID)
+			log.Printf("Client %s joined room %s\n", client.ID, msg.RoomID)
 		case "leave":
 			w.removeRoom(client, msg.RoomID)
 		}

@@ -70,7 +70,7 @@ func (s *Server) Run() error {
 		transaction_api := api.Group("/transactions")
 		s.RegisterTransactionRoutes(transaction_api)
 		ws_api := api.Group("/ws")
-
+		s.RegisterWSRoutes(ws_api)
 	}
 
 	log.Println("Starting server on port", s.PORT)
