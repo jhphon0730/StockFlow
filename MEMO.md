@@ -14,8 +14,8 @@ adjust: 조정 → 재고 조사나 오류 수정으로 수량을 변경. 기존
 - 각 모델에 대한 캐싱을 구현
 - 각 모델에 대한 DB 번호를 저장하여, 관리
 
-### - [] 모든 모델에 대한 캐싱 CRD 추가
+### - [x] 모든 모델에 대한 캐싱 CRD 추가
 - [x] Warehouse ( 창고 / C / R / D )
-- [] Product ( 제품 / C / R / D )
-- [] Inventory ( 재고 / C / R / D )
-- [] Transaction ( 재고내역 / C / R / D )
+- [x] Product ( 제품 / C / R / D )
+- [x] Inventory ( 재고 / C / R / D )
+- [x] Transaction ( 재고내역 / C / R / D )
