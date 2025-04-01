@@ -59,14 +59,11 @@ func (w *webSocketManager) HandleConnection(conn *websocket.Conn, roomID string,
 	w.addClientRoom(client, roomID)
 
 	go w.handleMessage(client)
-
-	defer func() {
-		w.removeRoom(client, roomID)
-		conn.Close()
-	}()
 }
 
 func (w *webSocketManager) removeRoom(client *Client, roomID string) {
+	log.Printf("Client %s left room %s\n", client.ID, roomID)
+
 	w.Mutex.Lock()
 	defer w.Mutex.Unlock()
 
@@ -81,9 +78,13 @@ func (w *webSocketManager) removeRoom(client *Client, roomID string) {
 			delete(w.Rooms, roomID)
 		}
 	}
+
+	client.Conn.Close()
 }
 
 func (w *webSocketManager) addClientRoom(client *Client, roomID string) {
+	log.Printf("Client %s joined room %s\n", client.ID, client.RoomID)
+
 	w.Mutex.Lock()
 	defer w.Mutex.Unlock()
 	
@@ -103,24 +104,57 @@ func (w *webSocketManager) addClientRoom(client *Client, roomID string) {
 }
 
 func (w *webSocketManager) handleMessage(client *Client) {
+	defer func() {
+		w.removeRoom(client, client.RoomID)
+	}()
+
 	for {
 		_, message, err := client.Conn.ReadMessage()
 		if err != nil {
 			log.Println("Error reading message: ", err)
+			// WebSocket 연결이 끊어진 경우
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("Unexpected close error for client %s", client.ID)
+			}
 			break
 		}
 
 		var msg Message
 		if err := json.Unmarshal(message, &msg); err != nil {
 			log.Println("Error unmarshaling message: ", err)
-			break
+			// 클라이언트에게 에러 메시지 전송
+			client.Conn.WriteMessage(websocket.TextMessage, []byte(`{"error":"invalid message format"}`))
+			continue // 잘못된 메시지 무시
 		}
 
 		switch msg.Action {
 		case "join":
-			log.Printf("Client %s joined room %s\n", client.ID, msg.RoomID)
 		case "leave":
-			w.removeRoom(client, msg.RoomID)
+			return
+		case "update":
+			w.broadcastMessage(msg.RoomID, message)
+		default:
+			log.Printf("Unknown action: %s", msg.Action)
+		}
+	}
+}
+
+func (w *webSocketManager) broadcastMessage(roomID string, message []byte) {
+	w.Mutex.Lock()
+	room, ok := w.Rooms[roomID]
+	w.Mutex.Unlock()
+
+	if !ok {
+		return
+	}
+
+	room.Mutex.Lock()
+	defer room.Mutex.Unlock()
+
+	for client := range room.Clients {
+		if err := client.Conn.WriteMessage(websocket.TextMessage, message); err != nil {
+			log.Printf("Error broadcasting to client %s: %v", client.ID, err)
+			continue
 		}
 	}
 }
