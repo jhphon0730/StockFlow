@@ -69,6 +69,8 @@ func (s *Server) Run() error {
 		s.RegisterInventoryRoutes(inventory_api)
 		transaction_api := api.Group("/transactions")
 		s.RegisterTransactionRoutes(transaction_api)
+		ws_api := api.Group("/ws")
+
 	}
 
 	log.Println("Starting server on port", s.PORT)

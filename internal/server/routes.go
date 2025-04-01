@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/jhphon0730/StockFlow/internal/ws"
 	"github.com/jhphon0730/StockFlow/internal/handlers"
 	"github.com/jhphon0730/StockFlow/internal/repositories"
 	"github.com/jhphon0730/StockFlow/internal/services"
@@ -28,6 +29,9 @@ var (
 	transactionRepository repositories.TransactionRepository = repositories.NewTransactionRepository(DB)
 	transactionService    services.TransactionService        = services.NewTransactionService(transactionRepository, inventoryRepository)
 	transactionHandler    handlers.TransactionHandler        = handlers.NewTransactionHandler(transactionService)
+
+	wsManager ws.WebSocketManager = ws.NewWebSocketManager()
+	wsHandler handlers.WebSocketHandler = handlers.NewWebSocketHandler(wsManager)
 )
 
 func (s *Server) RegisterUserRoutes(router *gin.RouterGroup) {
@@ -62,4 +66,8 @@ func (s *Server) RegisterTransactionRoutes(router *gin.RouterGroup) {
 	router.POST("", transactionHandler.CreateTransaction)
 	router.GET("/:id", transactionHandler.GetTransaction)
 	router.DELETE("/:id", transactionHandler.DeleteTransaction)
+}
+
+func (s *Server) RegisterWSRoutes(router *gin.RouterGroup) {
+	router.GET("", wsHandler.HandleSocket)
 }
