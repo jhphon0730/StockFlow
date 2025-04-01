@@ -17,9 +17,6 @@ func (w *webSocketManager) removeRoom(client *Client) {
 	room, ok := w.Rooms[client.RoomID]
 	w.Mutex.Unlock()
 
-	log.Println(room, ok)
-	log.Println("client count:", len(room.Clients))
-
 	if !ok {
 		return
 	}
