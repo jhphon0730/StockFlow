@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
+import type { Message } from "@/types/websocket/message";
+
 function getRoomId(pathname: string): string {
   const path = pathname.startsWith("/") ? pathname.substring(1) : pathname;
   return path || "dashboard";
@@ -9,8 +11,8 @@ function getRoomId(pathname: string): string {
 export function useWebSocket() {
   const location = useLocation();
 
-  let roomID = getRoomId(location.pathname);
-	const userID = localStorage.getItem("userID") || "test";
+  let roomID = getRoomId(location.pathname)
+	const userID = localStorage.getItem("userID") || "anonymous";
   const URL = import.meta.env.VITE_WS_URL || `ws://localhost:8080/api/ws?roomID=${roomID}&clientID=${userID}`;
 
   const socketRef = useRef<WebSocket | null>(null);
@@ -23,7 +25,6 @@ export function useWebSocket() {
     socket.onopen = () => {
       console.log("Connected to WebSocket");
       setIsConnected(true);
-      socket.send(JSON.stringify({ action: "join", roomID }));
     };
 
     socket.onmessage = (event) => {
@@ -41,7 +42,8 @@ export function useWebSocket() {
 
     const handleLeave = () => {
       if (socketRef.current?.readyState === WebSocket.OPEN) {
-        socketRef.current.send(JSON.stringify({ action: "leave", roomID }));
+				const message: Message = { action: "leave", roomID, clientID: userID };
+        socketRef.current.send(JSON.stringify(message));
         socketRef.current.close();
       }
     };
