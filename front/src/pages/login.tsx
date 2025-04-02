@@ -11,10 +11,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 import { setCookie } from "@/lib/cookies"
-import { signIn } from "@/lib/api/auth"
+import { signIn, logout } from "@/lib/api/auth"
 import type { SignInUserDTO } from "@/types/auth"
 
-export default function Login() {
+const Login = () => {
   const [formData, setFormData] = useState<SignInUserDTO>({
     email: "",
     password: "",
@@ -22,6 +22,10 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+
+	React.useEffect(() => {
+		logout()
+	}, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -36,13 +40,14 @@ export default function Login() {
     try {
       const result = await signIn(formData)
       if (result.data) {
-				setCookie("token", result.data.token, 1)
-				setCookie("userID", result.data.user.ID, 1)
-        navigate("/")
+				setCookie("token", result.data.token)
+				setCookie("userID", result.data.user.ID)
+        await navigate("/", {replace: true})
       } else {
         setError(result.error)
       }
     } catch (err) {
+			console.error(err)
       setError("로그인 중 오류가 발생했습니다.")
     } finally {
       setIsLoading(false)
@@ -113,3 +118,4 @@ export default function Login() {
   )
 }
 
+export default Login

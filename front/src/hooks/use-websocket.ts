@@ -9,7 +9,7 @@ function getRoomId(pathname: string): string {
   return path || "dashboard";
 }
 
-export function useWebSocket() {
+export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | null>; isConnected: boolean; roomID: string } {
   const location = useLocation();
 
   const roomID = getRoomId(location.pathname);
@@ -19,9 +19,9 @@ export function useWebSocket() {
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
-	if (userID === null || roomID === null) {
+	if (userID === "" || !userID) {
 		console.error("User ID is not set");
-		return
+		return { socketRef, isConnected, roomID };
 	}
 
   useEffect(() => {

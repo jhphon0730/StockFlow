@@ -8,7 +8,7 @@ export interface Response<T> {
 }
 
 export const getJWT = async (): Promise<string> => {
-	const token = getCookie('jwt')
+	const token = getCookie('token')
 	if (!token) {
 		throw new Error("No token found")
 	}

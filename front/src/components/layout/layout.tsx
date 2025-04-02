@@ -1,7 +1,7 @@
 import React from "react"
 
 import { useState, useEffect } from "react"
-import { useLocation, Link } from "react-router-dom"
+import { useLocation, Link, Navigate, Outlet } from "react-router-dom"
 import { BarChart3, Box, Home, LogOut, Menu, Package, Settings, Truck, Users, X, Bell, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -17,16 +17,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { isAuthenticated } from "@/lib/api/auth";
 
 interface NavItem {
   icon: React.ReactNode
   label: string
   path: string
   badge?: string | number
-}
-
-interface LayoutProps {
-  children: React.ReactNode
 }
 
 const navItems: NavItem[] = [
@@ -89,7 +86,14 @@ const SidebarItem = ({ item, isActive }: { item: NavItem; isActive: boolean }) =
   </Link>
 )
 
-export function Layout({ children }: LayoutProps) {
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />
+  }
+  return <>{children}</>
+}
+
+export function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
   const { isConnected, roomID } = useWebSocket()
@@ -205,11 +209,15 @@ export function Layout({ children }: LayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto p-4 lg:p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-4 lg:p-6">
+					<ProtectedRoute>
+						<Outlet />
+					</ProtectedRoute>
+				</main>
 
         {/* Footer */}
         <footer className="border-t py-4 px-6 text-center text-sm text-muted-foreground">
-          <p>© 2023 StockFlow. All rights reserved.</p>
+          <p>© 2025 StockFlow. All rights reserved.</p>
         </footer>
       </div>
     </div>
