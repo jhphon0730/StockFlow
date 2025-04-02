@@ -96,7 +96,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 export function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
-  const { isConnected, roomID } = useWebSocket()
+  const { isConnected, currentRoomClientCount } = useWebSocket()
 
   // Close sidebar when route changes on mobile
   useEffect(() => {
@@ -187,7 +187,7 @@ export function Layout() {
             {/* WebSocket 연결 상태 표시 */}
             {isConnected ? (
               <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                연결됨: {roomID}
+                연결됨 / 연결된 사용자: {currentRoomClientCount}명
               </Badge>
             ) : (
               <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">

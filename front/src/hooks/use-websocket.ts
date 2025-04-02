@@ -9,19 +9,20 @@ function getRoomId(pathname: string): string {
   return path || "dashboard";
 }
 
-export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | null>; isConnected: boolean; roomID: string } {
+export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | null>; isConnected: boolean; roomID: string, currentRoomClientCount: number } {
+  const socketRef = useRef<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+	const [currentRoomClientCount, setCurrentRoomClientCount] = useState(0);
   const location = useLocation();
 
   const roomID = getRoomId(location.pathname);
 	const userID = getCookie("userID");
   const URL = import.meta.env.VITE_WS_URL + `/ws?roomID=${roomID}&clientID=${userID}`;
 
-  const socketRef = useRef<WebSocket | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
 
 	if (userID === "" || !userID) {
 		console.error("User ID is not set");
-		return { socketRef, isConnected, roomID };
+		return { socketRef, isConnected, roomID, currentRoomClientCount };
 	}
 
   useEffect(() => {
@@ -34,7 +35,8 @@ export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | 
     };
 
     socket.onmessage = (event) => {
-      console.log("Received message:", event.data);
+			const message: Message = JSON.parse(event.data);
+			setCurrentRoomClientCount(message.data);
     };
 
     socket.onerror = (error) => {
@@ -62,5 +64,5 @@ export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | 
     };
   }, [URL, roomID]);
 
-  return { socketRef, isConnected, roomID };
+  return { socketRef, isConnected, roomID, currentRoomClientCount };
 }
