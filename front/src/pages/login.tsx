@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
+import { setCookie } from "@/lib/cookies"
 import { signIn } from "@/lib/api/auth"
 import type { SignInUserDTO } from "@/types/auth"
 
@@ -34,10 +35,9 @@ export default function Login() {
 
     try {
       const result = await signIn(formData)
-
-			console.log(result.data.token)
-			return
       if (result.data) {
+				setCookie("token", result.data.token, 1)
+				setCookie("userID", result.data.user.ID, 1)
         navigate("/")
       } else {
         setError(result.error)

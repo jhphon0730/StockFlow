@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
+import { getCookie } from "@/lib/cookies";
 import type { Message } from "@/types/websocket/message";
 
 function getRoomId(pathname: string): string {
@@ -12,7 +13,7 @@ export function useWebSocket() {
   const location = useLocation();
 
   const roomID = getRoomId(location.pathname);
-	const userID = localStorage.getItem("userID"); // TODO: 로그인 시에 사용자 ID로 변경 예정
+	const userID = getCookie("userID");
   const URL = import.meta.env.VITE_WS_URL + `/ws?roomID=${roomID}&clientID=${userID}`;
 
   const socketRef = useRef<WebSocket | null>(null);

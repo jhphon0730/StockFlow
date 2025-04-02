@@ -1,3 +1,5 @@
+import { getCookie } from '@/lib/cookies'
+
 const VITE_API_URL = import.meta.env.VITE_API_URL
 
 export interface Response<T> {
@@ -6,7 +8,7 @@ export interface Response<T> {
 }
 
 export const getJWT = async (): Promise<string> => {
-	const token = localStorage.getItem("token")
+	const token = getCookie('jwt')
 	if (!token) {
 		throw new Error("No token found")
 	}
