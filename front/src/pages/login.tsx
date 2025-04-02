@@ -35,7 +35,7 @@ export default function Login() {
     try {
       const result = await signIn(formData)
 
-			console.log(result)
+			console.log(result.data.token)
 			return
       if (result.data) {
         navigate("/")
@@ -95,7 +95,7 @@ export default function Login() {
                 onChange={handleChange}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
               {isLoading ? "로그인 중..." : "로그인"}
             </Button>
           </form>
