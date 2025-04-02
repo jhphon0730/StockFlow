@@ -65,7 +65,7 @@ func (w *webSocketManager) addClientRoom(client *Client) {
 		ClientID: client.ID,
 		Data: w.getRoomClientCount(client.RoomID),
 	}
-	w.broadcasting(msg)
+	w.broadcastingWithSender(msg)
 }
 
 func (w *webSocketManager) getRoomClientCount(roomID string) int {

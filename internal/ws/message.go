@@ -43,3 +43,32 @@ func (w *webSocketManager) broadcasting(msg Message) {
 	}
 	room.Mutex.Unlock()
 }
+
+func (w *webSocketManager) broadcastingWithSender(msg Message) {
+	roomID := msg.RoomID
+
+	message, err := utils.JsonEncode(msg)
+	if err != nil {
+		log.Printf("Error encoding message: %v", err)
+	}
+
+	w.Mutex.Lock()
+	room, ok := w.Rooms[roomID]
+	w.Mutex.Unlock()
+
+	if !ok {
+		return
+	}
+
+	room.Mutex.Lock()
+	for client := range room.Clients {
+		if client.Conn == nil {
+			continue
+		}
+
+		if err := client.Conn.WriteMessage(websocket.TextMessage, message); err != nil {
+			log.Printf("Error broadcasting to client %s: %v", client.ID, err)
+		}
+	}
+	room.Mutex.Unlock()
+}
