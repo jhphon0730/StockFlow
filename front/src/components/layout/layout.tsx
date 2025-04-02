@@ -18,13 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { isAuthenticated } from "@/lib/api/auth";
-
-interface NavItem {
-  icon: React.ReactNode
-  label: string
-  path: string
-  badge?: string | number
-}
+import { NavItem } from "@/types/layout";
 
 const navItems: NavItem[] = [
   {
