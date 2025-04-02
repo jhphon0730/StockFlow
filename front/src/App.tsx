@@ -1,11 +1,22 @@
-import { Button } from "@/components/ui/button";
+import React, { useEffect } from "react"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+
+import { Layout } from "@/components/layout/layout"
 
 const App = () => {
   return (
-		<div className="bg-black text-white">
-			Hello World
-			<Button>Click me</Button>
-		</div>
+		<Router>
+			<Layout>
+				<Routes>
+					<Route path="/" element={<div>Home</div>} />
+					<Route path="/products" element={<div>Products</div>} />
+					<Route path="/warehouses" element={<div>Warehouses</div>} />
+					<Route path="/inventory" element={<div>Inventory</div>} />
+					<Route path="/reports" element={<div>Reports</div>} />
+					<Route path="/users" element={<div>Users</div>} />
+				</Routes>
+			</Layout>
+		</Router>
   )
 }
 
