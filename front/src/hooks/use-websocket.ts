@@ -12,7 +12,7 @@ export function useWebSocket() {
   const location = useLocation();
 
   let roomID = getRoomId(location.pathname)
-	const userID = localStorage.getItem("userID") || "anonymous";
+	const userID = localStorage.getItem("userID") || "anonymous"; // TODO: 로그인 시에 사용자 ID로 변경 예정
   const URL = import.meta.env.VITE_WS_URL || `ws://localhost:8080/api/ws?roomID=${roomID}&clientID=${userID}`;
 
   const socketRef = useRef<WebSocket | null>(null);
