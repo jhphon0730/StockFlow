@@ -14,6 +14,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { setCookie } from "@/lib/cookies"
 import { signIn, logout } from "@/lib/api/auth"
 import type { SignInUserDTO } from "@/types/auth"
+import { useAuthStore } from "@/store/useAuthStore"
 
 const SignIn = () => {
   const [formData, setFormData] = useState<SignInUserDTO>({
@@ -68,6 +69,7 @@ const SignIn = () => {
       if (result.data) {
         setCookie("token", result.data.token)
         setCookie("userID", result.data.user.ID)
+        useAuthStore.getState().setUser(result.data.user)
 
         // 이전에 접근하려던 페이지가 있으면 해당 페이지로 리다이렉트
         const redirectPath = sessionStorage.getItem("redirectAfterLogin")
