@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/layout"
 
 import SignIn from "@/pages/signin"
 import SignUp from "@/pages/signup"
+import Dashboard from "@/pages/dashboard"
 
 const App = () => {
   return (
@@ -13,7 +14,7 @@ const App = () => {
 				<Route path="/signup" element={<SignUp />} />
 
 				<Route path="/" element={<Layout />}>
-					<Route index element={<div>Home</div>} />
+					<Route index element={<Dashboard />} />
 					<Route path="/products" element={<div>Products</div>} />
 					<Route path="/warehouses" element={<div>Warehouses</div>} />
 					<Route path="/inventory" element={<div>Inventory</div>} />
