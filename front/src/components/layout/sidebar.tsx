@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { NavItem } from "@/types/layout";
 import { logout } from "@/lib/api/auth";
+import { User } from "@/types/auth"
 
 const navItems: NavItem[] = [
   {
@@ -56,6 +57,7 @@ const navItems: NavItem[] = [
 ]
 
 interface SidebarProps {
+	user: User | null
 	sidebarOpen: boolean
 	setSidebarOpen: (open: boolean) => void
 }
@@ -81,7 +83,7 @@ const SidebarItem = ({ item, isActive }: { item: NavItem; isActive: boolean }) =
   </Link>
 )
 
-export const Sidebar = ({sidebarOpen, setSidebarOpen}: SidebarProps) => {
+export const Sidebar = ({user, sidebarOpen, setSidebarOpen}: SidebarProps) => {
 	const navigate = useNavigate()
 
 	const logoutHandler = () => {
@@ -121,15 +123,17 @@ export const Sidebar = ({sidebarOpen, setSidebarOpen}: SidebarProps) => {
 						<SidebarItem key={item.path} item={item} isActive={location.pathname === item.path} />
 					))}
 				</div>
-				<div className="mt-auto p-4 border-t">
+				{ user && <div className="mt-auto p-4 border-t">
 					<div className="flex items-center gap-3">
 						<Avatar className="h-9 w-9">
 							<AvatarImage src="/placeholder.svg?height=36&width=36" alt="User" />
-							<AvatarFallback>JD</AvatarFallback>
+							<AvatarFallback>{user.name.slice(1, 3)}</AvatarFallback>
 						</Avatar>
 						<div className="flex flex-col">
-							<span className="text-sm font-medium">홍길동</span>
-							<span className="text-xs text-muted-foreground">관리자</span>
+							<span className="text-sm font-medium">{user.name}</span>
+							<span className="text-xs text-muted-foreground">
+								{user.role === "admin" ? "관리자" : "일반 사용자"}
+							</span>
 						</div>
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
@@ -150,7 +154,7 @@ export const Sidebar = ({sidebarOpen, setSidebarOpen}: SidebarProps) => {
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</div>
-				</div>
+				</div> }
 			</div>
 		</>
 	)

@@ -1,6 +1,7 @@
 import { FetchWithOutAuth, Response } from "@/lib/api";
 import { AuthResponse, SignInUserDTO, SignUpUserDTO } from '@/types/auth'
 import { getCookie, removeCookie } from '@/lib/cookies'
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const signIn = async (signInProps: SignInUserDTO): Promise<Response<AuthResponse>> => {
   const res = await FetchWithOutAuth('/users/signin', {
@@ -34,6 +35,7 @@ export const isAuthenticated = (): boolean => {
 export const logout = (pageHref=false): void => {
 	removeCookie('token')
 	removeCookie('userID')
+	useAuthStore.getState().clearUser()
 	if (pageHref) {
 		window.location.href = "/signin"
 	}

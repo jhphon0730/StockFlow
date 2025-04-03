@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/footer"
 import { ping } from "@/lib/api/ping";
 import { useWebSocket } from "@/hooks/use-websocket"
 import { isAuthenticated } from "@/lib/api/auth";
+import { useAuthStore } from "@/store/useAuthStore"
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (!isAuthenticated()) {
@@ -20,6 +21,7 @@ export function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
   const { isConnected, currentRoomClientCount } = useWebSocket()
+  const { user } = useAuthStore.getState()
 
   useEffect(() => {
     setSidebarOpen(false)
@@ -30,7 +32,11 @@ export function Layout() {
   return (
     <div className="flex min-h-screen bg-background">
 			{/* Sidebar */}
-			<Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+			<Sidebar 
+        user={user}
+        sidebarOpen={sidebarOpen} 
+        setSidebarOpen={setSidebarOpen} 
+      />
 
       {/* Main content */}
       <div className="flex flex-1 flex-col">
