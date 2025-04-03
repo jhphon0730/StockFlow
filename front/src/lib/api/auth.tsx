@@ -26,8 +26,6 @@ export const signUp = async (signUpProps: SignUpUserDTO): Promise<Response<null>
 
 export const isAuthenticated = (): boolean => {
 	if (!getCookie('token') || !getCookie('userID')) {
-		console.log(getCookie('token'))
-		console.log(getCookie('userID'))
 		return false
 	}
 	return true

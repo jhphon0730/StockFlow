@@ -1,4 +1,4 @@
-
+import { useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { Link } from "react-router-dom"
 import { BarChart3, Box, Home, LogOut, Package, Settings, Truck, Users, X } from "lucide-react"
@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { NavItem } from "@/types/layout";
+import { logout } from "@/lib/api/auth";
 
 const navItems: NavItem[] = [
   {
@@ -82,6 +83,13 @@ const SidebarItem = ({ item, isActive }: { item: NavItem; isActive: boolean }) =
 )
 
 export const Sidebar = ({sidebarOpen, setSidebarOpen}: SidebarProps) => {
+	const navigate = useNavigate()
+
+	const logoutHandler = () => {
+		logout()
+		navigate("/login")
+	}
+
 	return (
 		<>
 			{/* Mobile sidebar backdrop */}
@@ -136,8 +144,8 @@ export const Sidebar = ({sidebarOpen, setSidebarOpen}: SidebarProps) => {
 								<DropdownMenuItem>프로필</DropdownMenuItem>
 								<DropdownMenuItem>설정</DropdownMenuItem>
 								<DropdownMenuSeparator />
-								<DropdownMenuItem>
-									<LogOut className="mr-2 h-4 w-4" />
+								<DropdownMenuItem onClick={logoutHandler}>
+									<LogOut className="mr-2 h-4 w-4"/>
 									로그아웃
 								</DropdownMenuItem>
 							</DropdownMenuContent>
