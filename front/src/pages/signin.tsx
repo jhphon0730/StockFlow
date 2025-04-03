@@ -15,7 +15,7 @@ import { setCookie } from "@/lib/cookies"
 import { signIn, logout } from "@/lib/api/auth"
 import type { SignInUserDTO } from "@/types/auth"
 
-const Login = () => {
+const SignIn = () => {
   const [formData, setFormData] = useState<SignInUserDTO>({
     email: "",
     password: "",
@@ -142,5 +142,5 @@ const Login = () => {
   )
 }
 
-export default Login
+export default SignIn
 

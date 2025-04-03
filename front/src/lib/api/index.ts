@@ -111,7 +111,9 @@ export const FetchWithAuthFormData = async (url: string, options: fetchOptions =
 	}
 }
 
-// 토큰 만료 시 로그아웃 + 리디렉션
+/* 토큰 만료 시 로그아웃 + 리디렉션
+ * 로그인 페이지로 이동하고 재로그인 시에 기존 페이지로 돌아갈 수 있도록
+ */
 const handleTokenExpiration = () => {
 	logout()
 

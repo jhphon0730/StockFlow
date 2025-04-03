@@ -2,13 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 import { Layout } from "@/components/layout/layout"
 
-import Login from "@/pages/login"
+import SignIn from "@/pages/signin"
 
 const App = () => {
   return (
 		<Router>
 			<Routes>
-				<Route path="/login" element={<Login />} />
+				<Route path="/login" element={<SignIn />} />
 
 				<Route path="/" element={<Layout />}>
 					<Route index element={<div>Home</div>} />
