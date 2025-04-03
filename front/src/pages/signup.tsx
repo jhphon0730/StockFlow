@@ -2,7 +2,6 @@ import type React from "react"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Box } from "lucide-react"
-import Swal from "sweetalert2"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
