@@ -1,10 +1,11 @@
 package server
 
 import (
-	"github.com/jhphon0730/StockFlow/internal/ws"
 	"github.com/jhphon0730/StockFlow/internal/handlers"
+	"github.com/jhphon0730/StockFlow/internal/middleware"
 	"github.com/jhphon0730/StockFlow/internal/repositories"
 	"github.com/jhphon0730/StockFlow/internal/services"
+	"github.com/jhphon0730/StockFlow/internal/ws"
 
 	"github.com/gin-gonic/gin"
 )
@@ -76,4 +77,5 @@ func (s *Server) RegisterTransactionRoutes(router *gin.RouterGroup) {
 
 func (s *Server) RegisterWSRoutes(router *gin.RouterGroup) {
 	router.GET("", wsHandler.HandleSocket)
+	router.GET("/room", middleware.AuthMiddleware(), wsHandler.GetRoomInfo)
 }

@@ -13,6 +13,7 @@ import (
 
 type WebSocketHandler interface {
 	HandleSocket(c *gin.Context)
+	GetRoomInfo(c *gin.Context)
 }
 
 type webSocketHandler struct {
@@ -49,4 +50,10 @@ func (w *webSocketHandler) HandleSocket(c *gin.Context) {
 	}
 
 	w.wsManager.HandleConnection(conn, roomID, clientID)
+}
+
+func (w *webSocketHandler) GetRoomInfo(c *gin.Context) {
+	roomInfo := w.wsManager.GetRoomClientCount()
+
+	utils.JSONResponse(c, http.StatusOK, roomInfo, nil)
 }

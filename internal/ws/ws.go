@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"github.com/jhphon0730/StockFlow/internal/models"
 	"github.com/jhphon0730/StockFlow/pkg/utils"
 
 	"github.com/gorilla/websocket"
@@ -17,6 +18,7 @@ type Client struct {
 
 type WebSocketManager interface {
 	HandleConnection(conn *websocket.Conn, roomID string, clientID string)
+	GetRoomClientCount() []models.RoomInfo
 }
 
 type webSocketManager struct {
@@ -49,6 +51,23 @@ func (w *webSocketManager) HandleConnection(conn *websocket.Conn, roomID string,
 	w.addClientRoom(client)
 
 	go w.handleMessage(client)
+}
+
+func (w *webSocketManager) GetRoomClientCount() []models.RoomInfo {
+	var roomInfos []models.RoomInfo
+
+	w.Mutex.Lock()
+	for roomID, room := range w.Rooms {
+		log.Println("roomID: ", roomID)
+		roomInfo := models.RoomInfo{
+			RoomID: roomID,
+			ConnectedClientCount: len(room.Clients),
+		}
+		roomInfos = append(roomInfos, roomInfo)
+	}
+	w.Mutex.Unlock()
+
+	return roomInfos
 }
 
 func (w *webSocketManager) handleMessage(client *Client) {
