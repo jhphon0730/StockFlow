@@ -27,7 +27,6 @@ const navItems: NavItem[] = [
     icon: <Package className="h-4 w-4" />,
     label: "제품",
     path: "/products",
-    badge: 12,
   },
   {
     icon: <Truck className="h-4 w-4" />,
