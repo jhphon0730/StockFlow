@@ -1,8 +1,9 @@
-import React from "react"
-
+import type React from "react"
+import { useEffect } from "react"
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import { Box } from "lucide-react"
+import Swal from "sweetalert2"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,10 +23,25 @@ const Login = () => {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
 
-	React.useEffect(() => {
-		logout()
-	}, [])
+  useEffect(() => {
+    logout()
+
+    // URL에서 expired 파라미터 확인
+    const queryParams = new URLSearchParams(location.search)
+    const isExpired = queryParams.get("expired") === "true"
+
+    if (isExpired) {
+      Swal.fire({
+        title: "세션 만료",
+        text: "로그인 세션이 만료되었습니다. 다시 로그인해 주세요.",
+        icon: "warning",
+        confirmButtonText: "확인",
+        confirmButtonColor: "#3182F6",
+      })
+    }
+  }, [location.search])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -40,14 +56,22 @@ const Login = () => {
     try {
       const result = await signIn(formData)
       if (result.data) {
-				setCookie("token", result.data.token)
-				setCookie("userID", result.data.user.ID)
-        await navigate("/", {replace: true})
+        setCookie("token", result.data.token)
+        setCookie("userID", result.data.user.ID)
+
+        // 이전에 접근하려던 페이지가 있으면 해당 페이지로 리다이렉트
+        const redirectPath = sessionStorage.getItem("redirectAfterLogin")
+        if (redirectPath) {
+          sessionStorage.removeItem("redirectAfterLogin") // 사용 후 삭제
+          navigate(redirectPath, { replace: true })
+        } else {
+          navigate("/", { replace: true })
+        }
       } else {
         setError(result.error)
       }
     } catch (err) {
-			console.error(err)
+      console.error(err)
       setError("로그인 중 오류가 발생했습니다.")
     } finally {
       setIsLoading(false)
@@ -119,3 +143,4 @@ const Login = () => {
 }
 
 export default Login
+
