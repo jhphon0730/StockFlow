@@ -86,7 +86,7 @@ export const Sidebar = ({sidebarOpen, setSidebarOpen}: SidebarProps) => {
 
 	const logoutHandler = () => {
 		logout()
-		navigate("/login")
+		navigate("/signin")
 	}
 
 	return (

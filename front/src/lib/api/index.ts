@@ -118,10 +118,10 @@ const handleTokenExpiration = () => {
 	logout()
 
 	const currentPath = window.location.pathname
-	if (currentPath !== "/login") {
+	if (currentPath !== "/signin") {
 		sessionStorage.setItem("redirectAfterLogin", currentPath)
 	}
 
 	// SPA 환경에서는 replace가 더 자연스럽게 동작
-	window.location.replace("/login?expired=true")
+	window.location.replace("/signin?expired=true")
 }

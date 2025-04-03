@@ -35,7 +35,7 @@ export const logout = (pageHref=false): void => {
 	removeCookie('token')
 	removeCookie('userID')
 	if (pageHref) {
-		window.location.href = "/login"
+		window.location.href = "/signin"
 	}
 }
 

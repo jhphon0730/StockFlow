@@ -132,7 +132,7 @@ const SignIn = () => {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
             계정이 없으신가요?{" "}
-            <Link to="/register" className="text-primary hover:underline">
+            <Link to="/signup" className="text-primary hover:underline">
               회원가입
             </Link>
           </p>
