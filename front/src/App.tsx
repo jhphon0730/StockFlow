@@ -3,12 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import { Layout } from "@/components/layout/layout"
 
 import SignIn from "@/pages/signin"
+import SignUp from "@/pages/signup"
 
 const App = () => {
   return (
 		<Router>
 			<Routes>
 				<Route path="/signin" element={<SignIn />} />
+				<Route path="/signup" element={<SignUp />} />
 
 				<Route path="/" element={<Layout />}>
 					<Route index element={<div>Home</div>} />

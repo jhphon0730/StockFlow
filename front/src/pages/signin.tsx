@@ -31,12 +31,22 @@ const SignIn = () => {
     // URL에서 expired 파라미터 확인
     const queryParams = new URLSearchParams(location.search)
     const isExpired = queryParams.get("expired") === "true"
-
     if (isExpired) {
       Swal.fire({
         title: "세션 만료",
         text: "로그인 세션이 만료되었습니다. 다시 로그인해 주세요.",
         icon: "warning",
+        confirmButtonText: "확인",
+        confirmButtonColor: "#3182F6",
+      })
+    }
+
+    const isSignup = queryParams.get("signup") === "true"
+    if (isSignup) {
+      Swal.fire({
+        title: "회원가입 완료",
+        text: "회원가입이 완료되었습니다. 로그인해 주세요.",
+        icon: "success",
         confirmButtonText: "확인",
         confirmButtonColor: "#3182F6",
       })

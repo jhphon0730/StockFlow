@@ -2,6 +2,7 @@ import type React from "react"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Box } from "lucide-react"
+import Swal from "sweetalert2"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -67,12 +68,12 @@ const SignUp = () => {
 
       if (result.data) {
         // 회원가입 성공 시 로그인 페이지로 이동
-        navigate("/signin", { replace: true })
+        navigate("/signin?signup=true", { replace: true })
       } else {
         setError(result.error)
       }
     } catch (err) {
-      console.error(err)
+      console.log(err)
       setError("회원가입 중 오류가 발생했습니다.")
     } finally {
       setIsLoading(false)

@@ -38,11 +38,6 @@ export const FetchWithOutAuth = async (url: string, options: fetchOptions = {}) 
 	}
 	const res = await fetch(`${VITE_API_URL}${url}`, mergeOptions)
 
-	// 응답이 JSON이 아닌 경우 처리
-	if (!res.ok) {
-		throw new Error(`HTTP Error: ${res.status}`)
-	}
-
 	return await res.json()
 }
 
@@ -65,11 +60,6 @@ export const FetchWithAuth = async (url: string, options: fetchOptions = {}) => 
 		if (res.status === 401) {
 			handleTokenExpiration()
 			throw new Error("Your session has expired. Please log in again.")
-		}
-
-		// 응답이 JSON이 아닌 경우 처리
-		if (!res.ok) {
-			throw new Error(`HTTP Error: ${res.status}`)
 		}
 
 		return await res.json()
@@ -97,11 +87,6 @@ export const FetchWithAuthFormData = async (url: string, options: fetchOptions =
 		if (res.status === 401) {
 			handleTokenExpiration()
 			throw new Error("Your session has expired. Please log in again.")
-		}
-
-		// 응답이 JSON이 아닌 경우 처리
-		if (!res.ok) {
-			throw new Error(`HTTP Error: ${res.status}`)
 		}
 
 		return await res.json()
