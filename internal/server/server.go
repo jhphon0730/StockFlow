@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jhphon0730/StockFlow/internal/database"
+	"github.com/jhphon0730/StockFlow/internal/middleware"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -62,12 +63,16 @@ func (s *Server) Run() error {
 		user_api := api.Group("/users")
 		s.RegisterUserRoutes(user_api)
 		warehouse_api := api.Group("/warehouses")
+		warehouse_api.Use(middleware.AuthMiddleware())
 		s.RegisterWarehouseRoutes(warehouse_api)
 		product_api := api.Group("/products")
+		product_api.Use(middleware.AuthMiddleware())
 		s.RegisterProductRoutes(product_api)
 		inventory_api := api.Group("/inventories")
+		inventory_api.Use(middleware.AuthMiddleware())
 		s.RegisterInventoryRoutes(inventory_api)
 		transaction_api := api.Group("/transactions")
+		transaction_api.Use(middleware.AuthMiddleware())
 		s.RegisterTransactionRoutes(transaction_api)
 		ws_api := api.Group("/ws")
 		s.RegisterWSRoutes(ws_api)
