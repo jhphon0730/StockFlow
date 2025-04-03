@@ -60,8 +60,16 @@ func (s *Server) Init(PORT string) {
 func (s *Server) Run() error {
 	api := s.router.Group("/api")
 	{
+		// ping
+		ping_api := api.Group("/ping")
+		ping_api.Use(middleware.AuthMiddleware())
+		s.RegisterPingRoutes(ping_api)
+
+		// auth
 		user_api := api.Group("/users")
 		s.RegisterUserRoutes(user_api)
+
+		// anoher routes
 		warehouse_api := api.Group("/warehouses")
 		warehouse_api.Use(middleware.AuthMiddleware())
 		s.RegisterWarehouseRoutes(warehouse_api)

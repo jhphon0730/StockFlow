@@ -1,11 +1,11 @@
-import React from "react"
-import { useState, useEffect } from "react"
+import React, { useEffect, useState} from "react"
 import { useLocation, Navigate, Outlet } from "react-router-dom"
 
 import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 
+import { ping } from "@/lib/api/ping";
 import { useWebSocket } from "@/hooks/use-websocket"
 import { isAuthenticated } from "@/lib/api/auth";
 
@@ -23,6 +23,8 @@ export function Layout() {
 
   useEffect(() => {
     setSidebarOpen(false)
+
+		ping()
   }, [location.pathname])
 
   return (

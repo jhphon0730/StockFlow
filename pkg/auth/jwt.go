@@ -25,7 +25,8 @@ func GenerateJWT(userID uint, userRole string) (string, error) {
 		UserID:   userID,
 		UserRole: userRole,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)), // 1시간 후 만료
+			// 테스트로 1분 종료
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 1)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}

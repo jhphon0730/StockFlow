@@ -34,6 +34,12 @@ var (
 	wsHandler handlers.WebSocketHandler = handlers.NewWebSocketHandler(wsManager)
 )
 
+func (s *Server) RegisterPingRoutes(router *gin.RouterGroup) {
+	router.GET("", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "pong"})
+	})
+}
+
 func (s *Server) RegisterUserRoutes(router *gin.RouterGroup) {
 	router.GET("", userHandler.FindAllUsers)
 	router.POST("/signup", userHandler.SignUpUser)
