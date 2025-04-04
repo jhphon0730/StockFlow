@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Users } from "lucide-react"
 
 import { GetRoomInfo } from "@/lib/api/dashboard";
-import { WebSocketInformation } from "@/types/dashboard/websocket";
+import { WebSocketInformation } from "@/types/dashboard";
 
 export const RoomStatus = () => {
 	const [rooms, setRooms] = useState<WebSocketInformation[] | null>(null);
