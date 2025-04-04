@@ -34,7 +34,7 @@ var (
 	dashboardService services.DashboardService = services.NewDashboardService(productRepository, inventoryRepository, warehouseRepository, transactionRepository)
 	dashboardHandler handlers.DashboardHandler = handlers.NewDashboardHandler(dashboardService)
 
-	wsManager ws.WebSocketManager = ws.NewWebSocketManager()
+	wsManager ws.WebSocketManager = ws.GetManager()
 	wsHandler handlers.WebSocketHandler = handlers.NewWebSocketHandler(wsManager)
 )
 
