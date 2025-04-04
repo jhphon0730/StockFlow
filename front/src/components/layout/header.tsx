@@ -1,4 +1,4 @@
-import { Menu, Bell, Search } from "lucide-react"
+import { Menu, Search } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -37,11 +37,13 @@ export const Header = ({isConnected, currentRoomClientCount, setSidebarOpen}: He
 					</Badge>
 				)}
 
-				<Button variant="ghost" size="icon" className="relative">
-					<Bell className="h-5 w-5" />
-					<span className="sr-only">알림</span>
-					<span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
-				</Button>
+				{/*
+					<Button variant="ghost" size="icon" className="relative">
+						<Bell className="h-5 w-5" />
+						<span className="sr-only">알림</span>
+						<span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
+					</Button>
+				*/}
 
 				<Button variant="ghost" size="icon" className="md:hidden">
 					<Search className="h-5 w-5" />

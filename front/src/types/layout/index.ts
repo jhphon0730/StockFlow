@@ -5,3 +5,6 @@ export interface NavItem {
   badge?: string | number
 }
 
+export interface HeaderAlert {
+	timestamp: string
+}
