@@ -4,16 +4,26 @@ import { useLocation } from "react-router-dom";
 import { getCookie } from "@/lib/cookies";
 import type { Message } from "@/types/websocket/message";
 
+interface WebSocketExport {
+	socketRef: React.MutableRefObject<WebSocket | null>;
+	isConnected: boolean;
+	roomID: string;
+	currentRoomClientCount: number;
+	message: Message | null;
+}
+
 function getRoomId(pathname: string): string {
   const path = pathname.startsWith("/") ? pathname.substring(1) : pathname;
   return path || "dashboard";
 }
 
-export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | null>; isConnected: boolean; roomID: string, currentRoomClientCount: number } {
+export function useWebSocket(): WebSocketExport {
+  const location = useLocation();
+
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 	const [currentRoomClientCount, setCurrentRoomClientCount] = useState(0);
-  const location = useLocation();
+	const [message, setMessage] = useState<Message | null>(null);
 
   const roomID = getRoomId(location.pathname);
 	const userID = getCookie("userID");
@@ -22,7 +32,7 @@ export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | 
 
 	if (userID === "" || !userID) {
 		console.error("User ID is not set");
-		return { socketRef, isConnected, roomID, currentRoomClientCount };
+		return { socketRef, isConnected, roomID, currentRoomClientCount, message };
 	}
 
   useEffect(() => {
@@ -37,6 +47,12 @@ export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | 
     socket.onmessage = (event) => {
 			const message: Message = JSON.parse(event.data);
 			setCurrentRoomClientCount(message.data);
+
+			if (message.action !== "update" || message.roomID !== roomID) {
+				return
+			}
+
+			setMessage(() => message);
     };
 
     socket.onerror = (error) => {
@@ -44,7 +60,6 @@ export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | 
     };
 
     socket.onclose = () => {
-      console.log("Disconnected from WebSocket");
       setIsConnected(false);
     };
 
@@ -64,5 +79,5 @@ export function useWebSocket(): { socketRef: React.MutableRefObject<WebSocket | 
     };
   }, [URL, roomID]);
 
-  return { socketRef, isConnected, roomID, currentRoomClientCount };
+	return { socketRef, isConnected, roomID, currentRoomClientCount, message };
 }
