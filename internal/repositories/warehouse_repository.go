@@ -2,7 +2,10 @@ package repositories
 
 import (
 	"github.com/jhphon0730/StockFlow/internal/models"
+
 	"gorm.io/gorm"
+
+	"time"
 )
 
 type WarehouseRepository interface {
@@ -12,7 +15,7 @@ type WarehouseRepository interface {
 	Create(warehouse *models.Warehouse) (*models.Warehouse, error)
 
 	Delete(id uint) error
-	GetCount() (int64, error)
+	GetCountWithComparison() (int64, float64, error)
 }
 
 type warehouseRepository struct {
@@ -99,10 +102,34 @@ func (r *warehouseRepository) Delete(id uint) error {
 	return nil
 }
 
-func (r *warehouseRepository) GetCount() (int64, error) {
-	var count int64
-	if err := r.db.Model(&models.Warehouse{}).Count(&count).Error; err != nil {
-		return 0, err
+func (r *warehouseRepository) GetCountWithComparison() (int64, float64, error) {
+	var totalCount int64
+	if err := r.db.Model(&models.Warehouse{}).Count(&totalCount).Error; err != nil {
+		return 0, 0, err
 	}
-	return count, nil
+
+	now := time.Now()
+	currentMonthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+
+	// 전월까지 누적된 수량
+	var previousCumulativeCount int64
+	if err := r.db.Model(&models.Warehouse{}).
+		Where("created_at < ?", currentMonthStart).
+		Count(&previousCumulativeCount).Error; err != nil {
+		return totalCount, 0, err
+	}
+
+	// 증감률 계산
+	var percentageChange float64
+	if previousCumulativeCount == 0 {
+		if totalCount == 0 {
+			percentageChange = 0
+		} else {
+			percentageChange = 100
+		}
+	} else {
+		percentageChange = float64(totalCount-previousCumulativeCount) / float64(previousCumulativeCount) * 100
+	}
+
+	return totalCount, percentageChange, nil
 }

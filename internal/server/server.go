@@ -33,7 +33,7 @@ func (s *Server) Init(PORT string) {
 	s.router.Use(gin.Logger())
 
 	s.router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://192.168.0.5:3000", "http://localhost:3000"},
+		AllowOrigins:     []string{"http://192.168.0.5:3000", "http://localhost:3000", "*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -82,6 +82,9 @@ func (s *Server) Run() error {
 		transaction_api := api.Group("/transactions")
 		transaction_api.Use(middleware.AuthMiddleware())
 		s.RegisterTransactionRoutes(transaction_api)
+		dashboard_api := api.Group("/dashboard")
+		dashboard_api.Use(middleware.AuthMiddleware())
+		s.RegisterDashboardRoutes(dashboard_api)
 		ws_api := api.Group("/ws")
 		s.RegisterWSRoutes(ws_api)
 	}

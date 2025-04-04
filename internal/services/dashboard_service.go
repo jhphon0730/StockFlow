@@ -8,9 +8,9 @@ import (
 )
 
 type DashboardService interface {
-	GetProductCount() (int, int64, error)
-	GetInventoryCount() (int, int64, error)
-	GetWarehouseCount() (int, int64, error)
+	GetProductCount() (int, int64, float64, error)
+	GetInventoryCount() (int, int64, float64, error)
+	GetWarehouseCount() (int, int64, float64, error)
 	GetRecentTransactions(limit int) (int, []models.Transaction, error)
 }
 
@@ -35,28 +35,28 @@ func NewDashboardService(
 	}
 }
 
-func (s *dashboardService) GetProductCount() (int, int64, error) {
-	count, err := s.productRepository.GetCount()
+func (s *dashboardService) GetProductCount() (int, int64, float64, error) {
+	count, comparison, err := s.productRepository.GetCountWithComparison()
 	if err != nil {
-		return http.StatusInternalServerError, 0, err
+		return http.StatusInternalServerError, 0, 0, err
 	}
-	return http.StatusOK, count, nil
+	return http.StatusOK, count, comparison, nil
 }
 
-func (s *dashboardService) GetInventoryCount() (int, int64, error) {
-	count, err := s.inventoryRepository.GetCount()
+func (s *dashboardService) GetInventoryCount() (int, int64, float64, error) {
+	count, comparison, err := s.inventoryRepository.GetCountWithComparison()
 	if err != nil {
-		return http.StatusInternalServerError, 0, err
+		return http.StatusInternalServerError, 0, 0, err
 	}
-	return http.StatusOK, count, nil
+	return http.StatusOK, count, comparison, nil
 }
 
-func (s *dashboardService) GetWarehouseCount() (int, int64, error) {
-	count, err := s.warehouseRepository.GetCount()
+func (s *dashboardService) GetWarehouseCount() (int, int64, float64, error) {
+	count, comparison, err := s.warehouseRepository.GetCountWithComparison()
 	if err != nil {
-		return http.StatusInternalServerError, 0, err
+		return http.StatusInternalServerError, 0, 0, err
 	}
-	return http.StatusOK, count, nil
+	return http.StatusOK, count, comparison, nil
 }
 
 func (s *dashboardService) GetRecentTransactions(limit int) (int, []models.Transaction, error) {

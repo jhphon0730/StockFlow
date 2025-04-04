@@ -58,7 +58,6 @@ func (w *webSocketManager) GetRoomClientCount() []models.RoomInfo {
 
 	w.Mutex.Lock()
 	for roomID, room := range w.Rooms {
-		log.Println("roomID: ", roomID)
 		roomInfo := models.RoomInfo{
 			RoomID: roomID,
 			ConnectedClientCount: len(room.Clients),

@@ -31,6 +31,9 @@ var (
 	transactionService    services.TransactionService        = services.NewTransactionService(transactionRepository, inventoryRepository)
 	transactionHandler    handlers.TransactionHandler        = handlers.NewTransactionHandler(transactionService)
 
+	dashboardService services.DashboardService = services.NewDashboardService(productRepository, inventoryRepository, warehouseRepository, transactionRepository)
+	dashboardHandler handlers.DashboardHandler = handlers.NewDashboardHandler(dashboardService)
+
 	wsManager ws.WebSocketManager = ws.NewWebSocketManager()
 	wsHandler handlers.WebSocketHandler = handlers.NewWebSocketHandler(wsManager)
 )
@@ -78,4 +81,8 @@ func (s *Server) RegisterTransactionRoutes(router *gin.RouterGroup) {
 func (s *Server) RegisterWSRoutes(router *gin.RouterGroup) {
 	router.GET("", wsHandler.HandleSocket)
 	router.GET("/room", middleware.AuthMiddleware(), wsHandler.GetRoomInfo)
+}
+
+func (s *Server) RegisterDashboardRoutes(router *gin.RouterGroup) {
+	router.GET("", dashboardHandler.GetDashboard)
 }
