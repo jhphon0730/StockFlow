@@ -11,6 +11,7 @@ type TransactionRepository interface {
 	FindByID(id uint) (*models.Transaction, error)
 	Create(transaction *models.Transaction) (*models.Transaction, error)
 	Delete(id uint) error
+	FindRecentTransactions(limit int) ([]models.Transaction, error)
 }
 
 type transactionRepository struct {
@@ -79,3 +80,13 @@ func (r *transactionRepository) Delete(id uint) error {
 	return tx.Commit().Error
 }
 
+
+func (r *transactionRepository) FindRecentTransactions(limit int) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+
+	if err := r.db.Order("created_at desc").Limit(limit).Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
+}

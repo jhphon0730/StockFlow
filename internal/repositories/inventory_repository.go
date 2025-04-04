@@ -12,6 +12,7 @@ type InventoryRepository interface {
 	Create(inventory *models.Inventory) (*models.Inventory, error)
 	Delete(id uint) error
 	UpdateQuantity(id uint, quantity int, transaction_type string) error
+	GetCount() (int64, error)
 }
 
 type inventoryRepository struct {
@@ -113,4 +114,12 @@ func (r *inventoryRepository) UpdateQuantity(id uint, quantity int, transaction_
 	}
 
 	return tx.Commit().Error
+}
+
+func (r *inventoryRepository) GetCount() (int64, error) {
+	var count int64
+	if err := r.db.Model(&models.Inventory{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
 }

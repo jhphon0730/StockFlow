@@ -12,6 +12,8 @@ type ProductRepository interface {
 
 	Create(product *models.Product) (*models.Product, error)
 	Delete(id uint) error
+
+	GetCount() (int64, error)
 }
 
 type productRepository struct {
@@ -96,4 +98,12 @@ func (r *productRepository) Delete(id uint) error {
 	}
 
 	return nil
+}
+
+func (r *productRepository) GetCount() (int64, error) {
+	var count int64
+	if err := r.db.Model(&models.Product{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
 }

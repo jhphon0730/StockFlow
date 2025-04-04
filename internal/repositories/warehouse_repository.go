@@ -12,6 +12,7 @@ type WarehouseRepository interface {
 	Create(warehouse *models.Warehouse) (*models.Warehouse, error)
 
 	Delete(id uint) error
+	GetCount() (int64, error)
 }
 
 type warehouseRepository struct {
@@ -96,4 +97,12 @@ func (r *warehouseRepository) Delete(id uint) error {
 	}
 
 	return nil
+}
+
+func (r *warehouseRepository) GetCount() (int64, error) {
+	var count int64
+	if err := r.db.Model(&models.Warehouse{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
 }
