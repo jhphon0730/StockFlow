@@ -1,5 +1,6 @@
 import React, { useEffect, useState} from "react"
 import { useLocation, Navigate, Outlet } from "react-router-dom"
+import { ToastContainer } from "react-toastify"
 
 import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
@@ -9,6 +10,8 @@ import { ping } from "@/lib/api/ping";
 import { useWebSocket } from "@/hooks/use-websocket"
 import { isAuthenticated } from "@/lib/api/auth";
 import { useAuthStore } from "@/store/useAuthStore"
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (!isAuthenticated()) {
@@ -22,6 +25,7 @@ export function Layout() {
   const location = useLocation()
   const { isConnected, currentRoomClientCount } = useWebSocket()
   const { user } = useAuthStore.getState()
+
 
   useEffect(() => {
     setSidebarOpen(false)
@@ -57,6 +61,20 @@ export function Layout() {
         {/* Footer */}
 				<Footer />
       </div>
+
+      <ToastContainer
+        position="top-right" // 알람 위치 지정
+        autoClose={1000} // 자동 off 시간
+        hideProgressBar={false} // 진행시간바 숨김
+        closeOnClick // 클릭으로 알람 닫기
+        rtl={false} // 알림 좌우 반전
+        pauseOnFocusLoss // 화면을 벗어나면 알람 정지
+        draggable // 드래그 가능
+        pauseOnHover // 마우스를 올리면 알람 정지
+        theme="light"
+        limit={6} // 알람 개수 제한
+      />
+				
     </div>
   )
 }
