@@ -8,5 +8,9 @@ export interface Warehouse {
 	UpdatedAt: string;
 	DeletedAt: string | null;
 
-	Inventories: Inventory[];
+	Inventories: Inventory[] | null;
+}
+
+export interface WarehouseResponse {
+	warehouses: Warehouse[];
 }
