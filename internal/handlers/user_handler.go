@@ -79,6 +79,10 @@ func (u *userHandler) SignInUser(c *gin.Context) {
 	// 1. find User
 	status, user, err := u.userService.FindByEmail(signInDTO.Email)
 	if err != nil {
+		if err.Error() == "record not found" {
+			utils.JSONResponse(c, http.StatusUnauthorized, nil, errors.New("사용자 정보가 없습니다"))
+			return
+		}
 		utils.JSONResponse(c, status, nil, err)
 		return
 	}
