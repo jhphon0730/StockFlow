@@ -14,5 +14,6 @@ export interface DashboardInfo {
   inventory: CountComparison;
   product: CountComparison;
   warehouse: CountComparison;
+	zero_quantity: CountComparison;
   recent_transactions: Transaction[];
 }

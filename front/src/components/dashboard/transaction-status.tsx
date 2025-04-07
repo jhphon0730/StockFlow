@@ -11,26 +11,6 @@ interface TransactionRecentListProps {
 	dashboardInfo: DashboardInfo | null
 }
 
-export const TransactionStatus = () => {
-	return (
-		<>
-			<Card>
-				<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-					<CardTitle className="text-sm font-medium">부족 재고</CardTitle>
-					<BarChart3 className="h-4 w-4 text-muted-foreground" />
-				</CardHeader>
-				<CardContent>
-					<div className="text-2xl font-bold">23</div>
-					<div className="flex items-center text-xs text-red-500">
-						<ArrowDownRight className="mr-1 h-3 w-3" />
-						전월 대비 +4
-					</div>
-				</CardContent>
-			</Card>
-		</>
-	)
-}
-
 export const TransactionRecentList = ({ isLoadingDashboard, dashboardInfo }: TransactionRecentListProps) => {
   // 트랜잭션 타입에 따른 색상 및 아이콘 반환
   const getTransactionTypeInfo = (type: string) => {

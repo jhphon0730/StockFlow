@@ -4,8 +4,8 @@ import { RoomStatus } from "@/components/dashboard/room-status"
 
 import { DashboardInfo } from "@/types/dashboard"
 import { ProductStatus } from "@/components/dashboard/product-status"
-import { InventoryStatus } from "@/components/dashboard/inventory-status"
-import { TransactionStatus, TransactionRecentList } from "@/components/dashboard/transaction-status"
+import { InventoryStatus, ZeroInventoryStatus } from "@/components/dashboard/inventory-status"
+import { TransactionRecentList } from "@/components/dashboard/transaction-status"
 import { WarehouseStatus } from "@/components/dashboard/warehouse-status"
 import { GetDashboardInfo } from "@/lib/api/dashboard"
 
@@ -37,7 +37,7 @@ const Dashboard = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 				<ProductStatus isLoadingDashboard={isLoadingDashboard} dashboardInfo={dashboardInfo} />
 				<InventoryStatus isLoadingDashboard={isLoadingDashboard} dashboardInfo={dashboardInfo} />
-				<TransactionStatus />
+				<ZeroInventoryStatus isLoadingDashboard={isLoadingDashboard} dashboardInfo={dashboardInfo} />
 				<WarehouseStatus isLoadingDashboard={isLoadingDashboard} dashboardInfo={dashboardInfo} />
       </div>
 
