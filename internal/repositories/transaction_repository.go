@@ -12,7 +12,6 @@ type TransactionRepository interface {
 	Create(transaction *models.Transaction) (*models.Transaction, error)
 	Delete(id uint) error
 	FindRecentTransactions(limit int) ([]models.Transaction, error)
-	FindZeroQuantityProducts() (int64, error)
 }
 
 type transactionRepository struct {
@@ -92,14 +91,3 @@ func (r *transactionRepository) FindRecentTransactions(limit int) ([]models.Tran
 	return transactions, nil
 }
 
-func (r *transactionRepository) FindZeroQuantityProducts() (int64, error) {
-	var count int64
-
-	if err := r.db.Model(&models.Transaction{}).
-		Where("quantity = 0").
-		Count(&count).Error; err != nil {
-		return 0, err
-	}
-
-	return count, nil
-}

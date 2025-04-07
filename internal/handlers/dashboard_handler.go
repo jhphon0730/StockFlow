@@ -40,7 +40,7 @@ func (d *dashboardHandler) GetDashboard(c *gin.Context) {
 		return
 	}
 
-	status, zero_quantity_count, err := d.dashboardService.GetZeroQuantityProducts()
+	status, zero_quantity_count, err := d.dashboardService.GetZeroQuantityInventory()
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
 		return

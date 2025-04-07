@@ -12,7 +12,7 @@ type DashboardService interface {
 	GetInventoryCount() (int, int64, float64, error)
 	GetWarehouseCount() (int, int64, float64, error)
 	GetRecentTransactions(limit int) (int, []models.Transaction, error)
-	GetZeroQuantityProducts() (int, int64, error)
+	GetZeroQuantityInventory() (int, int64, error)
 }
 
 type dashboardService struct {
@@ -68,8 +68,8 @@ func (s *dashboardService) GetRecentTransactions(limit int) (int, []models.Trans
 	return http.StatusOK, transactions, nil
 }
 
-func (s *dashboardService) GetZeroQuantityProducts() (int, int64, error) {
-	count, err := s.transactionRepository.FindZeroQuantityProducts()
+func (s *dashboardService) GetZeroQuantityInventory() (int, int64, error) {
+	count, err := s.inventoryRepository.GetZeroQuantityInventory()
 	if err != nil {
 		return http.StatusInternalServerError, 0, err
 	}

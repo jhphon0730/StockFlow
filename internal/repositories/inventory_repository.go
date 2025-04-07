@@ -15,6 +15,7 @@ type InventoryRepository interface {
 	Delete(id uint) error
 	UpdateQuantity(id uint, quantity int, transaction_type string) error
 	GetCountWithComparison() (int64, float64, error)
+	GetZeroQuantityInventory() (int64, error)
 }
 
 type inventoryRepository struct {
@@ -148,4 +149,16 @@ func (r *inventoryRepository) GetCountWithComparison() (int64, float64, error) {
 	}
 
 	return totalCount, percentageChange, nil
+}
+
+func (r *inventoryRepository) GetZeroQuantityInventory() (int64, error) {
+	var count int64
+
+	if err := r.db.Model(&models.Inventory{}).
+		Where("quantity = 0").
+		Count(&count).Error; err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }
