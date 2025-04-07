@@ -11,9 +11,17 @@ export const RoomStatus = () => {
 	const [rooms, setRooms] = useState<WebSocketInformation[] | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 
-	useEffect(() => {
-		getRoomInfoHandler();
-	}, []);
+  useEffect(() => {
+    getRoomInfoHandler()
+
+    const intervalId = setInterval(() => {
+      getRoomInfoHandler()
+    }, 5000)
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [])
 
 	const getRoomInfoHandler = async() => {
 		const res = await GetRoomInfo();
