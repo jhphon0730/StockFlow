@@ -24,13 +24,14 @@ export const RoomStatus = () => {
   }, [])
 
 	const getRoomInfoHandler = async() => {
+		setIsLoading(() => true)
 		const res = await GetRoomInfo();
 		if (res.error) {
 			return
 		}
 
 		setRooms(res.data);
-		setIsLoading(false);
+		setIsLoading(() => false)
 
 		return
 	}

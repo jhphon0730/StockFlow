@@ -40,6 +40,12 @@ func (d *dashboardHandler) GetDashboard(c *gin.Context) {
 		return
 	}
 
+	status, zero_quantity_count, err := d.dashboardService.GetZeroQuantityProducts()
+	if err != nil {
+		utils.JSONResponse(c, status, nil, err)
+		return
+	}
+
 	status, recent_transactions, err := d.dashboardService.GetRecentTransactions(5)
 	if err != nil {
 		utils.JSONResponse(c, status, nil, err)
@@ -58,6 +64,9 @@ func (d *dashboardHandler) GetDashboard(c *gin.Context) {
 		"inventory": gin.H {
 			"count":       inventory_count,
 			"comparison":  inventory_comparison,
+		},
+		"zero_quantity": gin.H {
+			"count":       zero_quantity_count,
 		},
 		"recent_transactions": recent_transactions,
 	}
