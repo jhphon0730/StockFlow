@@ -20,14 +20,17 @@ import type { Warehouse as WarehouseType } from "@/types/warehouse"
 import { GetAllWarehouses } from "@/lib/api/warehouse"
 
 const Warehouses = () => {
+	// 검색 된 창고 데이터 목록
   const [warehouses, setWarehouses] = useState<WarehouseType[] | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+	// 검색 필터 쿼리 파라미터
   const [searchName, setSearchName] = useState("")
   const [searchLocation, setSearchLocation] = useState("")
+	// 로딩 상태
+  const [isLoading, setIsLoading] = useState(true)
   const [isSearching, setIsSearching] = useState(false)
+	// 모달 상태
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
-  
-  // Temporary search values for the modal
+	// 모달에서 입력하는 데이터
   const [tempSearchName, setTempSearchName] = useState("")
   const [tempSearchLocation, setTempSearchLocation] = useState("")
   
