@@ -14,3 +14,8 @@ export interface Warehouse {
 export interface WarehouseResponse {
 	warehouses: Warehouse[];
 }
+
+export interface warehouseSearchParams {
+	name?: string
+	location?: string
+}
