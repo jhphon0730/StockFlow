@@ -31,7 +31,7 @@ func NewWarehouseRepository(db *gorm.DB) WarehouseRepository {
 func (r *warehouseRepository) FindByID(id uint) (*models.Warehouse, error) {
 	var warehouse models.Warehouse
 
-	if err := r.db.Preload("Inventories").First(&warehouse, id).Error; err != nil {
+	if err := r.db.Preload("Inventories").Preload("Inventories.Product").First(&warehouse, id).Error; err != nil {
 		return nil, err
 	}
 

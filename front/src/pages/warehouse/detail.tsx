@@ -152,14 +152,14 @@ const WarehouseDetail = () => {
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link to={`/warehouses/${warehouse.ID}/edit`}>
-              <Edit className="h-4 w-4 mr-2" />
+              <Edit className="h-4 w-4" />
               편집
             </Link>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive">
-                <Trash2 className="h-4 w-4 mr-2" />
+                <Trash2 className="h-4 w-4" />
                 삭제
               </Button>
             </AlertDialogTrigger>
@@ -236,7 +236,7 @@ const WarehouseDetail = () => {
               </div>
               <Button asChild>
                 <Link to={`/inventory/create?warehouse_id=${warehouse.ID}`}>
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4" />
                   재고 추가
                 </Link>
               </Button>
@@ -249,23 +249,15 @@ const WarehouseDetail = () => {
                       <TableRow>
                         <TableHead>제품명</TableHead>
                         <TableHead>제품 코드</TableHead>
-                        <TableHead>카테고리</TableHead>
                         <TableHead className="text-right">수량</TableHead>
                         <TableHead className="text-right">관리</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {warehouse.Inventories.map((inventory) => (
+                      {warehouse.Inventories && warehouse.Inventories.map((inventory) => (
                         <TableRow key={inventory.ID}>
                           <TableCell className="font-medium">{inventory.Product.name}</TableCell>
-                          <TableCell>{inventory.Product.code || "-"}</TableCell>
-                          <TableCell>
-                            {inventory.Product.category ? (
-                              <Badge variant="outline">{inventory.Product.category}</Badge>
-                            ) : (
-                              "-"
-                            )}
-                          </TableCell>
+                          <TableCell>{inventory.Product.sku || "-"}</TableCell>
                           <TableCell className="text-right">{inventory.quantity}</TableCell>
                           <TableCell className="text-right">
                             <Button variant="ghost" size="sm" asChild>
@@ -286,7 +278,7 @@ const WarehouseDetail = () => {
                   </p>
                   <Button asChild>
                     <Link to={`/inventory/create?warehouse_id=${warehouse.ID}`}>
-                      <Plus className="h-4 w-4 mr-2" />
+                      <Plus className="h-4 w-4" />
                       재고 추가
                     </Link>
                   </Button>
@@ -326,7 +318,7 @@ const WarehouseDetail = () => {
             <CardFooter>
               <Button variant="outline" asChild>
                 <Link to={`/warehouses/${warehouse.ID}/edit`}>
-                  <Edit className="h-4 w-4 mr-2" />
+                  <Edit className="h-4 w-4" />
                   정보 수정
                 </Link>
               </Button>
