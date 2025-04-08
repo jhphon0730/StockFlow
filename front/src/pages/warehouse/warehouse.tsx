@@ -100,7 +100,7 @@ const Warehouses = () => {
     if (tempSearchLocation) params.set("location", tempSearchLocation)
     
     // Update URL with search parameters
-    navigate(`/warehouses?${params.toString()}`)
+    navigate(`/warehouse?${params.toString()}`)
     
     // Fetch warehouses with search parameters
     getWarehousesHandler({
@@ -117,7 +117,7 @@ const Warehouses = () => {
     setSearchLocation("")
     setTempSearchName("")
     setTempSearchLocation("")
-    navigate("/warehouses")
+    navigate("/warehouse")
     getWarehousesHandler()
     setIsSearchModalOpen(false)
   }
@@ -242,7 +242,7 @@ const Warehouses = () => {
                   </div>
                   <div className="mt-4 flex justify-end">
                     <Button variant="outline" size="sm" asChild>
-                      <Link to={`/warehouses/${warehouse.ID}`}>상세 정보</Link>
+                      <Link to={`/warehouse/${warehouse.ID}`}>상세 정보</Link>
                     </Button>
                   </div>
                 </div>

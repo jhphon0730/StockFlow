@@ -27,12 +27,12 @@ const navItems: NavItem[] = [
   {
     icon: <Truck className="h-4 w-4" />,
     label: "창고",
-    path: "/warehouses",
+    path: "/warehouse",
   },
   {
     icon: <Package className="h-4 w-4" />,
     label: "제품",
-    path: "/products",
+    path: "/product",
   },
   {
     icon: <Box className="h-4 w-4" />,
@@ -42,17 +42,17 @@ const navItems: NavItem[] = [
   {
     icon: <BarChart3 className="h-4 w-4" />,
     label: "보고서",
-    path: "/reports",
+    path: "/report",
   },
   {
     icon: <Users className="h-4 w-4" />,
     label: "사용자",
-    path: "/users",
+    path: "/auth",
   },
   {
     icon: <Settings className="h-4 w-4" />,
     label: "설정",
-    path: "/settings",
+    path: "/setting",
   },
 ]
 

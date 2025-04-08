@@ -19,9 +19,15 @@ const App = () => {
 
 				<Route path="/" element={<Layout />}>
 					<Route index element={<Dashboard />} />
-					<Route path="/warehouses" element={<Warehouse />} />
-					<Route path="*" element={<NotFound />} />
+					<Route path="warehouse">
+						<Route index element={<Warehouse />} />
+						<Route path=":id" element={<Warehouse />} />
+						<Route path=":id/edit" element={<Warehouse />} />
+					</Route>
 				</Route>
+
+				{/* Catch all unmatched routes */}
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</Router>
   )
