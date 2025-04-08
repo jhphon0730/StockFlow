@@ -1,5 +1,5 @@
 import { FetchWithAuth, Response } from "@/lib/api";
-import { WarehouseResponse, warehouseSearchParams } from "@/types/warehouse";
+import { WarehouseResponse, warehouseSearchParams, CreateWarehouseParams, Warehouse } from "@/types/warehouse";
 
 export const GetAllWarehouses = async (params?: warehouseSearchParams): Promise<Response<WarehouseResponse>> => {
   let url = "/warehouses"
@@ -24,4 +24,16 @@ export const GetAllWarehouses = async (params?: warehouseSearchParams): Promise<
     data: res.data,
     error: res.error,
   }
+}
+
+export const CreateWarehouse = async (params: CreateWarehouseParams): Promise<Response<{warehouse: Warehouse}>> => {
+	const res = await FetchWithAuth("/warehouses", {
+		method: "POST",
+		body: JSON.stringify(params),
+	})
+
+	return {
+		data: res.data,
+		error: res.error,
+	}
 }

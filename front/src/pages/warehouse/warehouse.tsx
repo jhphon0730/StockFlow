@@ -165,7 +165,10 @@ const Warehouses = () => {
         </div>
         
         <Button>
-          <Plus className="h-4 w-4" />새 창고 추가
+          <Plus className="h-4 w-4" />
+					<Link to="/warehouse/create">
+						새 창고 추가
+					</Link>
         </Button>
       </div>
       
@@ -268,7 +271,10 @@ const Warehouses = () => {
             </Button>
           ) : (
             <Button>
-              <Plus className="h-4 w-4" />새 창고 추가
+              <Plus className="h-4 w-4" />
+							<Link to="/warehouse/create">
+								새 창고 추가
+							</Link>
             </Button>
           )}
         </div>

@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found"
 import SignIn from "@/pages/auth/signin"
 import SignUp from "@/pages/auth/signup"
 import Warehouse from "@/pages/warehouse/warehouse"
+import CreateWarehouse from "@/pages/warehouse/create"
 
 
 const App = () => {
@@ -21,8 +22,7 @@ const App = () => {
 					<Route index element={<Dashboard />} />
 					<Route path="warehouse">
 						<Route index element={<Warehouse />} />
-						<Route path=":id" element={<Warehouse />} />
-						<Route path=":id/edit" element={<Warehouse />} />
+						<Route path="create" element={<CreateWarehouse />} />
 					</Route>
 				</Route>
 

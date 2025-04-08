@@ -19,3 +19,8 @@ export interface warehouseSearchParams {
 	name?: string
 	location?: string
 }
+
+export interface CreateWarehouseParams {
+	name: string
+	location: string
+}
