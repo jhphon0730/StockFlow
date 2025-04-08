@@ -37,3 +37,25 @@ export const CreateWarehouse = async (params: CreateWarehouseParams): Promise<Re
 		error: res.error,
 	}
 }
+
+export const GetWarehouseById = async (id: number): Promise<Response<{warehouse: Warehouse}>> => {
+	const res = await FetchWithAuth(`/warehouses/${id}`, {
+		method: "GET",
+	})
+
+	return {
+		data: res.data,
+		error: res.error,
+	}
+}
+
+export const DeleteWarehouse = async (id: number): Promise<Response<null>> => {
+	const res = await FetchWithAuth(`/warehouses/${id}`, {
+		method: "DELETE",
+	})
+
+	return {
+		data: res.data,
+		error: res.error,
+	}
+}
