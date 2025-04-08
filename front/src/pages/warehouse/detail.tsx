@@ -6,7 +6,6 @@ import { ArrowLeft, WarehouseIcon, MapPin, Calendar, Package, Edit, Trash2, Plus
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
 import { Loading, LoadingCard } from "@/components/ui/loading"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
@@ -47,7 +46,7 @@ const WarehouseDetail = () => {
           title: "창고 정보 조회 실패",
           text: response.error,
         })
-        navigate("/warehouses")
+        navigate("/warehouse")
         return
       }
       setWarehouse(response.data.warehouse)
@@ -58,7 +57,7 @@ const WarehouseDetail = () => {
         title: "창고 정보 조회 실패",
         text: "서버와의 통신 중 오류가 발생했습니다.",
       })
-      navigate("/warehouses")
+      navigate("/warehouse")
     } finally {
       setIsLoading(false)
     }
@@ -86,7 +85,7 @@ const WarehouseDetail = () => {
         text: "창고가 성공적으로 삭제되었습니다.",
         timer: 1500,
       }).then(() => {
-        navigate("/warehouses")
+        navigate("/warehouse")
       })
     } catch (error) {
       console.error("창고 삭제 중 오류 발생:", error)
@@ -122,9 +121,11 @@ const WarehouseDetail = () => {
         <WarehouseIcon className="h-12 w-12 text-muted-foreground mb-4" />
         <h3 className="text-lg font-medium mb-2">창고 정보를 찾을 수 없습니다</h3>
         <p className="text-sm text-muted-foreground mb-4 text-center">요청하신 창고 정보를 찾을 수 없습니다.</p>
-        <Button onClick={() => navigate("/warehouses")}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          창고 목록으로 돌아가기
+        <Button>
+					<Link to="/warehouse">
+						<ArrowLeft className="mr-2 h-4 w-4" />
+						창고 목록으로 돌아가기
+					</Link>
         </Button>
       </div>
     )
@@ -138,8 +139,10 @@ const WarehouseDetail = () => {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/warehouses")}>
-            <ArrowLeft className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className="cursor-pointer">
+						<Link to="/warehouse">
+							<ArrowLeft className="h-5 w-5" />
+						</Link>
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{warehouse.name}</h1>
@@ -151,14 +154,14 @@ const WarehouseDetail = () => {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
-            <Link to={`/warehouses/${warehouse.ID}/edit`}>
+            <Link to={`/warehouse/${warehouse.ID}/edit`}>
               <Edit className="h-4 w-4" />
               편집
             </Link>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">
+              <Button variant="destructive" className="cursor-pointer">
                 <Trash2 className="h-4 w-4" />
                 삭제
               </Button>
@@ -176,7 +179,7 @@ const WarehouseDetail = () => {
                 <AlertDialogAction
                   onClick={handleDeleteWarehouse}
                   disabled={isDeleting}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-white"
                 >
                   {isDeleting ? <Loading size="sm" text="삭제 중..." /> : "삭제"}
                 </AlertDialogAction>
@@ -317,7 +320,7 @@ const WarehouseDetail = () => {
             </CardContent>
             <CardFooter>
               <Button variant="outline" asChild>
-                <Link to={`/warehouses/${warehouse.ID}/edit`}>
+                <Link to={`/warehouse/${warehouse.ID}/edit`}>
                   <Edit className="h-4 w-4" />
                   정보 수정
                 </Link>
