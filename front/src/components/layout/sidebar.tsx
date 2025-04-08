@@ -25,14 +25,14 @@ const navItems: NavItem[] = [
     path: "/",
   },
   {
-    icon: <Package className="h-4 w-4" />,
-    label: "제품",
-    path: "/products",
-  },
-  {
     icon: <Truck className="h-4 w-4" />,
     label: "창고",
     path: "/warehouses",
+  },
+  {
+    icon: <Package className="h-4 w-4" />,
+    label: "제품",
+    path: "/products",
   },
   {
     icon: <Box className="h-4 w-4" />,
