@@ -227,8 +227,8 @@ const WarehouseDetail = () => {
 
       <Tabs defaultValue="inventory" className="w-full">
         <TabsList>
-          <TabsTrigger value="inventory">재고 목록</TabsTrigger>
-          <TabsTrigger value="info">창고 정보</TabsTrigger>
+          <TabsTrigger value="inventory" className="cursor-pointer">재고 목록</TabsTrigger>
+          <TabsTrigger value="info" className="cursor-pointer">창고 정보</TabsTrigger>
         </TabsList>
         <TabsContent value="inventory" className="mt-4">
           <Card>
@@ -297,10 +297,6 @@ const WarehouseDetail = () => {
               <CardDescription>창고의 상세 정보입니다.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-1">창고 ID</h3>
-                <p className="text-sm text-muted-foreground">{warehouse.ID}</p>
-              </div>
               <div>
                 <h3 className="text-sm font-medium mb-1">창고 이름</h3>
                 <p className="text-sm text-muted-foreground">{warehouse.name}</p>
