@@ -1,5 +1,5 @@
 import { FetchWithAuth, Response } from "@/lib/api";
-import { productSearchParams, ProductResponse } from "@/types/product";
+import { Product, productSearchParams, ProductResponse, CreateProductParams } from "@/types/product";
 
 export const GetAllProducts = async (params?: productSearchParams): Promise<Response<ProductResponse>> => {
   let url = "/products"
@@ -24,4 +24,16 @@ export const GetAllProducts = async (params?: productSearchParams): Promise<Resp
     data: res.data,
     error: res.error,
   }
+}
+
+export const CreateProduct = async (params: CreateProductParams): Promise<Response<{product: Product}>> => {
+	const res = await FetchWithAuth("/products", {
+		method: "POST",
+		body: JSON.stringify(params),
+	})
+
+	return {
+		data: res.data,
+		error: res.error,
+	}
 }

@@ -149,7 +149,7 @@ const Products = () => {
 
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={openSearchModal}>
+          <Button variant="outline" onClick={openSearchModal} className="cursor-pointer">
             <Filter className="h-4 w-4" />
             검색 필터
           </Button>

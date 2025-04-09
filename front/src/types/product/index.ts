@@ -20,3 +20,9 @@ export interface productSearchParams {
 export interface ProductResponse {
 	products: Product[];
 }
+
+export interface CreateProductParams {
+	name: string;
+	description: string;
+	sku: string;
+}
