@@ -8,7 +8,7 @@ export const GetAllProducts = async (params?: productSearchParams): Promise<Resp
   if (params) {
     const queryParams = new URLSearchParams()
     if (params.name) queryParams.append("name", params.name)
-    if (params.sku) queryParams.append("location", params.sku)
+    if (params.sku) queryParams.append("sku", params.sku)
 
     const queryString = queryParams.toString()
     if (queryString) {
