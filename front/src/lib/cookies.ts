@@ -1,7 +1,11 @@
 import Cookies from "js-cookie";
 
-export const setCookie = (name: string, value: string) => {
-  Cookies.set(name, value, { expires: 1 / 24, path: "/" }); // 1시간(1/24일)
+export const setCookie = (name: string, value: string, hour?: string) => {
+	if (hour) {
+		Cookies.set(name, value, { expires: Number(hour) / 24, path: "/" }); // // n / 24 = 1 hour
+		return;
+	}
+	Cookies.set(name, value, { expires: 1 / 24, path: "/" }); // default 1 hour
 };
 
 export const getCookie = (name: string): string | undefined => {
