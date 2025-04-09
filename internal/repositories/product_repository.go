@@ -51,7 +51,9 @@ func (r *productRepository) FindAll(search_filter map[string]interface{}) ([]mod
 func (r *productRepository) FindByID(id uint) (*models.Product, error) {
 	var product models.Product
 
-	if err := r.db.Preload("Inventories").First(&product, id).Error; err != nil {
+	// if err := r.db.Preload("Inventories").Preload("Inventories.Product").First(&warehouse, id).Error; err != nil {
+	// if err := r.db.Preload("Inventories").First(&product, id).Error; err != nil {
+	if err := r.db.Preload("Inventories").Preload("Inventories.Warehouse").Where("id = ?", id).First(&product).Error; err != nil {
 		return nil, err
 	}
 

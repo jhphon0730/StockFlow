@@ -175,11 +175,11 @@ const ProductDetail = () => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>취소</AlertDialogCancel>
+                <AlertDialogCancel className="cursor-pointer">취소</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDeleteProduct}
                   disabled={isDeleting}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-white"
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-white cursor-pointer"
                 >
                   {isDeleting ? <Loading size="sm" text="삭제 중..." /> : "삭제"}
                 </AlertDialogAction>
