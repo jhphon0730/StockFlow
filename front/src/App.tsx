@@ -12,6 +12,7 @@ import CreateWarehouse from "@/pages/warehouse/create"
 import DetailWarehouse from "@/pages/warehouse/detail"
 import Product from "@/pages/product/product"
 import CreateProduct from "@/pages/product/create"
+import DetailProduct from "@/pages/product/detail"
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
 					<Route path="product">
 						<Route index element={<Product />} />
 						<Route path="create" element={<CreateProduct />} />
+						<Route path=":id" element={<DetailProduct />} />
 					</Route>
 				</Route>
 

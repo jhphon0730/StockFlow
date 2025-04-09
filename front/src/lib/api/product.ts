@@ -37,3 +37,26 @@ export const CreateProduct = async (params: CreateProductParams): Promise<Respon
 		error: res.error,
 	}
 }
+
+// GetProductById, DeleteProduct }
+export const GetProductById = async (id: number): Promise<Response<{product: Product}>> => {
+	const res = await FetchWithAuth(`/products/${id}`, {
+		method: "GET",
+	})
+
+	return {
+		data: res.data,
+		error: res.error,
+	}
+}
+
+export const DeleteProduct = async (id: number): Promise<Response<null>> => {
+	const res = await FetchWithAuth(`/products/${id}`, {
+		method: "DELETE",
+	})
+
+	return {
+		data: res.data,
+		error: res.error,
+	}
+}
