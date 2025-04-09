@@ -54,10 +54,15 @@ const ProductCreate = () => {
       const response = await CreateProduct({ name, description, sku })
 
       if (response.error) {
+				let errorMessage = "제품 생성 중 오류가 발생했습니다."
+				if (response.error.includes("duplicate") && response.error.includes("sku")) {
+					errorMessage = "이미 사용 중인 SKU입니다."
+				}
+
         Swal.fire({
           icon: "error",
           title: "제품 생성 실패",
-          text: response.error,
+          text: errorMessage,
         })
         setIsSubmitting(false)
         return
