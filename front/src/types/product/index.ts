@@ -9,5 +9,14 @@ export interface Product {
 	UpdatedAt: string;
 	DeletedAt: string | null;
 
-	Inventories: Inventory[];
+	Inventories: Inventory[] | null;
+}
+
+export interface productSearchParams {
+	name?: string;
+	sku?: string;
+}
+
+export interface ProductResponse {
+	products: Product[];
 }

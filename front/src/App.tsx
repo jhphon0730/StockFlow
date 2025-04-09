@@ -10,6 +10,7 @@ import SignUp from "@/pages/auth/signup"
 import Warehouse from "@/pages/warehouse/warehouse"
 import CreateWarehouse from "@/pages/warehouse/create"
 import DetailWarehouse from "@/pages/warehouse/detail"
+import Product from "@/pages/product/product"
 
 const App = () => {
   return (
@@ -24,6 +25,9 @@ const App = () => {
 						<Route index element={<Warehouse />} />
 						<Route path="create" element={<CreateWarehouse />} />
 						<Route path=":id" element={<DetailWarehouse />} />
+					</Route>
+					<Route path="product">
+						<Route index element={<Product />} />
 					</Route>
 				</Route>
 

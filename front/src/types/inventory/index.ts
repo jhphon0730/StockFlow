@@ -1,5 +1,6 @@
 import { Transaction } from "@/types/transaction";
 import { Product } from "@/types/product";
+import { Warehouse } from "@/types/warehouse";
 
 export interface Inventory {
 	ID: number;
@@ -10,6 +11,7 @@ export interface Inventory {
 	UpdatedAt: string;
 	DeletedAt: string | null;
 
-	Product: Product;
-	Transactions: Transaction[]
+	Product?: Product;
+	Warehouse?: Warehouse;
+	Transactions: Transaction[] | null;
 }
