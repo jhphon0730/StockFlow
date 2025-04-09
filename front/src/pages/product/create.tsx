@@ -151,12 +151,12 @@ const ProductCreate = () => {
             </div>
           </CardContent>
           <CardFooter className="flex justify-between mt-4">
-            <Button type="button" variant="outline">
+            <Button type="button" variant="outline" className="cursor-pointer">
 							<Link to="/product">
 								취소
 							</Link>
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="cursor-pointer">
               {isSubmitting ? <Loading size="sm" text="저장 중..." /> : "저장"}
             </Button>
           </CardFooter>
