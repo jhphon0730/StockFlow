@@ -97,7 +97,7 @@ const Products = () => {
     if (tempSearchSku) params.set("sku", tempSearchSku)
 
     // Update URL with search parameters
-    navigate(`/products?${params.toString()}`)
+    navigate(`/product?${params.toString()}`)
 
     // Fetch products with search parameters
     getProductsHandler({
@@ -114,7 +114,7 @@ const Products = () => {
     setSearchSku("")
     setTempSearchName("")
     setTempSearchSku("")
-    navigate("/products")
+    navigate("/product")
     getProductsHandler()
     setIsSearchModalOpen(false)
   }
@@ -168,7 +168,7 @@ const Products = () => {
         </div>
 
         <Button asChild>
-          <Link to="/products/create">
+          <Link to="/product/create">
             <Plus className="h-4 w-4" />새 제품 추가
           </Link>
         </Button>
@@ -262,7 +262,7 @@ const Products = () => {
                     </div>
                     <div className="mt-4 flex justify-end">
                       <Button variant="outline" size="sm" asChild>
-                        <Link to={`/products/${product.ID}`}>상세 정보</Link>
+                        <Link to={`/product/${product.ID}`}>상세 정보</Link>
                       </Button>
                     </div>
                   </div>
@@ -289,7 +289,7 @@ const Products = () => {
             </Button>
           ) : (
             <Button asChild>
-              <Link to="/products/create">
+              <Link to="/product/create">
                 <Plus className="h-4 w-4" />새 제품 추가
               </Link>
             </Button>
