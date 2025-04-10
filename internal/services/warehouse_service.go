@@ -72,9 +72,7 @@ func (w *warehouseService) Create(warehouse *models.Warehouse, ctx context.Conte
 		return http.StatusInternalServerError, nil, err
 	}
 
-	if warehouseRedis := w.getWarehouseRedis(ctx); warehouseRedis != nil {
-		_ = warehouseRedis.DeleteWarehouseCache(ctx)
-	}
+	redis.RestoreRedisData(ctx)
 
 	return http.StatusCreated, createdWarehouse, nil
 }
@@ -85,9 +83,7 @@ func (w *warehouseService) Delete(id uint, ctx context.Context) (int, error) {
 		return http.StatusInternalServerError, err
 	}
 
-	if warehouseRedis := w.getWarehouseRedis(ctx); warehouseRedis != nil {
-		_ = warehouseRedis.DeleteWarehouseCache(ctx)
-	}
+	redis.RestoreRedisData(ctx)
 
 	return http.StatusOK, nil
 }

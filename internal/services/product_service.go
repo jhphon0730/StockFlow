@@ -72,9 +72,7 @@ func (p *productService) Create(product *models.Product, ctx context.Context) (i
 		return http.StatusInternalServerError, nil, err
 	}
 
-	if productRedis := p.getProductRedis(ctx); productRedis != nil {
-		_ = productRedis.DeleteProductCache(ctx)
-	}
+	redis.RestoreRedisData(ctx)
 
 	return http.StatusCreated, createdProduct, nil
 }
@@ -85,9 +83,7 @@ func (p *productService) Delete(id uint, ctx context.Context) (int, error) {
 		return http.StatusInternalServerError, err
 	}
 
-	if productRedis := p.getProductRedis(ctx); productRedis != nil {
-		_ = productRedis.DeleteProductCache(ctx)
-	}
+	redis.RestoreRedisData(ctx)
 
 	return http.StatusOK, nil
 }

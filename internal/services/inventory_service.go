@@ -72,9 +72,7 @@ func (i *inventoryService) Create(inventory *models.Inventory, ctx context.Conte
 		return http.StatusInternalServerError, nil, err
 	}
 
-	if inventoryRedis := i.getInventoryRedis(ctx); inventoryRedis != nil {
-		_ = inventoryRedis.DeleteInventoryCache(ctx)
-	}
+	redis.RestoreRedisData(ctx)
 
 	return http.StatusCreated, createdInventory, nil
 }
@@ -85,9 +83,7 @@ func (i *inventoryService) Delete(id uint, ctx context.Context) (int, error) {
 		return http.StatusInternalServerError, err
 	}
 
-	if inventoryRedis := i.getInventoryRedis(ctx); inventoryRedis != nil {
-		_ = inventoryRedis.DeleteInventoryCache(ctx)
-	}
+	redis.RestoreRedisData(ctx)
 
 	return http.StatusOK, nil
 }

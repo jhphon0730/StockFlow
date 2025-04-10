@@ -78,9 +78,7 @@ func (t *transactionService) Create(transaction *models.Transaction, ctx context
 		return http.StatusInternalServerError, nil, err
 	}
 
-	if transactionRedis := t.getTransactionRedis(ctx); transactionRedis != nil {
-		_ = transactionRedis.DeleteTransactionCache(ctx)
-	}
+	redis.RestoreRedisData(ctx)
 
 	return http.StatusCreated, createdTransaction, nil
 }
@@ -91,9 +89,7 @@ func (t *transactionService) Delete(id uint, ctx context.Context) (int, error) {
 		return http.StatusInternalServerError, err
 	}
 
-	if transactionRedis := t.getTransactionRedis(ctx); transactionRedis != nil {
-		_ = transactionRedis.DeleteTransactionCache(ctx)
-	}
+	redis.RestoreRedisData(ctx)
 
 	return http.StatusOK, nil
 }
