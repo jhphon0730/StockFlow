@@ -59,7 +59,12 @@ func (s *Server) Init(PORT string) {
 }
 
 func (s *Server) Run() error {
+	/* http://192.168.0.5:8080/
 	s.router.Use(static.Serve("/", static.LocalFile("./front/dist", true)))
+	s.router.NoRoute(func(c *gin.Context) {
+		c.File("./front/dist/index.html")
+	}) 
+	*/
 
 	api := s.router.Group("/api")
 	{
