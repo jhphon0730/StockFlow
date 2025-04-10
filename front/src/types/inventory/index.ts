@@ -11,8 +11,8 @@ export interface Inventory {
 	UpdatedAt: string;
 	DeletedAt: string | null;
 
-	Product?: Product;
-	Warehouse?: Warehouse;
+	Product: Product;
+	Warehouse: Warehouse;
 	Transactions: Transaction[] | null;
 }
 
