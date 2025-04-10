@@ -259,8 +259,8 @@ const WarehouseDetail = () => {
                     <TableBody>
                       {warehouse.Inventories && warehouse.Inventories.map((inventory) => (
                         <TableRow key={inventory.ID} className="text-center">
-                          <TableCell>{inventory.Product?.name}</TableCell>
-                          <TableCell>{inventory.Product?.sku || "-"}</TableCell>
+                          <TableCell>{inventory.Product.name}</TableCell>
+                          <TableCell>{inventory.Product.sku || "-"}</TableCell>
                           <TableCell>{inventory.quantity}</TableCell>
                           <TableCell>
                             <Button variant="ghost" size="sm" asChild>
