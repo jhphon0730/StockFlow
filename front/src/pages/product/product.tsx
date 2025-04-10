@@ -141,7 +141,7 @@ const Products = () => {
   }
 
   return (
-    <main className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <h1 id="products-title" className="text-3xl font-bold tracking-tight">
           제품
@@ -343,7 +343,7 @@ const Products = () => {
         <p>총 {products?.length || 0}개의 제품이 있습니다.</p>
         <time dateTime={new Date().toISOString()}>마지막 업데이트: {new Date().toLocaleString()}</time>
       </footer>
-    </main>
+    </div>
   )
 }
 

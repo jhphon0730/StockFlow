@@ -140,7 +140,7 @@ const WarehouseDetail = () => {
   const totalItems = hasInventory ? warehouse.Inventories?.reduce((sum, inv) => sum + inv.quantity, 0) : 0
 
   return (
-    <main className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="cursor-pointer">
@@ -351,7 +351,7 @@ const WarehouseDetail = () => {
           </TabsContent>
         </Tabs>
       </section>
-    </main>
+    </div>
   )
 }
 

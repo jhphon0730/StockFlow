@@ -175,7 +175,7 @@ const Inventory = () => {
   }
 
   return (
-    <main className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <h1 id="inventory-title" className="text-3xl font-bold tracking-tight">
           재고 관리
@@ -392,7 +392,7 @@ const Inventory = () => {
         <p>총 {inventories?.length || 0}개의 재고가 있습니다.</p>
         <time dateTime={new Date().toISOString()}>마지막 업데이트: {new Date().toLocaleString()}</time>
       </footer>
-    </main>
+    </div>
   )
 }
 
