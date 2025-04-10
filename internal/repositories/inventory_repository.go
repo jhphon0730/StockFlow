@@ -41,7 +41,7 @@ func (r *inventoryRepository) FindAll(search_filter map[string]interface{}) ([]m
 		}
 	}
 
-	if err := query.Preload("Product").Find(&inventories).Error; err != nil {
+	if err := query.Preload("Product").Preload("Warehouse").Find(&inventories).Error; err != nil {
 		return nil, err
 	}
 

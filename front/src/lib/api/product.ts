@@ -1,7 +1,7 @@
 import { FetchWithAuth, Response } from "@/lib/api";
-import { Product, productSearchParams, ProductResponse, CreateProductParams } from "@/types/product";
+import { Product, productSearchParams, CreateProductParams } from "@/types/product";
 
-export const GetAllProducts = async (params?: productSearchParams): Promise<Response<ProductResponse>> => {
+export const GetAllProducts = async (params?: productSearchParams): Promise<Response<{ products: Product[] }>> => {
   let url = "/products"
 
   // Add query parameters if they exist

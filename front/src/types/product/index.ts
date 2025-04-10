@@ -17,10 +17,6 @@ export interface productSearchParams {
 	sku?: string;
 }
 
-export interface ProductResponse {
-	products: Product[];
-}
-
 export interface CreateProductParams {
 	name: string;
 	description: string;

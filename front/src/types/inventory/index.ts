@@ -15,3 +15,13 @@ export interface Inventory {
 	Warehouse?: Warehouse;
 	Transactions: Transaction[] | null;
 }
+
+export interface inventorySearchParams {
+	warehouse_id?: number;
+	product_id?: number;
+}
+
+export interface CreateProductParams {
+	warehouse_id: number;
+	product_id: number;
+}
