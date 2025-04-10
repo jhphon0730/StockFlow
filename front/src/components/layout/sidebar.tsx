@@ -111,7 +111,7 @@ export const Sidebar = ({user, sidebarOpen, setSidebarOpen}: SidebarProps) => {
 				</div>
 				<div className="flex flex-col gap-1 p-2">
 					{navItems.map((item) => (
-						<SidebarItem key={item.path} item={item} isActive={location.pathname === item.path} />
+						<SidebarItem key={item.path} item={item} isActive={location.pathname === item.path || location.pathname.includes(item.path) && item.path !== "/"} />
 					))}
 				</div>
 				{ user && <div className="mt-auto p-4 border-t">
