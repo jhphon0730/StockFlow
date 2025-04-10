@@ -15,6 +15,7 @@ import CreateProduct from "@/pages/product/create"
 import DetailProduct from "@/pages/product/detail"
 import Inventory from "@/pages/inventory/inventory"
 import CreateInventory from "@/pages/inventory/create"
+import DetailInventory from "@/pages/inventory/detail"
 
 const App = () => {
   return (
@@ -38,6 +39,7 @@ const App = () => {
 					<Route path="inventory">
 						<Route index element={<Inventory />} />
 						<Route path="create" element={<CreateInventory />} />
+						<Route path=":id" element={<DetailInventory />} />
 					</Route>
 				</Route>
 
