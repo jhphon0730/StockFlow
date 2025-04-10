@@ -240,7 +240,7 @@ const Warehouses = () => {
                 <article className="h-full">
                   <Card className="overflow-hidden transition-all hover:shadow-md h-full">
                     <CardHeader className="pb-2">
-                      <CardTitle as="h2">{warehouse.name}</CardTitle>
+                      <CardTitle>{warehouse.name}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <dl className="grid gap-2">

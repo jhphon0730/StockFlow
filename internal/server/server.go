@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/contrib/static"
 	"gorm.io/gorm"
 )
 
@@ -58,6 +59,8 @@ func (s *Server) Init(PORT string) {
 }
 
 func (s *Server) Run() error {
+	s.router.Use(static.Serve("/", static.LocalFile("./front/dist", true)))
+
 	api := s.router.Group("/api")
 	{
 		// ping

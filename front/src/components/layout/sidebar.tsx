@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { Link } from "react-router-dom"
-import { BarChart3, Box, Home, LogOut, Package, Settings, Truck, Users, X } from "lucide-react"
+import { BarChart3, Box, Home, LogOut, Package, Settings, Truck, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
