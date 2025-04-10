@@ -16,6 +16,8 @@ import DetailProduct from "@/pages/product/detail"
 import Inventory from "@/pages/inventory/inventory"
 import CreateInventory from "@/pages/inventory/create"
 import DetailInventory from "@/pages/inventory/detail"
+import Transaction from "@/pages/transaction/transaction"
+import CreateTransaction from "@/pages/transaction/create"
 
 const App = () => {
   return (
@@ -40,6 +42,10 @@ const App = () => {
 						<Route index element={<Inventory />} />
 						<Route path="create" element={<CreateInventory />} />
 						<Route path=":id" element={<DetailInventory />} />
+					</Route>
+					<Route path="transaction">
+						<Route index element={<Transaction />} />
+						<Route path="create" element={<CreateTransaction />} />
 					</Route>
 				</Route>
 

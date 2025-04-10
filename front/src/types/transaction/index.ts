@@ -1,14 +1,28 @@
 import { Inventory } from "@/types/inventory";
 
-export interface Transaction {
-	ID: number;
-	inventory_id: number;
-	type: "in" | "out" | "adjust";
-	quantity: number;
-	timestamp: string;
-	CreatedAt: string;
-	UpdatedAt: string;
-	DeletedAt: string | null;
+export type TransactionType = "IN" | "OUT" | "ADJUST"
 
-	Inventory: Inventory;
+export interface Transaction {
+  ID: number
+  inventory_id: number
+  type: TransactionType
+  quantity: number
+  note?: string
+  timestamp: string
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+
+  Inventory?: Inventory
+}
+
+export interface transactionSearchParams {
+	inventory_id?: number
+	type?: TransactionType
+}
+
+export interface CreateTransactionParams {
+	inventory_id: number
+	type: TransactionType
+	quantity: number
 }
