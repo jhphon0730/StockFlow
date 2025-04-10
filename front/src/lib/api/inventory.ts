@@ -25,3 +25,15 @@ export const GetAllInventories = async (params?: inventorySearchParams): Promise
 		error: res.error,
 	}
 }
+
+export const CreateInventory = async (params: CreateProductParams): Promise<Response<{ inventory: Inventory }>> => {
+	const res = await FetchWithAuth("/inventories", {
+		method: "POST",
+		body: JSON.stringify(params),
+	})
+
+	return {
+		data: res.data,
+		error: null,
+	}
+}
