@@ -254,20 +254,20 @@ const ProductDetail = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>창고명</TableHead>
-                        <TableHead>위치</TableHead>
-                        <TableHead className="text-right">수량</TableHead>
-                        <TableHead className="text-right">관리</TableHead>
+                        <TableHead className="text-center">창고명</TableHead>
+                        <TableHead className="text-center">위치</TableHead>
+                        <TableHead className="text-center">수량</TableHead>
+                        <TableHead className="text-center">관리</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {product.Inventories &&
                         product.Inventories.map((inventory) => (
-                          <TableRow key={inventory.ID}>
-                            <TableCell className="font-medium">{inventory.Warehouse?.name || "-"}</TableCell>
+                          <TableRow key={inventory.ID} className="text-center">
+                            <TableCell>{inventory.Warehouse?.name || "-"}</TableCell>
                             <TableCell>{inventory.Warehouse?.location || "-"}</TableCell>
-                            <TableCell className="text-right">{inventory.quantity}</TableCell>
-                            <TableCell className="text-right">
+                            <TableCell>{inventory.quantity}</TableCell>
+                            <TableCell>
                               <Button variant="ghost" size="sm" asChild>
                                 <Link to={`/inventory/${inventory.ID}`}>상세</Link>
                               </Button>

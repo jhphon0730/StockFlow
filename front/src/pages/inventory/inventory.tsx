@@ -286,29 +286,29 @@ const Inventory = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>제품</TableHead>
-                  <TableHead>SKU</TableHead>
-                  <TableHead>창고</TableHead>
-                  <TableHead className="text-right">수량</TableHead>
-                  <TableHead className="text-right">관리</TableHead>
+                  <TableHead className="text-center">제품</TableHead>
+                  <TableHead className="text-center">SKU</TableHead>
+                  <TableHead className="text-center">창고</TableHead>
+                  <TableHead className="text-center">수량</TableHead>
+                  <TableHead className="text-center">관리</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {inventories.map((inventory) => (
-                  <TableRow key={inventory.ID}>
-                    <TableCell className="font-medium">{inventory.Product?.name || "알 수 없음"}</TableCell>
+                  <TableRow key={inventory.ID} className="text-center">
+                    <TableCell>{inventory.Product?.name || "알 수 없음"}</TableCell>
                     <TableCell>{inventory.Product?.sku || "-"}</TableCell>
                     <TableCell>
-                      <div className="flex flex-col">
+                      <div className="flex flex-col justify-center items-center">
                         <span>{inventory.Warehouse?.name || "알 수 없음"}</span>
                         <span className="text-xs text-muted-foreground">{inventory.Warehouse?.location || "-"}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell>
                       <Badge variant={inventory.quantity > 0 ? "outline" : "destructive"}>{inventory.quantity}</Badge>
                     </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                    <TableCell>
+                      <div className="flex justify-center gap-2">
                         <Button variant="ghost" size="sm" asChild>
                           <Link to={`/inventory/${inventory.ID}`}>상세</Link>
                         </Button>
