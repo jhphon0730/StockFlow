@@ -101,7 +101,7 @@ const InventoryDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6" aria-busy="true" aria-label="재고 정보 로딩 중">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" disabled>
             <ArrowLeft className="h-5 w-5" />
@@ -118,14 +118,18 @@ const InventoryDetail = () => {
 
   if (!inventory) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10">
-        <Package className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-2">재고 정보를 찾을 수 없습니다</h3>
+      <div
+        className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10"
+        role="alert"
+        aria-live="assertive"
+      >
+        <Package className="h-12 w-12 text-muted-foreground mb-4" aria-hidden="true" />
+        <h1 className="text-lg font-medium mb-2">재고 정보를 찾을 수 없습니다</h1>
         <p className="text-sm text-muted-foreground mb-4 text-center">요청하신 재고 정보를 찾을 수 없습니다.</p>
-        <Button>
+        <Button asChild>
           <Link to="/inventory">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            재고 목록으로 돌아가기
+            <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+            <span>재고 목록으로 돌아가기</span>
           </Link>
         </Button>
       </div>
@@ -133,44 +137,46 @@ const InventoryDetail = () => {
   }
 
   const hasTransactions = inventory.Transactions && inventory.Transactions.length > 0
-  // const transactionCount = hasTransactions ? inventory.Transactions!.length : 0
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <main className="flex flex-col gap-6">
+      <header className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="cursor-pointer">
             <Link to="/inventory">
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+              <span className="sr-only">재고 목록으로 돌아가기</span>
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{inventory.Product.name || "알 수 없는 제품"} 재고</h1>
-            <p className="text-muted-foreground flex items-center">
-              <Warehouse className="h-4 w-4 mr-1" />
+            <h1 id="inventory-detail-title" className="text-3xl font-bold tracking-tight">
+              {inventory.Product.name || "알 수 없는 제품"} 재고
+            </h1>
+            <address className="text-muted-foreground flex items-center not-italic">
+              <Warehouse className="h-4 w-4 mr-1" aria-hidden="true" />
               {inventory.Warehouse.name || "알 수 없는 창고"} ({inventory.Warehouse.location || "위치 정보 없음"})
-            </p>
+            </address>
           </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link to={`/inventory/${inventory.ID}/edit`}>
-              <Edit className="h-4 w-4" />
-              편집
+              <Edit className="h-4 w-4" aria-hidden="true" />
+              <span>편집</span>
             </Link>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" className="cursor-pointer">
-                <Trash2 className="h-4 w-4" />
-                삭제
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                <span>삭제</span>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>재고 삭제</AlertDialogTitle>
                 <AlertDialogDescription>
-                  정말로 이 재고를 삭제하시겠습니까? 이 작업은 되돌릴 수 없으며, 모든 관련 트랜잭션 데이터가 함께
+                  정말로 이 재고를 삭제하시겠습니까? 이 작업은 되돌릴 수 없으며, 모든 관련 내역 데이터가 함께
                   삭제됩니다.
                 </AlertDialogDescription>
               </AlertDialogHeader>
@@ -187,16 +193,16 @@ const InventoryDetail = () => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </div>
+      </header>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <section className="grid gap-6 md:grid-cols-3" aria-label="재고 요약 정보">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">현재 수량</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Package className="h-4 w-4 mr-2 text-muted-foreground" />
+              <Package className="h-4 w-4 mr-2 text-muted-foreground" aria-hidden="true" />
               <Badge variant={inventory.quantity > 0 ? "outline" : "destructive"} className="text-lg px-2 py-1">
                 {inventory.quantity}
               </Badge>
@@ -209,7 +215,7 @@ const InventoryDetail = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Package className="h-4 w-4 mr-2 text-muted-foreground" />
+              <Package className="h-4 w-4 mr-2 text-muted-foreground" aria-hidden="true" />
               <div className="flex flex-col">
                 <span>{inventory.Product.name || "알 수 없는 제품"}</span>
                 <span className="text-xs text-muted-foreground">SKU: {inventory.Product.sku || "-"}</span>
@@ -223,149 +229,165 @@ const InventoryDetail = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>{formatDate(inventory.CreatedAt)}</span>
+              <Calendar className="h-4 w-4 mr-2 text-muted-foreground" aria-hidden="true" />
+              <time dateTime={inventory.CreatedAt}>{formatDate(inventory.CreatedAt)}</time>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </section>
 
-      <Tabs defaultValue="transactions" className="w-full">
-        <TabsList>
-          <TabsTrigger value="transactions" className="cursor-pointer">
-            트랜잭션 내역
-          </TabsTrigger>
-          <TabsTrigger value="info" className="cursor-pointer">
-            재고 정보
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="transactions" className="mt-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>트랜잭션 내역</CardTitle>
-                <CardDescription>이 재고의 모든 입출고 내역입니다.</CardDescription>
-              </div>
-              <Button asChild>
-                <Link to={`/transaction/create?inventory_id=${inventory.ID}`}>
-                  <Plus className="h-4 w-4" />
-                  트랜잭션 추가
-                </Link>
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {hasTransactions ? (
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>유형</TableHead>
-                        <TableHead>수량</TableHead>
-                        <TableHead>날짜</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {inventory.Transactions &&
-                        inventory.Transactions.map((transaction) => (
-                          <TableRow key={transaction.ID}>
-                            <TableCell>
-                              <Badge
-                                variant={
-                                  transaction.type === "in"
-                                    ? "secondary"
-                                    : transaction.type === "out"
-                                      ? "default"
-                                      : "outline"
-                                }
-                              >
-                                {transaction.type === "in" ? (
-                                  <ArrowUpRight className="h-3 w-3 mr-1" />
-                                ) : transaction.type === "out" ? (
-                                  <ArrowDownRight className="h-3 w-3 mr-1" />
-                                ) : null}
-                                {transaction.type === "in" ? "입고" : transaction.type === "out" ? "출고" : "조정"}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {transaction.type === "in" ? "+" : transaction.type === "out" ? "-" : ""}
-                              {Math.abs(transaction.quantity)}
-                            </TableCell>
-                            <TableCell>{formatDate(transaction.timestamp)}</TableCell>
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
+      <section aria-labelledby="inventory-detail-title">
+        <Tabs defaultValue="transactions" className="w-full">
+          <TabsList>
+            <TabsTrigger value="transactions" className="cursor-pointer">
+              내역
+            </TabsTrigger>
+            <TabsTrigger value="info" className="cursor-pointer">
+              재고 정보
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="transactions" className="mt-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>내역</CardTitle>
+                  <CardDescription>이 재고의 모든 입출고 내역입니다.</CardDescription>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10">
-                  <Package className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">트랜잭션 내역이 없습니다</h3>
-                  <p className="text-sm text-muted-foreground mb-4 text-center">
-                    이 재고의 입출고 내역이 없습니다. 새 트랜잭션을 추가해보세요.
-                  </p>
-                  <Button asChild>
-                    <Link to={`/transaction/create?inventory_id=${inventory.ID}`}>
-                      <Plus className="h-4 w-4" />
-                      트랜잭션 추가
-                    </Link>
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="info" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>재고 정보</CardTitle>
-              <CardDescription>재고의 상세 정보입니다.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-1">재고 ID</h3>
-                <p className="text-sm text-muted-foreground">{inventory.ID}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">제품 이름</h3>
-                <p className="text-sm text-muted-foreground">{inventory.Product.name || "알 수 없는 제품"}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">제품 SKU</h3>
-                <p className="text-sm text-muted-foreground">{inventory.Product.sku || "-"}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">창고 이름</h3>
-                <p className="text-sm text-muted-foreground">{inventory.Warehouse.name || "알 수 없는 창고"}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">창고 위치</h3>
-                <p className="text-sm text-muted-foreground">{inventory.Warehouse.location || "-"}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">현재 수량</h3>
-                <p className="text-sm text-muted-foreground">{inventory.quantity}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">생성일</h3>
-                <p className="text-sm text-muted-foreground">{formatDate(inventory.CreatedAt)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">최종 수정일</h3>
-                <p className="text-sm text-muted-foreground">{formatDate(inventory.UpdatedAt)}</p>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" asChild>
-                <Link to={`/inventory/${inventory.ID}/edit`}>
-                  <Edit className="h-4 w-4" />
-                  정보 수정
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+                <Button asChild>
+                  <Link to={`/transaction/create?inventory_id=${inventory.ID}`}>
+                    <Plus className="h-4 w-4" aria-hidden="true" />
+                    <span>내역 추가</span>
+                  </Link>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {hasTransactions ? (
+                  <div className="rounded-md border overflow-x-auto">
+                    <Table aria-label="내역 목록">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>유형</TableHead>
+                          <TableHead>수량</TableHead>
+                          <TableHead>날짜</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {inventory.Transactions &&
+                          inventory.Transactions.map((transaction) => (
+                            <TableRow key={transaction.ID}>
+                              <TableCell>
+                                <Badge
+                                  variant={
+                                    transaction.type === "in"
+                                      ? "secondary"
+                                      : transaction.type === "out"
+                                        ? "default"
+                                        : "outline"
+                                  }
+                                >
+                                  {transaction.type === "in" ? (
+                                    <ArrowUpRight className="h-3 w-3 mr-1" aria-hidden="true" />
+                                  ) : transaction.type === "out" ? (
+                                    <ArrowDownRight className="h-3 w-3 mr-1" aria-hidden="true" />
+                                  ) : null}
+                                  <span>
+                                    {transaction.type === "in" ? "입고" : transaction.type === "out" ? "출고" : "조정"}
+                                  </span>
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="font-medium">
+                                {transaction.type === "in" ? "+" : transaction.type === "out" ? "-" : ""}
+                                {Math.abs(transaction.quantity)}
+                              </TableCell>
+                              <TableCell>
+                                <time dateTime={transaction.timestamp}>{formatDate(transaction.timestamp)}</time>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div
+                    className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <Package className="h-12 w-12 text-muted-foreground mb-4" aria-hidden="true" />
+                    <h3 className="text-lg font-medium mb-2">내역이 없습니다</h3>
+                    <p className="text-sm text-muted-foreground mb-4 text-center">
+                      이 재고의 입출고 내역이 없습니다. 새 내역을 추가해보세요.
+                    </p>
+                    <Button asChild>
+                      <Link to={`/transaction/create?inventory_id=${inventory.ID}`}>
+                        <Plus className="h-4 w-4" aria-hidden="true" />
+                        <span>내역 추가</span>
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="info" className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>재고 정보</CardTitle>
+                <CardDescription>재고의 상세 정보입니다.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <dl>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">재고 ID</dt>
+                    <dd className="text-sm text-muted-foreground">{inventory.ID}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">제품 이름</dt>
+                    <dd className="text-sm text-muted-foreground">{inventory.Product.name || "알 수 없는 제품"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">제품 SKU</dt>
+                    <dd className="text-sm text-muted-foreground">{inventory.Product.sku || "-"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">창고 이름</dt>
+                    <dd className="text-sm text-muted-foreground">{inventory.Warehouse.name || "알 수 없는 창고"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">창고 위치</dt>
+                    <dd className="text-sm text-muted-foreground">{inventory.Warehouse.location || "-"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">현재 수량</dt>
+                    <dd className="text-sm text-muted-foreground">{inventory.quantity}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">생성일</dt>
+                    <dd className="text-sm text-muted-foreground">
+                      <time dateTime={inventory.CreatedAt}>{formatDate(inventory.CreatedAt)}</time>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">최종 수정일</dt>
+                    <dd className="text-sm text-muted-foreground">
+                      <time dateTime={inventory.UpdatedAt}>{formatDate(inventory.UpdatedAt)}</time>
+                    </dd>
+                  </div>
+                </dl>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" asChild>
+                  <Link to={`/inventory/${inventory.ID}/edit`}>
+                    <Edit className="h-4 w-4" aria-hidden="true" />
+                    <span>정보 수정</span>
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </section>
+    </main>
   )
 }
 

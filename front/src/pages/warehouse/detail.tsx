@@ -100,7 +100,7 @@ const WarehouseDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6" aria-busy="true" aria-label="창고 정보 로딩 중">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" disabled>
             <ArrowLeft className="h-5 w-5" />
@@ -117,15 +117,19 @@ const WarehouseDetail = () => {
 
   if (!warehouse) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10">
-        <WarehouseIcon className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-2">창고 정보를 찾을 수 없습니다</h3>
+      <div
+        className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10"
+        role="alert"
+        aria-live="assertive"
+      >
+        <WarehouseIcon className="h-12 w-12 text-muted-foreground mb-4" aria-hidden="true" />
+        <h1 className="text-lg font-medium mb-2">창고 정보를 찾을 수 없습니다</h1>
         <p className="text-sm text-muted-foreground mb-4 text-center">요청하신 창고 정보를 찾을 수 없습니다.</p>
-        <Button>
-					<Link to="/warehouse">
-						<ArrowLeft className="mr-2 h-4 w-4" />
-						창고 목록으로 돌아가기
-					</Link>
+        <Button asChild>
+          <Link to="/warehouse">
+            <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+            <span>창고 목록으로 돌아가기</span>
+          </Link>
         </Button>
       </div>
     )
@@ -136,34 +140,37 @@ const WarehouseDetail = () => {
   const totalItems = hasInventory ? warehouse.Inventories?.reduce((sum, inv) => sum + inv.quantity, 0) : 0
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <main className="flex flex-col gap-6">
+      <header className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="cursor-pointer">
-						<Link to="/warehouse">
-							<ArrowLeft className="h-5 w-5" />
-						</Link>
+            <Link to="/warehouse">
+              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+              <span className="sr-only">창고 목록으로 돌아가기</span>
+            </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{warehouse.name}</h1>
-            <p className="text-muted-foreground flex items-center">
-              <MapPin className="h-4 w-4 mr-1" />
+            <h1 id="warehouse-detail-title" className="text-3xl font-bold tracking-tight">
+              {warehouse.name}
+            </h1>
+            <address className="text-muted-foreground flex items-center not-italic">
+              <MapPin className="h-4 w-4 mr-1" aria-hidden="true" />
               {warehouse.location}
-            </p>
+            </address>
           </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link to={`/warehouse/${warehouse.ID}/edit`}>
-              <Edit className="h-4 w-4" />
-              편집
+              <Edit className="h-4 w-4" aria-hidden="true" />
+              <span>편집</span>
             </Link>
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" className="cursor-pointer">
-                <Trash2 className="h-4 w-4" />
-                삭제
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                <span>삭제</span>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -187,17 +194,17 @@ const WarehouseDetail = () => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </div>
+      </header>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <section className="grid gap-6 md:grid-cols-3" aria-label="창고 요약 정보">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">생성일</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-              <span>{formatDate(warehouse.CreatedAt)}</span>
+              <Calendar className="h-4 w-4 mr-2 text-muted-foreground" aria-hidden="true" />
+              <time dateTime={warehouse.CreatedAt}>{formatDate(warehouse.CreatedAt)}</time>
             </div>
           </CardContent>
         </Card>
@@ -207,7 +214,7 @@ const WarehouseDetail = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Package className="h-4 w-4 mr-2 text-muted-foreground" />
+              <Package className="h-4 w-4 mr-2 text-muted-foreground" aria-hidden="true" />
               <span>{inventoryCount}개</span>
             </div>
           </CardContent>
@@ -218,114 +225,133 @@ const WarehouseDetail = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <WarehouseIcon className="h-4 w-4 mr-2 text-muted-foreground" />
+              <WarehouseIcon className="h-4 w-4 mr-2 text-muted-foreground" aria-hidden="true" />
               <span>{totalItems}개</span>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </section>
 
-      <Tabs defaultValue="inventory" className="w-full">
-        <TabsList>
-          <TabsTrigger value="inventory" className="cursor-pointer">재고 목록</TabsTrigger>
-          <TabsTrigger value="info" className="cursor-pointer">창고 정보</TabsTrigger>
-        </TabsList>
-        <TabsContent value="inventory" className="mt-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>재고 목록</CardTitle>
-                <CardDescription>이 창고에 보관 중인 모든 제품 목록입니다.</CardDescription>
-              </div>
-              <Button asChild>
-                <Link to={`/inventory/create?warehouse_id=${warehouse.ID}`}>
-                  <Plus className="h-4 w-4" />
-                  재고 추가
-                </Link>
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {hasInventory ? (
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="text-center">제품명</TableHead>
-                        <TableHead className="text-center">제품 코드</TableHead>
-                        <TableHead className="text-center">수량</TableHead>
-                        <TableHead className="text-center">관리</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {warehouse.Inventories && warehouse.Inventories.map((inventory) => (
-                        <TableRow key={inventory.ID} className="text-center">
-                          <TableCell>{inventory.Product.name}</TableCell>
-                          <TableCell>{inventory.Product.sku || "-"}</TableCell>
-                          <TableCell>{inventory.quantity}</TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="sm" asChild>
-                              <Link to={`/inventory/${inventory.ID}`}>상세</Link>
-                            </Button>
-                          </TableCell>
+      <section aria-labelledby="warehouse-detail-title">
+        <Tabs defaultValue="inventory" className="w-full">
+          <TabsList>
+            <TabsTrigger value="inventory" className="cursor-pointer">
+              재고 목록
+            </TabsTrigger>
+            <TabsTrigger value="info" className="cursor-pointer">
+              창고 정보
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="inventory" className="mt-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>재고 목록</CardTitle>
+                  <CardDescription>이 창고에 보관 중인 모든 제품 목록입니다.</CardDescription>
+                </div>
+                <Button asChild>
+                  <Link to={`/inventory/create?warehouse_id=${warehouse.ID}`}>
+                    <Plus className="h-4 w-4" aria-hidden="true" />
+                    <span>재고 추가</span>
+                  </Link>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {hasInventory ? (
+                  <div className="rounded-md border overflow-x-auto">
+                    <Table aria-label="창고 내 재고 목록">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="text-center">제품명</TableHead>
+                          <TableHead className="text-center">제품 코드</TableHead>
+                          <TableHead className="text-center">수량</TableHead>
+                          <TableHead className="text-center">관리</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10">
-                  <Package className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">등록된 재고가 없습니다</h3>
-                  <p className="text-sm text-muted-foreground mb-4 text-center">
-                    이 창고에 보관 중인 제품이 없습니다. 새 재고를 추가해보세요.
-                  </p>
-                  <Button asChild>
-                    <Link to={`/inventory/create?warehouse_id=${warehouse.ID}`}>
-                      <Plus className="h-4 w-4" />
-                      재고 추가
-                    </Link>
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="info" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>창고 정보</CardTitle>
-              <CardDescription>창고의 상세 정보입니다.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-1">창고 이름</h3>
-                <p className="text-sm text-muted-foreground">{warehouse.name}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">위치</h3>
-                <p className="text-sm text-muted-foreground">{warehouse.location}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">생성일</h3>
-                <p className="text-sm text-muted-foreground">{formatDate(warehouse.CreatedAt)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">최종 수정일</h3>
-                <p className="text-sm text-muted-foreground">{formatDate(warehouse.UpdatedAt)}</p>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" asChild>
-                <Link to={`/warehouse/${warehouse.ID}/edit`}>
-                  <Edit className="h-4 w-4" />
-                  정보 수정
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+                      </TableHeader>
+                      <TableBody>
+                        {warehouse.Inventories &&
+                          warehouse.Inventories.map((inventory) => (
+                            <TableRow key={inventory.ID} className="text-center">
+                              <TableCell>{inventory.Product.name}</TableCell>
+                              <TableCell>{inventory.Product.sku || "-"}</TableCell>
+                              <TableCell>{inventory.quantity}</TableCell>
+                              <TableCell>
+                                <Button variant="ghost" size="sm" asChild>
+                                  <Link to={`/inventory/${inventory.ID}`}>
+                                    <span>상세</span>
+                                  </Link>
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                ) : (
+                  <div
+                    className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <Package className="h-12 w-12 text-muted-foreground mb-4" aria-hidden="true" />
+                    <h3 className="text-lg font-medium mb-2">등록된 재고가 없습니다</h3>
+                    <p className="text-sm text-muted-foreground mb-4 text-center">
+                      이 창고에 보관 중인 제품이 없습니다. 새 재고를 추가해보세요.
+                    </p>
+                    <Button asChild>
+                      <Link to={`/inventory/create?warehouse_id=${warehouse.ID}`}>
+                        <Plus className="h-4 w-4" aria-hidden="true" />
+                        <span>재고 추가</span>
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="info" className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>창고 정보</CardTitle>
+                <CardDescription>창고의 상세 정보입니다.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <dl>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">창고 이름</dt>
+                    <dd className="text-sm text-muted-foreground">{warehouse.name}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">위치</dt>
+                    <dd className="text-sm text-muted-foreground">{warehouse.location}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">생성일</dt>
+                    <dd className="text-sm text-muted-foreground">
+                      <time dateTime={warehouse.CreatedAt}>{formatDate(warehouse.CreatedAt)}</time>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium mb-1">최종 수정일</dt>
+                    <dd className="text-sm text-muted-foreground">
+                      <time dateTime={warehouse.UpdatedAt}>{formatDate(warehouse.UpdatedAt)}</time>
+                    </dd>
+                  </div>
+                </dl>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" asChild>
+                  <Link to={`/warehouse/${warehouse.ID}/edit`}>
+                    <Edit className="h-4 w-4" aria-hidden="true" />
+                    <span>정보 수정</span>
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </section>
+    </main>
   )
 }
 

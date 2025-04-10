@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 
-import type { Inventory,  } from "@/types/inventory"
+import type { Inventory } from "@/types/inventory"
 import { GetAllInventories } from "@/lib/api/inventory"
 import { GetAllWarehouses } from "@/lib/api/warehouse"
 import { GetAllProducts } from "@/lib/api/product"
@@ -175,27 +175,43 @@ const Inventory = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">재고 관리</h1>
+    <main className="flex flex-col gap-6">
+      <header className="flex flex-col gap-2">
+        <h1 id="inventory-title" className="text-3xl font-bold tracking-tight">
+          재고 관리
+        </h1>
         <p className="text-muted-foreground">모든 재고를 관리하고 새 재고를 추가하세요.</p>
-      </div>
+      </header>
 
-      <div className="flex justify-between items-center">
+      <nav className="flex justify-between items-center" aria-label="재고 필터 및 작업">
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={openSearchModal} className="cursor-pointer">
-            <Filter className="h-4 w-4" />
-            검색 필터
+            <Filter className="h-4 w-4" aria-hidden="true" />
+            <span>검색 필터</span>
           </Button>
 
           {hasSearchFilters && (
-            <div className="flex items-center text-sm text-muted-foreground ml-2">
+            <div className="flex items-center text-sm text-muted-foreground ml-2" aria-live="polite">
               <span className="font-medium">필터:</span>{" "}
-              {searchWarehouseId !== undefined && <span>창고: {getWarehouseName(searchWarehouseId)}</span>}
+              {searchWarehouseId !== undefined && (
+                <span>
+                  창고: <mark className="bg-transparent font-medium">{getWarehouseName(searchWarehouseId)}</mark>
+                </span>
+              )}
               {searchWarehouseId !== undefined && searchProductId !== undefined && <span> / </span>}
-              {searchProductId !== undefined && <span>제품: {getProductName(searchProductId)}</span>}
-              <Button variant="ghost" size="icon" className="h-6 w-6 ml-1" onClick={clearSearch}>
-                <X className="h-3.5 w-3.5" />
+              {searchProductId !== undefined && (
+                <span>
+                  제품: <mark className="bg-transparent font-medium">{getProductName(searchProductId)}</mark>
+                </span>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 ml-1"
+                onClick={clearSearch}
+                aria-label="필터 초기화"
+              >
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
                 <span className="sr-only">필터 초기화</span>
               </Button>
             </div>
@@ -204,10 +220,11 @@ const Inventory = () => {
 
         <Button asChild>
           <Link to="/inventory/create">
-            <Plus className="h-4 w-4" />새 재고 추가
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            <span>새 재고 추가</span>
           </Link>
         </Button>
-      </div>
+      </nav>
 
       {/* Search Modal */}
       <Dialog open={isSearchModalOpen} onOpenChange={setIsSearchModalOpen}>
@@ -221,7 +238,8 @@ const Inventory = () => {
               handleSearch()
             }}
           >
-            <div className="grid gap-4 py-4">
+            <fieldset className="grid gap-4 py-4">
+              <legend className="sr-only">검색 조건</legend>
               <div className="space-y-2">
                 <Label htmlFor="modal-warehouse">창고</Label>
                 <select
@@ -232,6 +250,7 @@ const Inventory = () => {
                     setTempSearchWarehouseId(e.target.value ? Number.parseInt(e.target.value, 10) : undefined)
                   }
                   disabled={isLoadingOptions}
+                  aria-busy={isLoadingOptions}
                 >
                   <option value="">모든 창고</option>
                   {warehouses.map((warehouse) => (
@@ -251,6 +270,7 @@ const Inventory = () => {
                     setTempSearchProductId(e.target.value ? Number.parseInt(e.target.value, 10) : undefined)
                   }
                   disabled={isLoadingOptions}
+                  aria-busy={isLoadingOptions}
                 >
                   <option value="">모든 제품</option>
                   {products.map((product) => (
@@ -260,95 +280,119 @@ const Inventory = () => {
                   ))}
                 </select>
               </div>
-            </div>
+            </fieldset>
             <DialogFooter className="sm:justify-between">
               <Button type="button" variant="outline" onClick={clearSearch}>
-                <X className="h-4 w-4" />
-                필터 초기화
+                <X className="h-4 w-4" aria-hidden="true" />
+                <span>필터 초기화</span>
               </Button>
               <Button type="submit" disabled={isSearching}>
-                <Search className="h-4 w-4" />
-                {isSearching ? "검색 중..." : "검색"}
+                <Search className="h-4 w-4" aria-hidden="true" />
+                <span>{isSearching ? "검색 중..." : "검색"}</span>
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      {isLoading ? (
-        <LoadingTable rows={5} columns={4} />
-      ) : inventories && inventories.length > 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>재고 목록</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-center">제품</TableHead>
-                  <TableHead className="text-center">SKU</TableHead>
-                  <TableHead className="text-center">창고</TableHead>
-                  <TableHead className="text-center">수량</TableHead>
-                  <TableHead className="text-center">관리</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {inventories.map((inventory) => (
-                  <TableRow key={inventory.ID} className="text-center">
-                    <TableCell>{inventory.Product.name || "알 수 없음"}</TableCell>
-                    <TableCell>{inventory.Product.sku || "-"}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-col justify-center items-center">
-                        <span>{inventory.Warehouse.name || "알 수 없음"}</span>
-                        <span className="text-xs text-muted-foreground">{inventory.Warehouse.location || "-"}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={inventory.quantity > 0 ? "outline" : "destructive"}>{inventory.quantity}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-center gap-2">
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link to={`/inventory/${inventory.ID}`}>상세</Link>
-                        </Button>
-                        <Button variant="outline" size="sm" asChild>
-                          <Link to={`/inventory/${inventory.ID}/edit`}>수정</Link>
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10">
-          <Package className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-medium mb-2">
-            {hasSearchFilters ? "검색 결과가 없습니다" : "등록된 재고가 없습니다"}
-          </h3>
-          <p className="text-sm text-muted-foreground mb-4 text-center">
-            {hasSearchFilters
-              ? "다른 검색 조건으로 다시 시도하거나 모든 재고를 확인하세요."
-              : "새 재고를 추가하여 재고를 관리해보세요."}
-          </p>
-          {hasSearchFilters ? (
-            <Button variant="outline" onClick={clearSearch}>
-              <X className="h-4 w-4" />
-              필터 초기화
-            </Button>
-          ) : (
-            <Button asChild>
-              <Link to="/inventory/create">
-                <Plus className="h-4 w-4" />새 재고 추가
-              </Link>
-            </Button>
-          )}
-        </div>
-      )}
-    </div>
+      <section aria-labelledby="inventory-title">
+        {isLoading ? (
+          <div aria-busy="true" aria-label="재고 목록 로딩 중">
+            <LoadingTable rows={5} columns={4} />
+          </div>
+        ) : inventories && inventories.length > 0 ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>재고 목록</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table aria-label="재고 목록 테이블">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-center">제품</TableHead>
+                      <TableHead className="text-center">SKU</TableHead>
+                      <TableHead className="text-center">창고</TableHead>
+                      <TableHead className="text-center">수량</TableHead>
+                      <TableHead className="text-center">관리</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {inventories.map((inventory) => (
+                      <TableRow key={inventory.ID} className="text-center">
+                        <TableCell>{inventory.Product.name || "알 수 없음"}</TableCell>
+                        <TableCell>{inventory.Product.sku || "-"}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col justify-center items-center">
+                            <span>{inventory.Warehouse.name || "알 수 없음"}</span>
+                            <address className="text-xs text-muted-foreground not-italic">
+                              {inventory.Warehouse.location || "-"}
+                            </address>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={inventory.quantity > 0 ? "outline" : "destructive"}>
+                            {inventory.quantity}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex justify-center gap-2">
+                            <Button variant="ghost" size="sm" asChild>
+                              <Link to={`/inventory/${inventory.ID}`}>
+                                <span>상세</span>
+                              </Link>
+                            </Button>
+                            <Button variant="outline" size="sm" asChild>
+                              <Link to={`/inventory/${inventory.ID}/edit`}>
+                                <span>수정</span>
+                              </Link>
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div
+            className="flex flex-col items-center justify-center p-8 border rounded-lg bg-muted/10"
+            role="status"
+            aria-live="polite"
+          >
+            <Package className="h-12 w-12 text-muted-foreground mb-4" aria-hidden="true" />
+            <h2 className="text-lg font-medium mb-2">
+              {hasSearchFilters ? "검색 결과가 없습니다" : "등록된 재고가 없습니다"}
+            </h2>
+            <p className="text-sm text-muted-foreground mb-4 text-center">
+              {hasSearchFilters
+                ? "다른 검색 조건으로 다시 시도하거나 모든 재고를 확인하세요."
+                : "새 재고를 추가하여 재고를 관리해보세요."}
+            </p>
+            {hasSearchFilters ? (
+              <Button variant="outline" onClick={clearSearch}>
+                <X className="h-4 w-4" aria-hidden="true" />
+                <span>필터 초기화</span>
+              </Button>
+            ) : (
+              <Button asChild>
+                <Link to="/inventory/create">
+                  <Plus className="h-4 w-4" aria-hidden="true" />
+                  <span>새 재고 추가</span>
+                </Link>
+              </Button>
+            )}
+          </div>
+        )}
+      </section>
+
+      <footer className="mt-4 text-sm text-muted-foreground">
+        <p>총 {inventories?.length || 0}개의 재고가 있습니다.</p>
+        <time dateTime={new Date().toISOString()}>마지막 업데이트: {new Date().toLocaleString()}</time>
+      </footer>
+    </main>
   )
 }
 

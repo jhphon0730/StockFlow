@@ -38,7 +38,7 @@ export const CreateInventory = async (params: CreateProductParams): Promise<Resp
 	}
 }
 
-export const GetInventoryById = async (id: string): Promise<Response<{ inventory: Inventory }>> => {
+export const GetInventoryById = async (id: number): Promise<Response<{ inventory: Inventory }>> => {
 	const res = await FetchWithAuth(`/inventories/${id}`, {
 		method: "GET",
 	})
@@ -49,7 +49,7 @@ export const GetInventoryById = async (id: string): Promise<Response<{ inventory
 	}
 }
 
-export const DeleteInventory = async (id: string): Promise<Response<{ inventory: Inventory }>> => {
+export const DeleteInventory = async (id: number): Promise<Response<{ inventory: Inventory }>> => {
 	const res = await FetchWithAuth(`/inventories/${id}`, {
 		method: "DELETE",
 	})
