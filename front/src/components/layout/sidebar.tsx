@@ -39,21 +39,12 @@ const navItems: NavItem[] = [
     label: "재고",
     path: "/inventory",
   },
-  {
-    icon: <BarChart3 className="h-4 w-4" />,
-    label: "보고서",
-    path: "/report",
-  },
-  {
-    icon: <Users className="h-4 w-4" />,
-    label: "사용자",
-    path: "/auth",
-  },
-  {
-    icon: <Settings className="h-4 w-4" />,
-    label: "설정",
-    path: "/setting",
-  },
+	// Transaction
+	{
+		icon: <BarChart3 className="h-4 w-4" />,
+		label: "재고 내역",
+		path: "/transaction",
+	},
 ]
 
 interface SidebarProps {

@@ -64,7 +64,7 @@ export const TransactionRecentList = ({ isLoadingDashboard, dashboardInfo }: Tra
 									<div>
 										<p className="text-sm font-medium">
 											{transaction.Inventory?.Product?.name || "제품"}
-											{transaction.type === "in" ? "입고" : transaction.type === "out" ? "출고" : "조정"} (
+											{transaction.type === "IN" ? "입고" : transaction.type === "OUT" ? "출고" : "조정"} (
 											{transaction.quantity > 0 ? "+" : ""}
 											{transaction.quantity})
 										</p>

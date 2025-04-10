@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Loading } from "@/components/ui/loading"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
@@ -120,7 +119,7 @@ const TransactionCreate = () => {
       const response = await CreateTransaction({
         inventory_id: inventoryId,
         type: toUppercaseType(type), // 대문자로 변환
-        quantity: type === "out" ? -Math.abs(quantity) : Math.abs(quantity),
+        quantity: Math.abs(quantity),
       })
 
       if (response.error) {

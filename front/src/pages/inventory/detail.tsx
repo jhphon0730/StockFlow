@@ -278,25 +278,25 @@ const InventoryDetail = () => {
                               <TableCell>
                                 <Badge
                                   variant={
-                                    transaction.type === "in"
+                                    transaction.type === "IN"
                                       ? "secondary"
-                                      : transaction.type === "out"
+                                      : transaction.type === "OUT"
                                         ? "default"
                                         : "outline"
                                   }
                                 >
-                                  {transaction.type === "in" ? (
+                                  {transaction.type === "IN" ? (
                                     <ArrowUpRight className="h-3 w-3 mr-1" aria-hidden="true" />
-                                  ) : transaction.type === "out" ? (
+                                  ) : transaction.type === "OUT" ? (
                                     <ArrowDownRight className="h-3 w-3 mr-1" aria-hidden="true" />
                                   ) : null}
                                   <span>
-                                    {transaction.type === "in" ? "입고" : transaction.type === "out" ? "출고" : "조정"}
+                                    {transaction.type === "IN" ? "입고" : transaction.type === "OUT" ? "출고" : "조정"}
                                   </span>
                                 </Badge>
                               </TableCell>
                               <TableCell className="font-medium">
-                                {transaction.type === "in" ? "+" : transaction.type === "out" ? "-" : ""}
+                                {transaction.type === "IN" ? "+" : transaction.type === "OUT" ? "-" : ""}
                                 {Math.abs(transaction.quantity)}
                               </TableCell>
                               <TableCell>
