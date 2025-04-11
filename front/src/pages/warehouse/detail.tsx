@@ -23,6 +23,7 @@ import {
 import type { Warehouse } from "@/types/warehouse"
 import { GetWarehouseById, DeleteWarehouse } from "@/lib/api/warehouse"
 import { formatDate } from "@/lib/utils"
+import { SendUpdateMessage } from "@/hooks/use-websocket";
 
 const WarehouseDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -85,6 +86,7 @@ const WarehouseDetail = () => {
         text: "창고가 성공적으로 삭제되었습니다.",
         timer: 1500,
       }).then(() => {
+				SendUpdateMessage()
         navigate("/warehouse")
       })
     } catch (error) {

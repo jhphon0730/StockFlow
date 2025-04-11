@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label"
 import { Loading } from "@/components/ui/loading"
 
 import { CreateWarehouse } from "@/lib/api/warehouse"
+import { SendUpdateMessage } from "@/hooks/use-websocket";
 
 const WarehouseCreate = () => {
   const [name, setName] = useState("")
@@ -69,6 +70,7 @@ const WarehouseCreate = () => {
         text: "새 창고가 성공적으로 생성되었습니다.",
         timer: 1500,
       }).then(() => {
+				SendUpdateMessage()
         navigate(`/warehouse/${response.data.warehouse.ID}`)
       })
     } catch (error) {
