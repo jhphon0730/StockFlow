@@ -3,6 +3,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { Link, useSearchParams, useNavigate } from "react-router-dom"
 import Swal from "sweetalert2"
+import { toast } from "react-toastify"
 import { MapPin, Package, Plus, Search, X, Filter } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -14,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 
 import type { Warehouse as WarehouseType } from "@/types/warehouse"
 import { GetAllWarehouses } from "@/lib/api/warehouse"
+import { useWebSocketStore } from "@/store/useWebSocketStore"
 
 const Warehouses = () => {
   // 검색 된 창고 데이터 목록
@@ -32,9 +34,31 @@ const Warehouses = () => {
 
   const searchParams = useSearchParams()[0]
   const navigate = useNavigate()
+	const { message } = useWebSocketStore()
+
+	useEffect(() => {
+		if (!message) {
+			return
+		}
+
+		toast.success("창고 목록이 업데이트되었습니다.", {
+			position: "bottom-right",
+			autoClose: 2000,
+			hideProgressBar: true,
+			closeOnClick: true,
+			pauseOnHover: false,
+			draggable: false,
+		})
+		
+		getWarehouseWithQuery()
+	}, [message])
 
   // Get query parameters on initial load
   useEffect(() => {
+		getWarehouseWithQuery()
+  }, [searchParams])
+
+	const getWarehouseWithQuery = () => {
     const nameParam = searchParams.get("name")
     const locationParam = searchParams.get("location")
 
@@ -51,7 +75,7 @@ const Warehouses = () => {
       name: nameParam || undefined,
       location: locationParam || undefined,
     })
-  }, [searchParams])
+	}
 
   const getWarehousesHandler = async (params?: { name?: string; location?: string }) => {
     setIsLoading(true)
