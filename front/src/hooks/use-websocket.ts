@@ -25,7 +25,7 @@ function getRoomId(pathname: string): string {
 	return parts[0]
 }
 
-export function useWebSocket(): WebSocketExport {
+export const useWebSocket = (): WebSocketExport => {
   const location = useLocation()
 	const pathname = location.pathname.slice(1)
   const roomID = getRoomId(pathname)
@@ -137,16 +137,20 @@ export function useWebSocket(): WebSocketExport {
   return { socketRef, isConnected, roomID, currentRoomClientCount, message }
 }
 
-export const SendUpdateMessage = () => {
-	const { socket, roomID } = useWebSocketStore();
-	const { user } = useAuthStore();
+export const SendUpdateMessage = (): void => {
+	const socket = useWebSocketStore.getState().socket
+	const roomID = useWebSocketStore.getState().roomID
+  const userID = getCookie("userID")
 
-	if (socket && socket.readyState === WebSocket.OPEN && user) {
+	if (socket && socket.readyState === WebSocket.OPEN && userID) {
 		const message: Message = {
 			action: "update",
 			roomID,
-			clientID: user.ID,
+			clientID: userID.toString(),
 		};
+		console.log("Sending update message:", message)
 		socket.send(JSON.stringify(message));
 	}
+
+	return
 }

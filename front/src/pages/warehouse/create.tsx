@@ -64,13 +64,13 @@ const WarehouseCreate = () => {
         return
       }
 
+			SendUpdateMessage()
       Swal.fire({
         icon: "success",
         title: "창고 생성 성공",
         text: "새 창고가 성공적으로 생성되었습니다.",
         timer: 1500,
       }).then(() => {
-				SendUpdateMessage()
         navigate(`/warehouse/${response.data.warehouse.ID}`)
       })
     } catch (error) {

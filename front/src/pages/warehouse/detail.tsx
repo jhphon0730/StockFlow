@@ -80,13 +80,13 @@ const WarehouseDetail = () => {
         return
       }
 
+			SendUpdateMessage()
       Swal.fire({
         icon: "success",
         title: "창고 삭제 성공",
         text: "창고가 성공적으로 삭제되었습니다.",
         timer: 1500,
       }).then(() => {
-				SendUpdateMessage()
         navigate("/warehouse")
       })
     } catch (error) {
