@@ -6,7 +6,6 @@ import { useLocation } from "react-router-dom"
 import { getCookie } from "@/lib/cookies"
 import type { Message } from "@/types/websocket/message"
 import { useWebSocketStore } from "@/store/useWebSocketStore"
-import { useAuthStore } from "@/store/useAuthStore"
 
 interface WebSocketExport {
   socketRef: React.MutableRefObject<WebSocket | null>
