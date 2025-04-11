@@ -17,13 +17,18 @@ interface WebSocketExport {
 }
 
 function getRoomId(pathname: string): string {
-  const path = pathname.startsWith("/") ? pathname.substring(1) : pathname
-  return path || "dashboard"
+	if (pathname === "") {
+		return "dashboard"
+	}
+
+	const parts = pathname.split("/")
+	return parts[0]
 }
 
 export function useWebSocket(): WebSocketExport {
   const location = useLocation()
-  const roomID = getRoomId(location.pathname)
+	const pathname = location.pathname.slice(1)
+  const roomID = getRoomId(pathname)
   const userID = getCookie("userID")
 
   // Use the WebSocket store
