@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom"
 import { getCookie } from "@/lib/cookies"
 import type { Message } from "@/types/websocket/message"
 import { useWebSocketStore } from "@/store/useWebSocketStore"
+import { useAuthStore } from "@/store/useAuthStore"
 
 interface WebSocketExport {
   socketRef: React.MutableRefObject<WebSocket | null>
@@ -131,3 +132,16 @@ export function useWebSocket(): WebSocketExport {
   return { socketRef, isConnected, roomID, currentRoomClientCount, message }
 }
 
+export const SendUpdateMessage = () => {
+	const { socket, roomID } = useWebSocketStore();
+	const { user } = useAuthStore();
+
+	if (socket && socket.readyState === WebSocket.OPEN && user) {
+		const message: Message = {
+			action: "update",
+			roomID,
+			clientID: user.ID,
+		};
+		socket.send(JSON.stringify(message));
+	}
+}

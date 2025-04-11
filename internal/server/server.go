@@ -11,7 +11,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/contrib/static"
+	// "github.com/gin-gonic/contrib/static"
 	"gorm.io/gorm"
 )
 
