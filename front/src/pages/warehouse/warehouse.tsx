@@ -41,8 +41,8 @@ const Warehouses = () => {
 			return
 		}
 
-		toast.success("창고 목록이 업데이트되었습니다.", {
-			position: "bottom-right",
+		toast.info("창고 목록이 업데이트되었습니다.", {
+			position: "top-right",
 			autoClose: 2000,
 			hideProgressBar: true,
 			closeOnClick: true,
