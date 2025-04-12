@@ -10,8 +10,19 @@ const (
 )
 
 func RestoreRedisData(ctx context.Context) {
-	warehouse_instance.DeleteWarehouseCache(ctx)
-	product_instance.DeleteProductCache(ctx)
-	inventory_instance.DeleteInventoryCache(ctx)
-	transaction_instance.DeleteTransactionCache(ctx)
+	if warehouse_instance, err := GetWarehouseRedis(ctx); err == nil {
+		warehouse_instance.DeleteWarehouseCache(ctx)
+	}
+
+	if product_instance, err := GetProductRedis(ctx); err == nil {
+		product_instance.DeleteProductCache(ctx)
+	}
+
+	if inventory_instance, err := GetInventoryRedis(ctx); err == nil {
+		inventory_instance.DeleteInventoryCache(ctx)
+	}
+
+	if transaction_instance, err := GetTransactionRedis(ctx); err == nil {
+		transaction_instance.DeleteTransactionCache(ctx)
+	}
 }
