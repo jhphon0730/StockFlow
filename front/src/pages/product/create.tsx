@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Loading } from "@/components/ui/loading"
 
 import { CreateProduct } from "@/lib/api/product"
+import { SendUpdateMessage } from "@/hooks/use-websocket";
 
 const ProductCreate = () => {
   const [name, setName] = useState("")
@@ -68,6 +69,7 @@ const ProductCreate = () => {
         return
       }
 
+			SendUpdateMessage()
       Swal.fire({
         icon: "success",
         title: "제품 생성 성공",

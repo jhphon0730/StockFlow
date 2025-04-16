@@ -3,6 +3,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { Link, useSearchParams, useNavigate } from "react-router-dom"
 import Swal from "sweetalert2"
+import { toast } from "react-toastify"
 import { Package, Barcode, Plus, Search, X, Filter } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -15,6 +16,7 @@ import { Badge } from "@/components/ui/badge"
 
 import type { Product } from "@/types/product"
 import { GetAllProducts } from "@/lib/api/product"
+import { useWebSocketStore } from "@/store/useWebSocketStore"
 
 const Products = () => {
   // 검색 된 제품 데이터 목록
@@ -33,9 +35,31 @@ const Products = () => {
 
   const searchParams = useSearchParams()[0]
   const navigate = useNavigate()
+	const { message } = useWebSocketStore()
+
+	useEffect(() => {
+		if (!message) {
+			return
+		}
+
+		toast.info("제품 목록이 업데이트되었습니다.", {
+			position: "top-right",
+			autoClose: 2000,
+			hideProgressBar: true,
+			closeOnClick: true,
+			pauseOnHover: false,
+			draggable: false,
+		})
+
+		getProductWithQuery()
+	}, [message])
 
   // Get query parameters on initial load
   useEffect(() => {
+		getProductWithQuery()
+  }, [searchParams])
+
+	const getProductWithQuery = () => {
     const nameParam = searchParams.get("name")
     const skuParam = searchParams.get("sku")
 
@@ -52,7 +76,7 @@ const Products = () => {
       name: nameParam || undefined,
       sku: skuParam || undefined,
     })
-  }, [searchParams])
+	}
 
   const getProductsHandler = async (params?: { name?: string; sku?: string }) => {
     setIsLoading(true)

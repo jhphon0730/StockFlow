@@ -23,6 +23,7 @@ import {
 import type { Product } from "@/types/product"
 import { GetProductById, DeleteProduct } from "@/lib/api/product"
 import { formatDate } from "@/lib/utils"
+import { SendUpdateMessage } from "@/hooks/use-websocket";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -79,6 +80,7 @@ const ProductDetail = () => {
         return
       }
 
+			SendUpdateMessage()
       Swal.fire({
         icon: "success",
         title: "제품 삭제 성공",
