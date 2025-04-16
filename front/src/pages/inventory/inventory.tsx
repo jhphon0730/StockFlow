@@ -217,13 +217,6 @@ const Inventory = () => {
             </div>
           )}
         </div>
-
-        <Button asChild>
-          <Link to="/inventory/create">
-            <Plus className="h-4 w-4" aria-hidden="true" />
-            <span>새 재고 추가</span>
-          </Link>
-        </Button>
       </nav>
 
       {/* Search Modal */}

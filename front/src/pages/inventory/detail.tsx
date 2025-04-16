@@ -256,7 +256,7 @@ const InventoryDetail = () => {
                 <Button asChild>
                   <Link to={`/transaction/create?inventory_id=${inventory.ID}`}>
                     <Plus className="h-4 w-4" aria-hidden="true" />
-                    <span>내역 추가</span>
+                    <span>수량 수정</span>
                   </Link>
                 </Button>
               </CardHeader>
