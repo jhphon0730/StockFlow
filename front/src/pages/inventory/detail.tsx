@@ -203,9 +203,7 @@ const InventoryDetail = () => {
           <CardContent>
             <div className="flex items-center">
               <Package className="h-4 w-4 mr-2 text-muted-foreground" aria-hidden="true" />
-              <Badge variant={inventory.quantity > 0 ? "outline" : "destructive"} className="text-lg px-2 py-1">
-                {inventory.quantity}
-              </Badge>
+                {inventory.quantity}개
             </div>
           </CardContent>
         </Card>
@@ -266,15 +264,15 @@ const InventoryDetail = () => {
                     <Table aria-label="내역 목록">
                       <TableHeader>
                         <TableRow>
-                          <TableHead>유형</TableHead>
-                          <TableHead>수량</TableHead>
-                          <TableHead>날짜</TableHead>
+                          <TableHead className="text-center">유형</TableHead>
+                          <TableHead className="text-center">수량</TableHead>
+                          <TableHead className="text-center">날짜</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {inventory.Transactions &&
                           inventory.Transactions.map((transaction) => (
-                            <TableRow key={transaction.ID}>
+                            <TableRow key={transaction.ID} className="text-center">
                               <TableCell>
                                 <Badge
                                   variant={
